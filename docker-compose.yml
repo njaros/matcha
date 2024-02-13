@@ -1,0 +1,46 @@
+version: '3.3'
+services:
+################# POSTGRESQL - DATABASE ###################
+  db:
+    image: postgres:latest
+    container_name: db_container
+    hostname: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    networks:
+      - matcha_network
+    volumes:
+      - database:/var/lib/postgresql/data
+################# PYTHON FLASK - BACKEND ##################
+  back:
+    image: flask_img
+    build:
+      context: ./back
+    container_name: flask_container
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    networks:
+      - matcha_network
+    volumes:
+      - ./back:/app
+################# TYPESCRIPT REACT - FRONTEND #############
+  front:
+    image: reactjs_img
+    build:
+      context: ./front
+    container_name: react_container
+    restart: always
+    ports:
+      - "8000:8000"
+    networks:
+      - matcha_network
+    env_file:
+      - .env
+    volumes:
+      - ./front:/usr/src/app
