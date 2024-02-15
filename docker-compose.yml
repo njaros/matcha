@@ -22,7 +22,7 @@ services:
     container_name: flask_container
     restart: always
     ports:
-      - "3000:3000"
+      - "5066:5066"
     env_file:
       - .env
     networks:
