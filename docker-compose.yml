@@ -43,7 +43,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./front:/usr/src/app
+      - ./front:/dev/app/
 volumes:
   database:
 networks:
