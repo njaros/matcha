@@ -23,6 +23,8 @@ services:
     restart: always
     ports:
       - "5066:5066"
+    depends_on: 
+      - db
     env_file:
       - .env
     networks:
@@ -44,6 +46,19 @@ services:
       - .env
     volumes:
       - ./front:/dev/app/
+######################### ADMINER ##########################
+  adminer:
+    container_name: adminer
+    image: adminer
+    restart: always
+    depends_on: 
+      - db
+    environment:
+      ADMINER_DEFAULT_SERVER: db_container
+    ports:
+      - 8080:8080
+    networks:
+      - matcha_network
 volumes:
   database:
 networks:
