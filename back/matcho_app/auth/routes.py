@@ -4,7 +4,7 @@ from auth import sql
 from jwt_policy import jwt_policy
 
 
-def auth_routes(app, conn):
+def auth_routes(app):
     @app.route("/sign", methods=["POST"])
     def sign():
         sign_data = {}
@@ -26,3 +26,8 @@ def auth_routes(app, conn):
             return jwt_policy.create_token(returned_id, app.config["SECRET"])
         else:
             return "wrong user name or password"
+
+    @app.route("/test", methods=["POST"])
+    @jwt_policy.token_required
+    def test():
+        return "OK token"
