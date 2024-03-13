@@ -22,7 +22,7 @@ services:
     container_name: flask_container
     restart: always
     ports:
-      - "5066:5066"
+      - ${CLIENT_PORT}:${CLIENT_PORT}
     depends_on: 
       - db
     env_file:
@@ -39,7 +39,7 @@ services:
     container_name: react_container
     restart: always
     ports:
-      - "8000:8000"
+      - ${SERVER_PORT}:${SERVER_PORT}
     networks:
       - matcha_network
     env_file:

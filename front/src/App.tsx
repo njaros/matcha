@@ -3,6 +3,7 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { NavLink } from "react-router-dom";
+import { Socket, io } from 'socket.io-client'
 
 const ip = import.meta.env.VITE_IP;
 const Axios = axios.create({
@@ -16,6 +17,7 @@ const App: React.FC = () => {
 	const [userName, setUserName] = useState<string>("");
 	const [buildingUserName, setBuildingUserName] = useState<string>("");
 	const [helloMsg, setHelloMsg] = useState<string>("");
+	const [socket, setSocket] = useState<Socket>();
 	const { handleSubmit } = useForm<{}>({});
 
 	useEffect(() => {
@@ -74,6 +76,10 @@ const App: React.FC = () => {
 	const buildUserName = (event: React.ChangeEvent<HTMLInputElement>) => {
 		setBuildingUserName(event.target.value);
 	}
+
+	useEffect (() => {
+		setSocket(io(`${process.env.REACT_APP_SERVER_URL}`));
+	},[])
 
 	return (
 		<div>
