@@ -1,8 +1,8 @@
-from flask import Flask
-from flask_cors import CORS
-import psycopg
 import os
 from auth import routes
+import psycopg
+from flask import Flask
+from flask_cors import CORS
 
 
 def set_up_db():
@@ -27,10 +27,13 @@ def set_up_db():
     return conn
 
 
+app = Flask(__name__)
+CORS(app)
+conn = set_up_db()
+app.config["SECRET"] = os.environ.get("SECRET", "this is a secret")
+
+
 def main():
-    app = Flask(__name__)
-    CORS(app)
-    conn = set_up_db()
 
     routes.auth_routes(app, conn)
 
