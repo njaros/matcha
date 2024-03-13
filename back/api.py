@@ -1,10 +1,10 @@
 from flask import Flask
-from flask_restful import Api, Resource
-from flask_socketio import SocketIO, emit
+from flask_restful import Resource
 from flask_cors import CORS
 import psycopg
 import os
 from auth import routes
+from extensions import socketio
 
 
 def set_up_db():
@@ -29,28 +29,27 @@ def set_up_db():
     return conn
 
 
-def main():
-    app = Flask(__name__)
-    CORS(app)
-    conn = set_up_db()
+# create primary Flask app
 
-    routes.auth_routes(app, conn)
+app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get('SECRET')
+CORS(app)
+conn = set_up_db()
 
-    @app.route("/")
-    def home():
-        return "you are at home"
 
-    @app.route("/leave")
-    def leave():
-        return "you leaved home"
+# initialization of Flask-SocketIO
 
-    @app.route("/helloworld")
-    def hello():
-        return "hello world"
+socketio.init_app(app)
 
-    app.run(debug=True, host='0.0.0.0', port=port)
+# import and save sub-app 
+
+from app1 import app as app1
+from app2 import app as app2
+
+app.register_blueprint(app1)
+app.register_blueprint(app2)
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 5066))
-    main()
+    port = int(os.environ.get('SERVER_PORT'))
+    socketio.run(app, host='0.0.0.0', port=port, debug=True, allow_unsafe_werkzeug=True)

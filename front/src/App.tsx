@@ -11,89 +11,30 @@ const Axios = axios.create({
 })
 
 const App: React.FC = () => {
-	const [hello, setHello] = useState<string>("pouet");
-	const [home, setHome] = useState<string>("not at home");
-	const [atHome, setAtHome] = useState<boolean>(false);
-	const [userName, setUserName] = useState<string>("");
-	const [buildingUserName, setBuildingUserName] = useState<string>("");
-	const [helloMsg, setHelloMsg] = useState<string>("");
-	const [socket, setSocket] = useState<Socket>();
-	const { handleSubmit } = useForm<{}>({});
+	const { handleSubmit: handleSubmitMsg, register } = useForm()
 
-	useEffect(() => {
-		Axios.get("helloworld").then(
-			response => {
-				console.log(response);
-				setHello(response.data);
-			}
-			).catch(error => {
-				console.log("error occured : " + error);
-			})
-	}, [])
+	const sock = io(`${process.env.REACT_APP_SERVER_URL}`)
 
-	const homing = () => {
-		if (!atHome)
-		{
-			Axios.get("").then(
-				response => {
-					setAtHome(true);
-					setHome(response.data);
-				}
-			).catch(error => {
-				console.log("error occured : " + error);
-			})
-		}
-		else
-		{
-			Axios.get("leave").then(
-				response => {
-					setAtHome(false);
-					setHome(response.data);
-				}
-			).catch(error => {
-				console.log("error occured : " + error);
-			})
-		}
+	const onSubmit = (data: {message: string}) => {
+		console.log(data.message)
+		sock.emit(data.message)
 	}
-
-	useEffect (() => {
-		/*
-		here can be define the parsing of the name the user has set
-		*/
-		Axios.get(userName).then(
-			response => {
-				setHelloMsg(response.data);
-			}
-		).catch(error => {
-			console.log("error occured : " + error);
-		})
-	}, [userName])
-
-	const changeUserName = () => {
-		setUserName(buildingUserName);
-	}
-
-	const buildUserName = (event: React.ChangeEvent<HTMLInputElement>) => {
-		setBuildingUserName(event.target.value);
-	}
-
-	useEffect (() => {
-		setSocket(io(`${process.env.REACT_APP_SERVER_URL}`));
-	},[])
 
 	return (
 		<div>
-			<div>{hello} + pouet</div>
-			<button onClick={homing}>{home}</button>
-			<form onSubmit={handleSubmit(changeUserName)}>
-				<h2>set your name</h2>
-				<input value={buildingUserName}
-					type="text"
-					onChange={buildUserName}
-				/>
-				<button type="submit">SUBMIT</button>
+			<h2>Send a message to the back</h2>
+			<form onSubmit={handleSubmitMsg(onSubmit)}>
+					<input
+						type='text'
+						placeholder="type your message..."
+						autoComplete="off"
+						{...register("message", {
+							required: "enter message",
+						})}
+					/>
+				<button type="submit">Send</button>
 			</form>
-			{userName !== "" ? <p> {helloMsg} </p> : null}
+		
 		</div>)
 }
 
