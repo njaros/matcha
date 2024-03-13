@@ -2,7 +2,6 @@ click==8.0.3
 colorama==0.4.4
 Flask==2.2.5
 Flask-RESTful==0.3.10
-flask-sqlalchemy==3.1.1
 flask-cors
 itsdangerous==2.0.1
 Jinja2==3.0.3
@@ -11,3 +10,5 @@ Werkzeug==2.2.2
 psycopg[binary]
 gunicorn==20.1.0
 flask-socketio
+Flask[async]
+gunicorn==20.1.0

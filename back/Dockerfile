@@ -1,6 +1,6 @@
 # Dockerfile source https://www.kilukru.dev/construire-et-deployer-une-application-flask-a-laide-de-docker/
 # start by pulling the python image
-FROM python
+FROM python:alpine
  
 # copy the requirements file into the image
 COPY ./requirements.txt /app/requirements.txt

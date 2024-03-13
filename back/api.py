@@ -4,18 +4,10 @@ from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 import psycopg
 import os
+from auth import routes
 
 
-def main():
-    app = Flask(__name__)
-    app.config['SECRET_KEY'] = os.environ.get('SECRET')
-    socketio = SocketIO(app)
-    CORS(app)
-    api = Api(app)
-    print(f"{os.environ.get('POSTGRES_DB')=},\
-            {os.environ.get('POSTGRES_IP')=},\
-            {os.environ.get('POSTGRES_USER')=},\
-            {os.environ.get('POSTGRES_PASSWORD')=}")
+def set_up_db():
     conn = psycopg.connect(
         dbname=os.environ.get("POSTGRES_DB"),
         host=os.environ.get("POSTGRES_IP"),
@@ -27,44 +19,36 @@ def main():
     exists = cur.fetchall()
     print(exists)
     if (len(exists) == 0):
-        cur.execute("CREATE TABLE user_table (id serial PRIMARY KEY,\
-            name varchar);")
-        cur.execute("INSERT INTO user_table (name) VALUES ('Mich');")
-        cur.execute("SELECT * FROM user_table;")
-        print(cur.fetchall())
+        cur.execute("CREATE TABLE user_table (\
+            id serial PRIMARY KEY,\
+            name varchar,\
+            password varchar,\
+            email varchar);")
         cur.close()
         conn.commit()
-    conn.close()
-    api.add_resource(HelloWorld, "/helloworld")
-    api.add_resource(Home, "/")
-    api.add_resource(Leave, "/leave")
-    api.add_resource(Name, "/<string:name>")
-    #socketio.run(app, host='0.0.0.0', port=port)
-    app.run(debug=True, host='0.0.0.0', port=port)
-
-    @socketio.on(message='message')
-    def handle_message(data):
-        print('receveid message: ' + data)
+    return conn
 
 
-class HelloWorld(Resource):
-    def get(self):
-        return "hello world"
+def main():
+    app = Flask(__name__)
+    CORS(app)
+    conn = set_up_db()
 
+    routes.auth_routes(app, conn)
 
-class Home(Resource):
-    def get(self):
+    @app.route("/")
+    def home():
         return "you are at home"
 
-
-class Leave(Resource):
-    def get(self):
+    @app.route("/leave")
+    def leave():
         return "you leaved home"
 
+    @app.route("/helloworld")
+    def hello():
+        return "hello world"
 
-class Name(Resource):
-    def get(self, name):
-        return f"Hello, {name}"
+    app.run(debug=True, host='0.0.0.0', port=port)
 
 
 if __name__ == "__main__":
