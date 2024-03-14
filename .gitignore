@@ -161,6 +161,8 @@ cython_debug/
 # Other ignores
 
 nodes_modules/
+
+# Nicolas : Ignore the folders and files my computer create I don't know why
 Backups/
 blob_storage/
 Cache/
