@@ -166,6 +166,7 @@ blob_storage/
 Cache/
 CachedData/
 CachedProfilesData/
+Code Cache/
 Crashpad/
 Dictionaries/
 GPUCache/
