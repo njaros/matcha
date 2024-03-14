@@ -161,3 +161,23 @@ cython_debug/
 # Other ignores
 
 nodes_modules/
+Backups/
+blob_storage/
+Cache/
+CachedData/
+CachedProfilesData/
+Crashpad/
+Dictionaries/
+GPUCache/
+jaja/
+Local Storage/
+logs/
+Session Storage/
+User/
+Cookies
+Cookies-journal
+languagepacks.json
+machineid
+Network Persistent State
+Preferences
+TransportSecurity
