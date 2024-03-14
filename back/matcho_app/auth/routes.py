@@ -2,13 +2,14 @@ from flask import request
 import hashlib
 from auth import sql
 from jwt_policy import jwt_policy
+from api import app
 
 
-def auth_routes(app):
+def auth_routes():
     @app.route("/sign", methods=["POST"])
     def sign():
         sign_data = {}
-        sign_data["user_name"] = request.form["user_name"]
+        sign_data["username"] = request.form["username"]
         sign_data["email"] = request.form["email"]
         sign_data["password"] = hashlib.sha256(request.form["password"]
                                                .encode("utf-8")).hexdigest()
@@ -17,8 +18,9 @@ def auth_routes(app):
 
     @app.route("/login", methods=["POST"])
     def login():
+        print(request.form)
         login_data = {}
-        login_data["user_name"] = request.form["user_name"]
+        login_data["username"] = request.form["username"]
         login_data["password"] = hashlib.sha256(request.form["password"]
                                                 .encode("utf-8")).hexdigest()
         returned_id = sql.login_user_in_database(login_data)

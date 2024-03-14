@@ -6,7 +6,7 @@ def insert_new_user_in_database(sign_data):
     cur.execute(
                 "INSERT INTO user_table (name, password, email)\
                     VALUES (%s, %s, %s);",
-                (sign_data.get("user_name"),
+                (sign_data.get("username"),
                  sign_data.get("password"),
                  sign_data.get("email"),))
     conn.commit()
@@ -18,7 +18,7 @@ def login_user_in_database(login_data):
     cur.execute(
         "SELECT id FROM user_table "
         "WHERE name = %s AND password = %s;",
-        (login_data.get("user_name"),
+        (login_data.get("username"),
          login_data.get("password"),)
     )
     id = cur.fetchone()

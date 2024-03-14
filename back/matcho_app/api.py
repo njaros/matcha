@@ -35,19 +35,7 @@ app.config["SECRET"] = os.environ.get("SECRET", "this is a secret")
 
 def main():
 
-    routes.auth_routes(app, conn)
-
-    @app.route("/")
-    def home():
-        return "you are at home"
-
-    @app.route("/leave")
-    def leave():
-        return "you leaved home"
-
-    @app.route("/helloworld")
-    def hello():
-        return "hello world"
+    routes.auth_routes()
 
     app.run(debug=True, host='0.0.0.0', port=port)
 
