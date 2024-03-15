@@ -33,7 +33,7 @@ def set_up_db():
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET')
-CORS(app)
+CORS(app, origins='http://127.0.0.1:8000')
 conn = set_up_db()
 
 

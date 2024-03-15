@@ -13,12 +13,24 @@ const Axios = axios.create({
 const App: React.FC = () => {
 	const { handleSubmit: handleSubmitMsg, register } = useForm()
 
-	const sock = io(`${process.env.REACT_APP_SERVER_URL}`)
+	const sock = io(`http://127.0.0.1:5066`)
 
 	const onSubmit = (data: {message: string}) => {
 		console.log(data.message)
+		Axios.get("").then(
+			res => {
+				console.log(res)
+			}
+		)
 		sock.emit(data.message)
 	}
+
+	useEffect(() => {
+		sock.on('res', (res: String) => {
+			console.log('from front sock on')
+			console.log(res);
+		})
+	},[])
 
 	return (
 		<div>
