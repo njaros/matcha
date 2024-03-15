@@ -52,4 +52,4 @@ app.register_blueprint(app2)
 
 if __name__ == "__main__":
     port = int(os.environ.get('SERVER_PORT'))
-    socketio.run(app, host='0.0.0.0', port=port, debug=True, allow_unsafe_werkzeug=True)
+    socketio.run(app, host='0.0.0.0', port=5066, debug=True, allow_unsafe_werkzeug=True)

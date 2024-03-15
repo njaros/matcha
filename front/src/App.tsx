@@ -13,22 +13,21 @@ const Axios = axios.create({
 const App: React.FC = () => {
 	const { handleSubmit: handleSubmitMsg, register } = useForm()
 
-	const sock = io(`http://127.0.0.1:5066`)
+	const sock = io(`http://127.0.0.1:5066/app2`)
 
 	const onSubmit = (data: {message: string}) => {
 		console.log(data.message)
-		Axios.get("").then(
-			res => {
-				console.log(res)
-			}
-		)
-		sock.emit(data.message)
+		// Axios.get("/app1/test").then(
+		// 	res => {
+		// 		console.log(res)
+		// 	}
+		// )
+		sock.emit("message", {message: data.message})
 	}
 
 	useEffect(() => {
-		sock.on('res', (res: String) => {
-			console.log('from front sock on')
-			console.log(res);
+		sock.on('res', (data: {str: string, str2: string, str3: string}) => {
+			console.log(data.str);
 		})
 	},[])
 
