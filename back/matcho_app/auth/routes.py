@@ -2,10 +2,11 @@ from flask import request
 import hashlib
 from auth import sql
 from jwt_policy import jwt_policy
-from api import app
+from CORS_killer import we_hate_CORS as c
+from flask_cors import cross_origin
 
 
-def auth_routes():
+def auth_routes(app):
     @app.route("/sign", methods=["POST"])
     def sign():
         sign_data = {}
@@ -16,18 +17,31 @@ def auth_routes():
         sql.insert_new_user_in_database(sign_data)
         return "OK"
 
-    @app.route("/login", methods=["POST"])
+    @app.route("/login", methods=["POST", "OPTIONS"])
+    @cross_origin(
+                  methods=["POST"],
+                  supports_credentials=True,
+                  allow_headers=[
+                      "Content-Type",
+                      "Access-Control-Allow-Origin",
+                      "Access-Control-Request-Methods",
+                      "Access-Control-Allow-Credentials",
+                      "Access-Control-Allow-Headers",
+                      ],
+                  )
     def login():
-        print(request.form)
+        if request.method == "OPTIONS":
+            return c.options_response()
+        app.logger.info(request.form)
         login_data = {}
         login_data["username"] = request.form["username"]
         login_data["password"] = hashlib.sha256(request.form["password"]
                                                 .encode("utf-8")).hexdigest()
         returned_id = sql.login_user_in_database(login_data)
         if returned_id is not None:
-            return jwt_policy.create_token(returned_id, app.config["SECRET"])
+            return [jwt_policy.create_token(returned_id, app.config["SECRET"]), 200]
         else:
-            return "wrong user name or password"
+            return ["wrong user name or password", 200]
 
     @app.route("/test", methods=["POST"])
     @jwt_policy.token_required
