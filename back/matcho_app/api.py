@@ -30,15 +30,16 @@ def set_up_db():
 app = Flask(__name__)
 conn = set_up_db()
 app.config["SECRET"] = os.environ.get("SECRET", "this is a secret")
+CORS(app,
+     origins=['*'])
 
 
 def main():
 
     routes.auth_routes(app)
 
-    app.run(debug=True, host='0.0.0.0', port=port)
+    app.run(debug=True, host='0.0.0.0', port=5066)
 
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 5066))
     main()

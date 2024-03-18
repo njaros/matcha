@@ -17,25 +17,13 @@ def auth_routes(app):
         sql.insert_new_user_in_database(sign_data)
         return "OK"
 
-    @app.route("/login", methods=["POST", "OPTIONS"])
-    @cross_origin(
-                  methods=["POST"],
-                  supports_credentials=True,
-                  allow_headers=[
-                      "Content-Type",
-                      "Access-Control-Allow-Origin",
-                      "Access-Control-Request-Methods",
-                      "Access-Control-Allow-Credentials",
-                      "Access-Control-Allow-Headers",
-                      ],
-                  )
+    @app.route("/login", methods=["POST"])
     def login():
-        if request.method == "OPTIONS":
-            return c.options_response()
-        app.logger.info(request.form)
+        data: dict = request.get_json()["data"]
+        app.logger.info(data)
         login_data = {}
-        login_data["username"] = request.form["username"]
-        login_data["password"] = hashlib.sha256(request.form["password"]
+        login_data["username"] = data["username"]
+        login_data["password"] = hashlib.sha256(data["password"]
                                                 .encode("utf-8")).hexdigest()
         returned_id = sql.login_user_in_database(login_data)
         if returned_id is not None:

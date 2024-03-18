@@ -17,11 +17,7 @@ const Login: React.FC = () => {
 
 	const loginSubmit = async (data: ILoginInForm) => {
 		console.log(data);
-		Axios.post("login", { username: "p", password: "p" },
-			{
-				headers: {
-					"Access-Control-Allow-Origin": true
-		}})
+		Axios.post("login", { data })
         .then(response => {
             console.log(response);
         })
