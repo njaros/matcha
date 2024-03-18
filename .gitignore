@@ -184,3 +184,4 @@ machineid
 Network Persistent State
 Preferences
 TransportSecurity
+.env
