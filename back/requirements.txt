@@ -11,4 +11,5 @@ psycopg[binary]
 gunicorn==20.1.0
 flask-socketio
 Flask[async]
+pyjwt
 gunicorn==20.1.0

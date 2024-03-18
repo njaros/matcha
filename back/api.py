@@ -1,9 +1,7 @@
 from flask import Flask
 from flask_restful import Resource
 from flask_cors import CORS
-import psycopg
 import os
-from auth import routes
 from db_init import set_up_db
 from extensions import socketio
 
@@ -21,10 +19,10 @@ socketio.init_app(app)
 
 # import and save sub-app 
 
-from app1 import app as app1
+from login_module import app as login_module
 from app2 import app as app2
 
-app.register_blueprint(app1)
+app.register_blueprint(login_module)
 app.register_blueprint(app2)
 
 

@@ -1,62 +1,26 @@
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
-import axios from "axios";
-import React, { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { NavLink } from "react-router-dom";
-import { Socket, io } from 'socket.io-client'
+import ProtectedRoutes from "./components/ProtectedRoutes"
+import Layout from "./components/Layout"
+import { tokenReader } from "./tools/TokenReader";
+import Login from "./components/LoginModule/Login";
+import Signup from "./components/SignUpModule/SignUp";
 
-const ip = import.meta.env.VITE_IP;
-const Axios = axios.create({
-	baseURL: ip + ':5066'
-})
-
-const App: React.FC = () => {
-	const { handleSubmit: handleSubmitMsg, register } = useForm()
-
-	const sock = io(`http://127.0.0.1:5066/app2`)
-
-	const onSubmit = (data: {message: string}) => {
-		// Axios.get("/app1/test").then(
-		// 	res => {
-		// 		console.log(res)
-		// 	}
-		// )
-	 	Axios.post("/app1/testPost", {message: data.message}).then(
-			res => {
-				console.log('Message received: ' + res.data)
-			}
-		).catch(
-			err => {
-				console.log(err)
-		})
-		//sock.emit("message", {message: data.message})
-	}
-
-	useEffect(() => {
-		sock.on('res', (data: {str: string, str2: string, str3: string}) => {
-			console.log(data.str);
-		})
-
-		// return (() => {
-		// 	sock.off('res')})
-	},[])
-
+function App() {
 	return (
-		<div>
-			<h2>Send a message to the back</h2>
-			<form onSubmit={handleSubmitMsg(onSubmit)}>
-					<input
-						type='text'
-						placeholder="type your message..."
-						autoComplete="off"
-						{...register("message", {
-							required: "enter message",
-						})}
-					/>
-				<button type="submit">Send</button>
-			</form>
-		
-		</div>)
+		<div className="App">
+			<BrowserRouter>
+				<Routes>
+					<Route element={<Layout />}>
+						<Route path="/login" element={ tokenReader.isLogged() ? <Navigate to="/" /> : <Login />} />
+						<Route path="/signUp" element={ tokenReader.isLogged() ? <Navigate to="/" /> : <Signup />}/>
+						<Route element={<ProtectedRoutes />}>
+							<Route path="/" />
+						</Route>
+					</Route>
+				</Routes>
+			</BrowserRouter>
+		</div>
+		)
 }
 
 export default App
