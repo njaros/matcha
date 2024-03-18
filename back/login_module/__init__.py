@@ -2,6 +2,7 @@ from flask import Blueprint
 from flask_cors import CORS
 from .routes import login, sign
 
+
 app = Blueprint('login', __name__)
 CORS(app)
 

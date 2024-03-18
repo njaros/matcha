@@ -6,14 +6,15 @@ from login_module import sql
 
 
 def sign():
-    data = request.get_data()["data"]
+    data = request.get_json()
+    current_app.logger.info(data)
     sign_data = {}
     sign_data["username"] = data["username"]
     sign_data["email"] = data["email"]
-    sign_data["password"] = hashlib.sha256(request.form["password"]
+    sign_data["password"] = hashlib.sha256(data["password"]
                                            .encode("utf-8")).hexdigest()
     sql.insert_new_user_in_database(sign_data)
-    return "OK"
+    return 200
 
 
 def login():
@@ -28,4 +29,4 @@ def login():
         return [jwt_policy.create_token(returned_id,
                                         current_app.config["SECRET"]), 200]
     else:
-        return ["wrong user name or password", 200]
+        return ["wrong user name or password", 401]

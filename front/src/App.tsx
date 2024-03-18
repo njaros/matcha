@@ -14,7 +14,7 @@ function App() {
 						<Route path="/login" element={ tokenReader.isLogged() ? <Navigate to="/" /> : <Login />} />
 						<Route path="/signUp" element={ tokenReader.isLogged() ? <Navigate to="/" /> : <Signup />}/>
 						<Route element={<ProtectedRoutes />}>
-							<Route path="/" />
+							<Route path="/" element={ <Home />} />
 						</Route>
 					</Route>
 				</Routes>
