@@ -2,12 +2,12 @@ import { JwtPayload } from "jsonwebtoken";
 import * as jsrsasign from 'jsrsasign';
 import { cookieMan } from "./CookieMan";
 
-function getToken()
+export function getToken()
 {
     return cookieMan.getCookie("token")
 }
 
-function readPayload(token: string | undefined)
+export function readPayload(token: string | undefined)
 {
     if (token == undefined)
         return undefined;
