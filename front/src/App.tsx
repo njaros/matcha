@@ -7,6 +7,7 @@ import Signup from "./components/SignUpModule/SignUp";
 import Home from "./components/HomeModule/Home";
 
 function App() {
+
 	return (
 		<div className="App">
 			<BrowserRouter>

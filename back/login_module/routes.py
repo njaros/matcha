@@ -29,6 +29,7 @@ def login():
     returned_id = login_ctx.login_user_in_database(login_data)
     if returned_id is not None:
         current_app.logger.info(returned_id)
-        return [jwt_policy.create_token(returned_id)], 200
+        return [jwt_policy.create_access_token(returned_id),
+                jwt_policy.create_refresh_token(returned_id)], 200
     else:
         return [], 401

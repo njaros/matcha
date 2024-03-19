@@ -7,7 +7,8 @@ from extensions import socketio
 # create primary Flask app
 
 app = Flask(__name__)
-app.config['SECRET'] = os.environ.get('SECRET')
+app.config['SECRET_ACCESS'] = os.environ.get('SECRET_ACCESS')
+app.config['SECRET_REFRESH'] = os.environ.get('SECRET_REFRESH')
 CORS(app, origins='*')
 
 
@@ -18,9 +19,11 @@ socketio.init_app(app)
 # import and save sub-app 
 
 from login_module import app as login_module
+from jwt_policy import app as jwt_module
 from app2 import app as app2
 
 app.register_blueprint(login_module)
+app.register_blueprint(jwt_module)
 app.register_blueprint(app2)
 
 
