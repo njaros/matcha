@@ -19,6 +19,11 @@ def set_up_db():
             name varchar,\
             password varchar,\
             email varchar);")
+        cur.execute("CREATE TABLE message (\
+            id serial PRIMARY KEY,\
+            content varchar,\
+            author varchar,\
+            time varchar);")
         cur.close()
         db_conn.commit()
     return db_conn

@@ -20,10 +20,10 @@ socketio.init_app(app)
 # import and save sub-app 
 
 from login_module import app as login_module
-from app2 import app as app2
+from chat import app as chat_module
 
 app.register_blueprint(login_module)
-app.register_blueprint(app2)
+app.register_blueprint(chat_module)
 
 
 if __name__ == "__main__":
