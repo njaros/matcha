@@ -17,7 +17,7 @@ def token_required(f):
                 "error": "Unauthorized"
             }, 401
         try:
-            data = jwt.decode(token, app.config["SECRET_KEY"],
+            data = jwt.decode(token, app.config["SECRET"],
                               algorithms=["HS256"])
             current_user = sql.get_user_by_id(data["user_id"])
             if current_user is None:
@@ -26,8 +26,6 @@ def token_required(f):
                         "data": None,
                         "error": "Unauthorized"
                 }, 401
-            if not current_user["active"]:
-                abort(403)
         except Exception as e:
             return {
                 "message": "Something went wrong",
