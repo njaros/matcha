@@ -4,6 +4,7 @@ import Layout from "./components/Layout"
 import { tokenReader } from "./tools/TokenReader";
 import Login from "./components/LoginModule/Login";
 import Signup from "./components/SignUpModule/SignUp";
+import Home from "./components/HomeModule/Home";
 
 function App() {
 	return (
@@ -14,7 +15,7 @@ function App() {
 						<Route path="/login" element={ tokenReader.isLogged() ? <Navigate to="/" /> : <Login />} />
 						<Route path="/signUp" element={ tokenReader.isLogged() ? <Navigate to="/" /> : <Signup />}/>
 						<Route element={<ProtectedRoutes />}>
-							<Route path="/" />
+							<Route path="/" element={ <Home />} />
 						</Route>
 					</Route>
 				</Routes>

@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import { set, useForm } from "react-hook-form";
-import { NavLink } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { NavLink, useNavigate } from "react-router-dom";
 import { ILoginInForm } from "../../Interfaces";
 import Axios from "../../tools/Caller";
+import { cookieMan } from "../../tools/CookieMan";
 
 const Login: React.FC = () => {
+	const navigate = useNavigate();
     const loginInput = useRef<HTMLInputElement>(null);
     const { register, handleSubmit } = useForm<ILoginInForm>();
     const [ wrong, setWrong ] = useState<boolean>(false);
@@ -15,11 +17,20 @@ const Login: React.FC = () => {
         }
     }, [])
 
-	const loginSubmit = async (data: ILoginInForm) => {
+	const loginSubmit = (data: ILoginInForm) => {
 		console.log(data);
-		Axios.post("login", { data })
-        .then(response => {
-            console.log(response);
+		Axios.post("login", data)
+			.then(response => {
+				console.log(response);
+				if (response.status == 200)
+				{
+					cookieMan.addCookie('token', response.data);
+					navigate("/");
+				}
+				else
+				{
+					setWrong(true);
+				}
         })
         .catch(error => {
             console.log(error);

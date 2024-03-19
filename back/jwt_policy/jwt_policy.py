@@ -1,7 +1,7 @@
 from functools import wraps
 import jwt
 from flask import request, abort, current_app as app
-from login_module import sql
+from common_sql_requests.user_context import sql
 
 
 def token_required(f):
@@ -40,9 +40,9 @@ def token_required(f):
     return decorated
 
 
-def create_token(user_id, secret):
+def create_token(user_id):
     return jwt.encode(
-                    {"user_id": user_id},
-                    secret,
+                    {"user_id": user_id.hex},
+                    app.config["SECRET"],
                     algorithm="HS256"
                 )

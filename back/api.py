@@ -2,15 +2,13 @@ from flask import Flask
 from flask_restful import Resource
 from flask_cors import CORS
 import os
-from db_init import set_up_db
 from extensions import socketio
 
 # create primary Flask app
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('SECRET')
-CORS(app, origins='http://127.0.0.1:8000')
-conn = set_up_db()
+app.config['SECRET'] = os.environ.get('SECRET')
+CORS(app, origins='*')
 
 
 # initialization of Flask-SocketIO

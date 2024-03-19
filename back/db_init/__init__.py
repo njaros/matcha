@@ -15,8 +15,8 @@ def set_up_db():
     print(exists)
     if (len(exists) == 0):
         cur.execute("CREATE TABLE user_table (\
-            id serial PRIMARY KEY,\
-            name varchar,\
+            id uuid PRIMARY KEY,\
+            username varchar,\
             password varchar,\
             email varchar);")
         cur.execute("CREATE TABLE message (\
