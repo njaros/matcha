@@ -1,32 +1,34 @@
-from db_init import db_conn as conn
-from flask import request, current_app, jsonify
+from flask import request, current_app
 import hashlib
 from jwt_policy import jwt_policy
-from login_module import sql
+from login_module import sql as login_ctx
+from common_sql_requests.user_context import sql as user_ctx
 
 
 def sign():
     data = request.get_json()
     current_app.logger.info(data)
+    if user_ctx.get_user_by_username(data["username"]) is not None:
+        return ["conflit error : username already exists"], 409
     sign_data = {}
     sign_data["username"] = data["username"]
     sign_data["email"] = data["email"]
     sign_data["password"] = hashlib.sha256(data["password"]
                                            .encode("utf-8")).hexdigest()
-    sql.insert_new_user_in_database(sign_data)
-    return 200
+    login_ctx.insert_new_user_in_database(sign_data)
+    return [], 201
 
 
 def login():
-    data: dict = request.get_json()["data"]
+    data: dict = request.get_json()
     current_app.logger.info(data)
     login_data = {}
     login_data["username"] = data["username"]
     login_data["password"] = hashlib.sha256(data["password"]
                                             .encode("utf-8")).hexdigest()
-    returned_id = sql.login_user_in_database(login_data)
+    returned_id = login_ctx.login_user_in_database(login_data)
     if returned_id is not None:
-        return [jwt_policy.create_token(returned_id,
-                                        current_app.config["SECRET"]), 200]
+        current_app.logger.info(returned_id)
+        return [jwt_policy.create_token(returned_id)], 200
     else:
-        return ["wrong user name or password", 401]
+        return [], 401

@@ -4,6 +4,7 @@ import Layout from "./components/Layout"
 import { tokenReader } from "./tools/TokenReader";
 import Login from "./components/LoginModule/Login";
 import Signup from "./components/SignUpModule/SignUp";
+import Home from "./components/HomeModule/Home";
 
 function App() {
 	return (

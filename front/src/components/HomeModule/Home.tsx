@@ -1,7 +1,12 @@
-const Home: React.FC = () => {
+import { useNavigate } from "react-router-dom"
+import { cookieMan } from "../../tools/CookieMan"
 
-	const logOutHandler(e: any) {
-		
+const Home: React.FC = () => {
+	const navigate = useNavigate();
+
+	const logOutHandler = () => {
+		cookieMan.eraseCookie('token');
+		navigate("/login");
 	}
 
 	return (
@@ -10,3 +15,5 @@ const Home: React.FC = () => {
 		</div>
 	)
 }
+
+export default Home;

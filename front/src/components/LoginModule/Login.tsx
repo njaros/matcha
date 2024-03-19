@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
 import { ILoginInForm } from "../../Interfaces";
 import Axios from "../../tools/Caller";
@@ -19,7 +19,7 @@ const Login: React.FC = () => {
 
 	const loginSubmit = (data: ILoginInForm) => {
 		console.log(data);
-		Axios.post("login", { data })
+		Axios.post("login", data)
 			.then(response => {
 				console.log(response);
 				if (response.status == 200)
