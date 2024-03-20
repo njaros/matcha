@@ -2,14 +2,17 @@ import { JwtPayload } from "jsonwebtoken";
 import * as jsrsasign from 'jsrsasign';
 import { cookieMan } from "./CookieMan";
 
-function getToken()
+function getToken(): string
 {
-    return cookieMan.getCookie("token")
+    const token = cookieMan.getCookie("token")
+    if (token === undefined)
+        return ""
+    return token
 }
 
 function readPayload(token: string | undefined)
 {
-    if (token == undefined)
+    if (token == undefined || token == "")
         return undefined;
     try
     {

@@ -56,8 +56,12 @@ def token_required(f):
 
 
 def create_access_token(user_id):
+    if type(user_id) is str:
+        hex = user_id
+    else:
+        hex = user_id.hex
     return jwt.encode(
-                    {"user_id": user_id.hex,
+                    {"user_id": hex,
                      "exp": datetime.now(tz=timezone.utc) +
                      timedelta(seconds=10)},
                     app.config["SECRET_ACCESS"],
@@ -66,8 +70,12 @@ def create_access_token(user_id):
 
 
 def create_refresh_token(user_id):
+    if type(user_id) is str:
+        hex = user_id
+    else:
+        hex = user_id.hex
     return jwt.encode(
-        {"user_id": user_id.hex,
+        {"user_id": hex,
          "exp": datetime.now(tz=timezone.utc) +
          timedelta(days=1)},
         app.config["SECRET_REFRESH"],
@@ -78,10 +86,10 @@ def create_refresh_token(user_id):
 def update_access_token(access_token, refresh_token):
     access_data = jwt.decode(access_token,
                              app.config["SECRET_ACCESS"],
-                             algorithm="HS256")
+                             algorithms="HS256")
     refresh_data = jwt.decode(refresh_token,
                               app.config["SECRET_REFRESH"],
-                              algorithm="HS256")
+                              algorithms="HS256")
     access_id = access_data.get("user_id")
     refresh_id = access_data.get("user_id")
     if access_id is None or access_id != refresh_id:
@@ -90,24 +98,23 @@ def update_access_token(access_token, refresh_token):
     exp_refresh = refresh_data.get("exp")
     if exp_access is None or exp_refresh is None:
         return None
-    now = datetime.now(tz=timezone.utc)
+    now = datetime.now(tz=timezone.utc).timestamp()
     if exp_access < now or exp_refresh < now:
         return None
-    return {"access_token": create_access_token(access_id),
-            "refresh_token": create_refresh_token(access_id)}
+    return [create_access_token(access_id),
+            create_refresh_token(access_id)]
 
 
 def refresh():
     data: dict = request.get_json()
-    app.logger.info(data)
     parse = {}
     try:
         parse["access"] = data["access_token"]
         parse["refresh"] = data["refresh_token"]
     except Exception:
-        return [], 400
+        return ["jwt_policy:refresh(): bad arguments"], 400
     newTokens = update_access_token(data["access_token"],
                                     data["refresh_token"])
     if newTokens is None:
-        return [], 400
+        return ["jwt_policy:refresh(): unable to refresh tokens"], 400
     return newTokens, 200

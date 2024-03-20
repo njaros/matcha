@@ -7,7 +7,6 @@ from common_sql_requests.user_context import sql as user_ctx
 
 def sign():
     data = request.get_json()
-    current_app.logger.info(data)
     if user_ctx.get_user_by_username(data["username"]) is not None:
         return ["conflit error : username already exists"], 409
     sign_data = {}
@@ -21,7 +20,6 @@ def sign():
 
 def login():
     data: dict = request.get_json()
-    current_app.logger.info(data)
     login_data = {}
     login_data["username"] = data["username"]
     login_data["password"] = hashlib.sha256(data["password"]

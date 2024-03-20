@@ -1,13 +1,17 @@
 import { useNavigate } from "react-router-dom"
 import { cookieMan } from "../../tools/CookieMan"
 import { tokenReader } from "../../tools/TokenReader";
-import { store } from "../../tools/Stores";
+import { storeRefresh, storeTimeout } from "../../tools/Stores";
 
 const Home: React.FC = () => {
 	const navigate = useNavigate();
-	const getRefreshToken = store((state) => state.refreshToken);
+    const { refreshTokenTimeoutId, updateRefreshTimeout } = storeTimeout();
+    const { refreshToken, updateRefreshToken } = storeRefresh();
 
 	const logOutHandler = () => {
+		clearTimeout(refreshTokenTimeoutId);
+		updateRefreshTimeout(undefined);
+		updateRefreshToken("");
 		cookieMan.eraseCookie('token');
 		navigate("/login");
 	}
@@ -17,7 +21,7 @@ const Home: React.FC = () => {
 	}
 
 	const readRefreshToken = () => {
-		console.log(getRefreshToken);
+		console.log(refreshToken);
 	}
 
 	return (
