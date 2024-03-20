@@ -41,6 +41,18 @@ const Login: React.FC = () => {
         });
     }
 
+    const test = () => {
+        Axios.get("/test").then(
+            response => {
+                console.log(response);
+            }
+        ).catch(
+            error => {
+                console.log(error);
+            }
+        )
+    }
+
     return (
         <div className="login_page">
             <h1>LOGIN PAGE</h1>
@@ -57,6 +69,7 @@ const Login: React.FC = () => {
                 <button className="submit_button" type="submit">SUBMIT</button>
             </form>
             <NavLink to="/signup">Not registered ? Sign Up !</NavLink>
+            <button onClick={test}>test required_token button</button>
         </div>
     )
 }

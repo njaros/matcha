@@ -1,4 +1,4 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom"
+import { Navigate, Outlet } from "react-router-dom"
 import { tokenReader } from "../tools/TokenReader";
 import React, { useEffect, useState } from "react";
 import { storeRefresh, storeTimeout } from "../tools/Stores";
@@ -94,7 +94,7 @@ const ProtectedRoutes: React.FC = () => {
         }
 	}, [access])
 
-    return tokenReader.isLogged() ? <Outlet /> : <Navigate to="/login" replace state={{ from: useLocation()}} />;
+    return tokenReader.isLogged() ? <Outlet /> : <Navigate to="/login" />;
 }
 
 export default ProtectedRoutes;

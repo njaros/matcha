@@ -28,7 +28,7 @@ function readPayload(token: string | undefined)
 
 function isTokenValid(token: string | undefined)
 {
-    if (token == undefined)
+    if (token == undefined || token == "")
         return false;
     let decodedToken: JwtPayload | undefined = readPayload(token);
     if (decodedToken == undefined ||

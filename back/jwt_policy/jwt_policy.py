@@ -9,6 +9,7 @@ def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
+        app.logger.info(request.headers)
         if "Authorization" in request.headers:
             token = request.headers["Authorization"].split(" ")[1]
         if not token:
@@ -28,7 +29,7 @@ def token_required(f):
                     "data": None,
                     "error": "Unauthorized"
                 }, 401
-            if expDate < datetime.now(tz=timezone.utc):
+            if expDate < datetime.now(tz=timezone.utc).timestamp():
                 return {
                     "message": "Invalid Authentication token: \
                         token expired",
@@ -50,7 +51,7 @@ def token_required(f):
                 "error": str(e)
             }, 500
 
-        return f(current_user, *args, **kwargs)
+        return f(*args, **kwargs)
 
     return decorated
 
