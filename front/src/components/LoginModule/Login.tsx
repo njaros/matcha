@@ -4,12 +4,14 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { ILoginInForm } from "../../Interfaces";
 import Axios from "../../tools/Caller";
 import { cookieMan } from "../../tools/CookieMan";
+import { storeRefresh } from "../../tools/Stores";
 
 const Login: React.FC = () => {
 	const navigate = useNavigate();
     const loginInput = useRef<HTMLInputElement>(null);
     const { register, handleSubmit } = useForm<ILoginInForm>();
-    const [ wrong, setWrong ] = useState<boolean>(false);
+	const [wrong, setWrong] = useState<boolean>(false);
+	const setRefreshToken = storeRefresh(state => state.updateRefreshToken)
     
     useEffect(() => {
         if (loginInput.current) {
@@ -24,7 +26,8 @@ const Login: React.FC = () => {
 				console.log(response);
 				if (response.status == 200)
 				{
-					cookieMan.addCookie('token', response.data);
+					cookieMan.addCookie('token', response.data[0]);
+					setRefreshToken(response.data[1]);
 					navigate("/");
 				}
 				else

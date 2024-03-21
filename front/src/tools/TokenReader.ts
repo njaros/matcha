@@ -4,12 +4,15 @@ import { cookieMan } from "./CookieMan";
 
 export function getToken()
 {
-    return cookieMan.getCookie("token")
+    const token = cookieMan.getCookie("token")
+    if (token === undefined)
+        return ""
+    return token
 }
 
 export function readPayload(token: string | undefined)
 {
-    if (token == undefined)
+    if (token == undefined || token == "")
         return undefined;
     try
     {
