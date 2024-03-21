@@ -9,7 +9,6 @@ def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         token = None
-        app.logger.info(request.headers)
         if "Authorization" in request.headers:
             token = request.headers["Authorization"].split(" ")[1]
         if not token:
@@ -29,13 +28,6 @@ def token_required(f):
                     "data": None,
                     "error": "Unauthorized"
                 }, 401
-            if expDate < datetime.now(tz=timezone.utc).timestamp():
-                return {
-                    "message": "Invalid Authentication token: \
-                        token expired",
-                    "data": None,
-                    "error": "Unauthorized"
-                }, 401
             current_user = sql.get_user_by_id(data["user_id"])
             if current_user is None:
                 return {
@@ -44,12 +36,18 @@ def token_required(f):
                         "data": None,
                         "error": "Unauthorized"
                 }, 401
-        except Exception as e:
+        except jwt.exceptions.InvalidTokenError as e:
             return {
-                "message": "Something went wrong",
+                "message": "Invalid Authentication token",
                 "data": None,
                 "error": str(e)
-            }, 500
+            }, 401
+        except Exception as e:
+            return {
+                "message": "Unhandled error",
+                "data": None,
+                "error": str(e)
+                }, 500
 
         return f(*args, **kwargs)
 
@@ -85,12 +83,18 @@ def create_refresh_token(user_id):
 
 
 def update_access_token(access_token, refresh_token):
-    access_data = jwt.decode(access_token,
-                             app.config["SECRET_ACCESS"],
-                             algorithms="HS256")
-    refresh_data = jwt.decode(refresh_token,
-                              app.config["SECRET_REFRESH"],
-                              algorithms="HS256")
+    try:
+        access_data = jwt.decode(access_token,
+                                 app.config["SECRET_ACCESS"],
+                                 algorithms="HS256")
+    except Exception:
+        return None
+    try:
+        refresh_data = jwt.decode(refresh_token,
+                                  app.config["SECRET_REFRESH"],
+                                  algorithms="HS256")
+    except Exception:
+        return None
     access_id = access_data.get("user_id")
     refresh_id = access_data.get("user_id")
     if access_id is None or access_id != refresh_id:

@@ -4,7 +4,8 @@ import { cookieMan } from "./CookieMan";
 
 function getToken(): string
 {
-    const token = cookieMan.getCookie("token")
+	const token = cookieMan.getCookie("token")
+	console.log(token);
     if (token === undefined)
         return ""
     return token
@@ -34,9 +35,11 @@ function isTokenValid(token: string | undefined)
     if (decodedToken == undefined ||
         ( decodedToken.exp !== undefined
         && decodedToken.exp < Date.now() / 1000))
-        {
-            return false;
-        }
+	{
+		console.log("invalid token");
+        return false;
+	}
+	console.log("valid token");
     return true;
 }
 

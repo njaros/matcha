@@ -1,34 +1,39 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { ILoginInForm } from "../../Interfaces";
 import Axios from "../../tools/Caller";
 import { cookieMan } from "../../tools/CookieMan";
-import { storeRefresh } from "../../tools/Stores";
+import { storeRefresh, storeTmp } from "../../tools/Stores";
+import { tokenReader } from "../../tools/TokenReader";
+import { JwtPayload } from "jsonwebtoken";
+import TmpMan from "../../tools/TmpMan";
 
 const Login: React.FC = () => {
 	const navigate = useNavigate();
-    const loginInput = useRef<HTMLInputElement>(null);
+	const location = useLocation();
     const { register, handleSubmit } = useForm<ILoginInForm>();
 	const [wrong, setWrong] = useState<boolean>(false);
-	const setRefreshToken = storeRefresh(state => state.updateRefreshToken)
-    
-    useEffect(() => {
-        if (loginInput.current) {
-            loginInput.current.focus();
-        }
-    }, [])
+	const setRefreshToken = storeRefresh(state => state.updateRefreshToken);
+	const { tmp, setTmp } = storeTmp();
 
 	const loginSubmit = (data: ILoginInForm) => {
-		console.log(data);
 		Axios.post("login", data)
 			.then(response => {
 				console.log(response);
 				if (response.status == 200)
 				{
 					cookieMan.addCookie('token', response.data[0]);
+					let payload: JwtPayload | undefined = tokenReader.readPayload(response.data[0]);
+					let userId: string;
+					if (payload != undefined)
+					{
+						userId = payload.user_id;
+						setTmp(userId);
+					}
 					setRefreshToken(response.data[1]);
-					navigate("/");
+					const from = (location.state as any)?.from || "/";
+					navigate(from);
 				}
 				else
 				{

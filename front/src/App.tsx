@@ -1,4 +1,4 @@
-import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
+import { Routes, Route, BrowserRouter, Navigate, useNavigate } from "react-router-dom";
 import ProtectedRoutes from "./components/ProtectedRoutes"
 import Layout from "./components/Layout"
 import { tokenReader } from "./tools/TokenReader";
@@ -12,12 +12,10 @@ function App() {
 		<div className="App">
 			<BrowserRouter>
 				<Routes>
-					<Route element={<Layout />}>
-						<Route path="/login" element={ tokenReader.isLogged() ? <Navigate to="/" /> : <Login />} />
-						<Route path="/signUp" element={ tokenReader.isLogged() ? <Navigate to="/" /> : <Signup />}/>
-						<Route element={<ProtectedRoutes />}>
-							<Route path="/" element={ <Home />} />
-						</Route>
+					<Route path="/login" element={ tokenReader.isLogged() ? <Navigate to="/" /> : (<Login />) } />
+					<Route path="/signUp" element={ tokenReader.isLogged() ? <Navigate to="/" /> : (<Signup />) } />
+					<Route element={<ProtectedRoutes />}>
+						<Route path="/" element={ <Home />} />
 					</Route>
 				</Routes>
 			</BrowserRouter>
