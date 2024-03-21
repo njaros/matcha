@@ -16,14 +16,33 @@ def set_up_db():
     if (len(exists) == 0):
         cur.execute("CREATE TABLE user_table (\
             id uuid PRIMARY KEY,\
-            username varchar,\
-            password varchar,\
-            email varchar);")
+            username VARCHAR,\
+            password VARCHAR,\
+            email VARCHAR,\
+            rank INT);")
+
         cur.execute("CREATE TABLE message (\
             id serial PRIMARY KEY,\
-            content varchar,\
-            author varchar,\
-            time varchar);")
+            content VARCHAR,\
+            user_id_sender VARCHAR,\
+            user_id_receiver VARCHAR,\
+            time TIMESTAMP);")
+
+        cur.execute("CREATE TABLE photos (\
+            id uuid PRIMARY KEY,\
+            path VARCHAR,\
+            user_id VARCHAR);")
+
+        cur.execute("CREATE TABLE relationship (\
+            id uuid  PRIMARY KEY,\
+            user_id_1 VARCHAR,\
+            user_id_2 VARCHAR,\
+            status VARCHAR);")
+
+        cur.execute("CREATE TABLE HOBBIES (\
+            id serial PRIMARY KEY,\
+            name VARCHAR);")
+        
         cur.close()
         db_conn.commit()
     return db_conn
