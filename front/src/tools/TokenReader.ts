@@ -27,6 +27,22 @@ function readPayload(token: string | undefined)
     }
 }
 
+function getAttr(token: string, attr: string): any
+{
+    let payload: JwtPayload | undefined = readPayload(token);
+    if (payload == undefined)
+        return payload;
+    return payload[attr];
+}
+
+function getAttrAsString(token: string, attr: string): string
+{
+    let val = getAttr(token, attr);
+    if (typeof(val) == "string")
+        return val;
+    return "";
+}
+
 function isTokenValid(token: string | undefined)
 {
     if (token == undefined || token == "")
@@ -49,5 +65,5 @@ function isLogged()
 }
 
 export const tokenReader = {
-    getToken, readPayload, isTokenValid, isLogged
+    getToken, readPayload, getAttr, getAttrAsString, isTokenValid, isLogged
 }
