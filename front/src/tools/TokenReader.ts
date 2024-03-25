@@ -4,7 +4,7 @@ import { cookieMan } from "./CookieMan";
 
 export function getToken()
 {
-    const token = cookieMan.getCookie("token")
+	const token = cookieMan.getCookie("token")
     if (token === undefined)
         return ""
     return token
@@ -26,17 +26,37 @@ export function readPayload(token: string | undefined)
     }
 }
 
+function getAttr(token: string, attr: string): any
+{
+    let payload: JwtPayload | undefined = readPayload(token);
+    if (payload == undefined)
+        return payload;
+    return payload[attr];
+}
+
+function getAttrAsString(token: string, attr: string): string
+{
+    let val = getAttr(token, attr);
+    if (typeof(val) == "string")
+        return val;
+    return "";
+}
+
 function isTokenValid(token: string | undefined)
 {
     if (token == undefined || token == "")
+    {
+        console.log("isTokenValid: no token");
         return false;
+    }
     let decodedToken: JwtPayload | undefined = readPayload(token);
     if (decodedToken == undefined ||
         ( decodedToken.exp !== undefined
         && decodedToken.exp < Date.now() / 1000))
-        {
-            return false;
-        }
+	{
+		console.log("invalid token");
+        return false;
+	}
     return true;
 }
 
@@ -46,5 +66,5 @@ function isLogged()
 }
 
 export const tokenReader = {
-    getToken, readPayload, isTokenValid, isLogged
+    getToken, readPayload, getAttr, getAttrAsString, isTokenValid, isLogged
 }

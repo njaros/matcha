@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
 import { ISignUpForm } from "../../Interfaces";
@@ -6,16 +6,8 @@ import Axios from "../../tools/Caller";
 
 const Signup: React.FC = () => {
 	const navigate = useNavigate();
-	const signUpInput = useRef<HTMLInputElement>(null);
 	const { register, handleSubmit } = useForm<ISignUpForm>();
 	const [ errorMsg, setErrorMsg ] = useState<string>("");
-
-	useEffect(() => {
-		if (signUpInput.current)
-		{
-			signUpInput.current.focus();
-		}
-	}, [])
 
 	const signupSubmit = (data: ISignUpForm) => {
 		console.log(data);
@@ -65,7 +57,6 @@ const Signup: React.FC = () => {
                 <button className="submit_button" type="submit">SUBMIT</button>
 			</form>
 			{ errorMsg != "" && <p> {errorMsg} </p> }
-			<NavLink to="/login">Already registered ? Log In !</NavLink>
 		</div>)
 }
 

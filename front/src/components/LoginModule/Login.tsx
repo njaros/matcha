@@ -1,26 +1,20 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { ILoginInForm } from "../../Interfaces";
 import Axios from "../../tools/Caller";
 import { cookieMan } from "../../tools/CookieMan";
 import { storeRefresh } from "../../tools/Stores";
+import { tokenReader } from "../../tools/TokenReader";
 
 const Login: React.FC = () => {
 	const navigate = useNavigate();
-    const loginInput = useRef<HTMLInputElement>(null);
+	const location = useLocation();
     const { register, handleSubmit } = useForm<ILoginInForm>();
 	const [wrong, setWrong] = useState<boolean>(false);
-	const setRefreshToken = storeRefresh(state => state.updateRefreshToken)
-    
-    useEffect(() => {
-        if (loginInput.current) {
-            loginInput.current.focus();
-        }
-    }, [])
+	const setRefreshToken = storeRefresh(state => state.updateRefreshToken);
 
 	const loginSubmit = (data: ILoginInForm) => {
-		console.log(data);
 		Axios.post("login", data)
 			.then(response => {
 				console.log(response);
@@ -28,7 +22,8 @@ const Login: React.FC = () => {
 				{
 					cookieMan.addCookie('token', response.data[0]);
 					setRefreshToken(response.data[1]);
-					navigate("/");
+					const from = (location.state as any)?.from || "/";
+					navigate(from);
 				}
 				else
 				{
@@ -68,7 +63,6 @@ const Login: React.FC = () => {
                 {wrong && <div className="log_error">wrong username or password</div>}
                 <button className="submit_button" type="submit">SUBMIT</button>
             </form>
-            <NavLink to="/signup">Not registered ? Sign Up !</NavLink>
             <button onClick={test}>test required_token button</button>
         </div>
     )

@@ -1,11 +1,11 @@
 # matcha
 dating web site 42 project 
 
-# steps
-- database planification
-- auth
-- fun
+# todos
 
-# doc
+- ranger les refresh token dans tmp
+- reussir a initialiser la classe TmpMan via zustand
 
-- pour login et token : https://www.loginradius.com/blog/engineering/guest-post/securing-flask-api-with-jwt/
+# BUGS
+
+- reparer les routes react (ne devrait pas pouvoir aller sur login si user connecté avec un retour arrière + ne devrait pas planté si le user refresh puis logout)

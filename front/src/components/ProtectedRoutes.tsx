@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from "react-router-dom"
+import { Navigate, Outlet, useLocation } from "react-router-dom"
 import { tokenReader } from "../tools/TokenReader";
 import React, { useEffect, useState } from "react";
 import { storeRefresh, storeTimeout } from "../tools/Stores";
@@ -10,6 +10,7 @@ import { cookieMan } from "../tools/CookieMan";
 //by a token manager, and then devs never have to take care about token
 //in the children modules content
 const ProtectedRoutes: React.FC = () => {
+	const location = useLocation();
     const [ access, setAccess ] = useState<string>(tokenReader.getToken());
     const { refreshToken, updateRefreshToken } = storeRefresh();
     const { refreshTokenTimeoutId, updateRefreshTimeout } = storeTimeout();
@@ -27,9 +28,9 @@ const ProtectedRoutes: React.FC = () => {
                 {
                     case 200:
                         cookieMan.addCookie("token", response.data[0]);
-                        updateRefreshToken(response.data[1]);
                         setAccess(response.data[0]);
-                        updateRefreshToken(response.data[1]);
+                        if (response.data.lenght == 2)
+                            updateRefreshToken(response.data[1]);
                         break;
                     default:
                         console.log("unhandled status: ", response.status);
@@ -64,37 +65,43 @@ const ProtectedRoutes: React.FC = () => {
         let accessExp: number | undefined;
         let refreshExp: number | undefined;
         let accessPayload: JwtPayload | undefined;
-        let refreshPayload: JwtPayload | undefined;
+		let refreshPayload: JwtPayload | undefined;
+		let timeIdTmp: NodeJS.Timeout | undefined;
 
         if (refreshTokenTimeoutId != undefined)
 		{
 			clearTimeout(refreshTokenTimeoutId);
             updateRefreshTimeout(undefined);
 		}
-        if (access != "" && refreshToken != "")
-        {
-            accessPayload = tokenReader.readPayload(access);
-            refreshPayload = tokenReader.readPayload(refreshToken);
-            if (accessPayload != undefined && refreshPayload != undefined)
-            {
-                accessExp = accessPayload.exp;
-                refreshExp = refreshPayload.exp;
-                if (accessExp != undefined && refreshExp != undefined)
-                {
-                    msAccessLeft = accessExp - Date.now() / 1000;
-                    msRefreshLeft = refreshExp - Date.now() / 1000;
-                    if (msAccessLeft > 0 && msRefreshLeft > 0)
-                    {
-                        updateRefreshTimeout(
-                            setTimeout(askNewTokens,
-                            Math.max(0, Math.min(msAccessLeft - 1, msRefreshLeft - 1)) * 1000))
-                    }
-                }
-            }
-        }
+		if (access != "" && refreshToken != "") {
+			accessPayload = tokenReader.readPayload(access);
+			refreshPayload = tokenReader.readPayload(refreshToken);
+			if (accessPayload != undefined && refreshPayload != undefined) {
+				accessExp = accessPayload.exp;
+				refreshExp = refreshPayload.exp;
+				if (accessExp != undefined && refreshExp != undefined) {
+					msAccessLeft = accessExp - Date.now() / 1000;
+					msRefreshLeft = refreshExp - Date.now() / 1000;
+					if (msAccessLeft > 0 && msRefreshLeft > 0) {
+						timeIdTmp = setTimeout(askNewTokens,
+							Math.max(0, Math.min(msAccessLeft - 1, msRefreshLeft - 1)) * 1000)
+						updateRefreshTimeout(timeIdTmp)
+					}
+				}
+			}
+		}
+		else
+		{	
+			console.log("no token");
+		}
+		
+		return () => {
+			console.log("useEffect of protected route returns");
+			clearTimeout(timeIdTmp);
+		}
 	}, [access])
 
-    return tokenReader.isLogged() ? <Outlet /> : <Navigate to="/login" />;
+	return (tokenReader.isLogged() ? <Outlet /> : <Navigate to="/login" replace state={{ from: location }} />)
 }
 
 export default ProtectedRoutes;

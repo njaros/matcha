@@ -1,5 +1,6 @@
 import { Socket, io } from "socket.io-client";
 import { create } from "zustand";
+import TmpMan from "./TmpMan";
 
 interface IstoreTimeout {
 	refreshTokenTimeoutId: NodeJS.Timeout | undefined,
@@ -19,7 +20,7 @@ interface IstoreSocket {
 export const storeRefresh = create<IstoreRefresh>()((set) => ({
 	refreshToken: "",
 	updateRefreshToken: (newToken: string) => set({ refreshToken: newToken }),
-}))
+}));
 
 export const storeTimeout = create<IstoreTimeout>()((set) => ({
 	refreshTokenTimeoutId: undefined,
