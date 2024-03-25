@@ -4,10 +4,8 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { ILoginInForm } from "../../Interfaces";
 import Axios from "../../tools/Caller";
 import { cookieMan } from "../../tools/CookieMan";
-import { storeRefresh, storeTmp } from "../../tools/Stores";
+import { storeRefresh } from "../../tools/Stores";
 import { tokenReader } from "../../tools/TokenReader";
-import { JwtPayload } from "jsonwebtoken";
-import TmpMan from "../../tools/TmpMan";
 
 const Login: React.FC = () => {
 	const navigate = useNavigate();
@@ -15,7 +13,6 @@ const Login: React.FC = () => {
     const { register, handleSubmit } = useForm<ILoginInForm>();
 	const [wrong, setWrong] = useState<boolean>(false);
 	const setRefreshToken = storeRefresh(state => state.updateRefreshToken);
-	const { tmp, setTmp } = storeTmp();
 
 	const loginSubmit = (data: ILoginInForm) => {
 		Axios.post("login", data)
@@ -24,13 +21,6 @@ const Login: React.FC = () => {
 				if (response.status == 200)
 				{
 					cookieMan.addCookie('token', response.data[0]);
-					let payload: JwtPayload | undefined = tokenReader.readPayload(response.data[0]);
-					let userId: string;
-					if (payload != undefined)
-					{
-						userId = payload.user_id;
-						setTmp(userId);
-					}
 					setRefreshToken(response.data[1]);
 					const from = (location.state as any)?.from || "/";
 					navigate(from);
@@ -73,7 +63,6 @@ const Login: React.FC = () => {
                 {wrong && <div className="log_error">wrong username or password</div>}
                 <button className="submit_button" type="submit">SUBMIT</button>
             </form>
-            <NavLink to="/signup">Not registered ? Sign Up !</NavLink>
             <button onClick={test}>test required_token button</button>
         </div>
     )

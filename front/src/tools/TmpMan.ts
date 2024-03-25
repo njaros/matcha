@@ -1,5 +1,6 @@
-import { existsSync, mkdirSync, readFileSync, writeFile } from "fs";
+import fs from "fs/promises";
 
+// sadly ss is forbidden by web browser. So this class is unusable
 export default class TmpMan
 {
 	private static instance: TmpMan;
@@ -7,8 +8,6 @@ export default class TmpMan
 
 	private constructor(userId: string) {
 		TmpMan.TmpPath = "/tmp/Matcha/" + userId;
-		if (!existsSync(TmpMan.TmpPath))
-			mkdirSync(TmpMan.TmpPath, { recursive: true });
 	}
 
 	public static getInstance(userId?:string): TmpMan
@@ -22,15 +21,18 @@ export default class TmpMan
 		return TmpMan.instance;
 	}
 
-	public static async createKeyVal(key: string, val: string): Promise<void>
+	public async createKeyVal(key: string, val: string): Promise<void>
 	{
-		await writeFile(this.TmpPath + '/' + key, val, (err) => {
-			console.log(err);
-		});
+		fs.access(TmpMan.TmpPath)
+		.catch
+		{
+			await fs.mkdir(TmpMan.TmpPath, { recursive: true });
+		}
+		await fs.writeFile(TmpMan.TmpPath + '/' + key, val);
 	}
 
-	public static readVal(key: string): string
+	public async readVal(key: string): Promise<string>
 	{
-		return readFileSync(this.TmpPath + '/' + key).toString();
+		return await fs.readFile(TmpMan.TmpPath + '/' + key).toString();
 	}
 }

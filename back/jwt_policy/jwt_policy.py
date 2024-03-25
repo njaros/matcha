@@ -62,7 +62,7 @@ def create_access_token(user_id):
     return jwt.encode(
                     {"user_id": hex,
                      "exp": datetime.now(tz=timezone.utc) +
-                     timedelta(seconds=10)},
+                     timedelta(seconds=120)},
                     app.config["SECRET_ACCESS"],
                     algorithm="HS256"
                 )
@@ -106,8 +106,10 @@ def update_access_token(access_token, refresh_token):
     now = datetime.now(tz=timezone.utc).timestamp()
     if exp_access < now or exp_refresh < now:
         return None
-    return [create_access_token(access_id),
-            create_refresh_token(access_id)]
+    if exp_refresh - now < 3600:
+        return [create_access_token(access_id),
+                create_refresh_token(access_id)]
+    return [create_access_token(access_id)]
 
 
 def refresh():

@@ -28,9 +28,9 @@ const ProtectedRoutes: React.FC = () => {
                 {
                     case 200:
                         cookieMan.addCookie("token", response.data[0]);
-                        updateRefreshToken(response.data[1]);
                         setAccess(response.data[0]);
-                        updateRefreshToken(response.data[1]);
+                        if (response.data.lenght == 2)
+                            updateRefreshToken(response.data[1]);
                         break;
                     default:
                         console.log("unhandled status: ", response.status);
@@ -101,7 +101,7 @@ const ProtectedRoutes: React.FC = () => {
 		}
 	}, [access])
 
-	return tokenReader.isLogged() ? <Outlet /> : <Navigate to="/login" replace state={{ from: location }} />;
+	return (tokenReader.isLogged() ? <Outlet /> : <Navigate to="/login" replace state={{ from: location }} />)
 }
 
 export default ProtectedRoutes;

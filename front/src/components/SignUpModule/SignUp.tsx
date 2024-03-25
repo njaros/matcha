@@ -57,7 +57,6 @@ const Signup: React.FC = () => {
                 <button className="submit_button" type="submit">SUBMIT</button>
 			</form>
 			{ errorMsg != "" && <p> {errorMsg} </p> }
-			<NavLink to="/login">Already registered ? Log In !</NavLink>
 		</div>)
 }
 

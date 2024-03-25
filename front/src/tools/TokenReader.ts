@@ -5,7 +5,6 @@ import { cookieMan } from "./CookieMan";
 function getToken(): string
 {
 	const token = cookieMan.getCookie("token")
-	console.log(token);
     if (token === undefined)
         return ""
     return token
@@ -46,7 +45,10 @@ function getAttrAsString(token: string, attr: string): string
 function isTokenValid(token: string | undefined)
 {
     if (token == undefined || token == "")
+    {
+        console.log("isTokenValid: no token");
         return false;
+    }
     let decodedToken: JwtPayload | undefined = readPayload(token);
     if (decodedToken == undefined ||
         ( decodedToken.exp !== undefined
@@ -55,7 +57,6 @@ function isTokenValid(token: string | undefined)
 		console.log("invalid token");
         return false;
 	}
-	console.log("valid token");
     return true;
 }
 

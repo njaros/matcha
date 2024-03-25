@@ -1,12 +1,8 @@
-import { useNavigate } from "react-router-dom"
-import { cookieMan } from "../../tools/CookieMan"
 import { tokenReader } from "../../tools/TokenReader";
 import { storeRefresh, storeTimeout } from "../../tools/Stores";
 import Axios from "../../tools/Caller";
 
 const Home: React.FC = () => {
-	const navigate = useNavigate();
-    const { refreshTokenTimeoutId, updateRefreshTimeout } = storeTimeout();
     const { refreshToken, updateRefreshToken } = storeRefresh();
 
 	const test = () => {
@@ -21,17 +17,6 @@ const Home: React.FC = () => {
         )
     }
 
-	const logOutHandler = () => {
-		if (refreshTokenTimeoutId != undefined)
-		{
-			clearTimeout(refreshTokenTimeoutId);
-			updateRefreshTimeout(undefined);
-		}
-		updateRefreshToken("");
-		cookieMan.eraseCookie('token');
-		navigate("..", { relative: "path" });
-	}
-
 	const readPayload = () => {
 		console.log(tokenReader.readPayload(tokenReader.getToken()));
 	}
@@ -42,7 +27,6 @@ const Home: React.FC = () => {
 
 	return (
 		<div>
-			<button onClick={logOutHandler}>Log Out</button>
 			<button onClick={readPayload}>Read token</button>
 			<button onClick={readRefreshToken}>Read Refresh Token</button>
 			<button onClick={test}>test required_token button</button>
