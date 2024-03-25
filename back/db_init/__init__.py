@@ -21,15 +21,26 @@ def set_up_db():
             email VARCHAR,\
             rank INT);")
 
+        cur.execute("""
+            CREATE TABLE room (
+                id uuid PRIMARY KEY,
+                user_1 uuid,
+                user_2 uuid,
+                FOREIGN KEY (user_1) REFERENCES user_table(id),
+                FOREIGN KEY (user_2) REFERENCES user_table(id)
+            )
+        """)
+        
+
         cur.execute("CREATE TABLE message (\
             id serial PRIMARY KEY,\
             content VARCHAR,\
-            user_id uuid,\
-            time VARCHAR,\
-            room_id uuid);")
+            sender_id uuid,\
+            send_at TIMESTAMP DEFAULT NOW(),\
+            room_id uuid,\
+            FOREIGN KEY (sender_id) REFERENCES user_table(id),\
+            FOREIGN KEY (room_id) REFERENCES room(id));")#ON DELETE CASCADE
 
-        cur.execute("CREATE TABLE room (\
-            id uuid PRIMARY KEY)")
 
         cur.execute("CREATE TABLE photos (\
             id uuid PRIMARY KEY,\
@@ -45,18 +56,6 @@ def set_up_db():
         cur.execute("CREATE TABLE HOBBIES (\
             id serial PRIMARY KEY,\
             name VARCHAR);")
-        
-        cur.execute("CREATE TABLE room_to_message (\
-            room_id uuid PRIMARY KEY, \
-            message_id INT)")
-        
-        cur.execute("CREATE TABLE user_to_room (\
-            user_id uuid PRIMARY KEY,\
-            room_id uuid)")
-        
-        cur.execute("CREATE TABLE room_to_user (\
-            room_id uuid PRIMARY KEY,\
-            user_id uuid)")
         
         cur.close()
         db_conn.commit()

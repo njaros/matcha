@@ -6,15 +6,14 @@ from chat import sql as chat_sql
 
 def add_message():
     content = request.form.get('content')
-    user_id = request.form.get('user_id')
+    sender_id = request.form.get('sender_id')
     room_id = request.form.get('room_id')
-    time =  datetime.now(timezone.utc)
+    current_app.logger.info(sender_id)
 
     data = {
         'content': content,
-        'user_id': user_id,
+        'sender_id': sender_id,
         'room_id': room_id,
-        'time': time
     }
 
     chat_sql.insert_message(data)
@@ -26,8 +25,7 @@ def add_room():
 
     data = {
         'user_id1': user_id1,
-        'user_id2': user_id2
+        'user_id2': user_id2,
     }
-
     chat_sql.insert_room(data)
     return [], 200
