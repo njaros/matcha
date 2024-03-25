@@ -42,10 +42,14 @@ def set_up_db():
             FOREIGN KEY (room_id) REFERENCES room(id));")#ON DELETE CASCADE
 
 
-        cur.execute("CREATE TABLE photos (\
-            id uuid PRIMARY KEY,\
-            path VARCHAR,\
-            user_id VARCHAR);")
+        cur.execute("""
+            CREATE TABLE photos (
+                id uuid PRIMARY KEY,
+                type VARCHAR,
+                binaries bytea,
+                user_id VARCHAR,
+                FOREIGN KEY (user_id) REFERENCES user_table(id));
+        """)#ON DELETE CASCADE
 
         cur.execute("CREATE TABLE relationship (\
             id uuid  PRIMARY KEY,\
