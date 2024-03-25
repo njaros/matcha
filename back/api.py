@@ -18,13 +18,17 @@ socketio.init_app(app)
 # import and save sub-app
 
 from login_module import app as login_module
+from socket_app import app as socket_app
+from chat import app as chat_module
 from jwt_policy import app as jwt_module
 from app2 import app as app2
 from token_required_test_module import app as app3
 
 app.register_blueprint(login_module)
+app.register_blueprint(socket_app)
 app.register_blueprint(jwt_module)
 app.register_blueprint(app2)
+app.register_blueprint(chat_module)
 app.register_blueprint(app3)
 
 
