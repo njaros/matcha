@@ -31,7 +31,6 @@ def set_up_db():
             )
         """)
         
-
         cur.execute("CREATE TABLE message (\
             id serial PRIMARY KEY,\
             content VARCHAR,\
@@ -41,7 +40,6 @@ def set_up_db():
             FOREIGN KEY (sender_id) REFERENCES user_table(id),\
             FOREIGN KEY (room_id) REFERENCES room(id));")#ON DELETE CASCADE
 
-
         cur.execute("""
             CREATE TABLE photos (
                 id uuid PRIMARY KEY,
@@ -50,7 +48,6 @@ def set_up_db():
                 user_id uuid,
                 FOREIGN KEY (user_id) REFERENCES user_table(id));
         """)#ON DELETE CASCADE
-
 
         cur.execute("CREATE TABLE relationship (\
             id uuid  PRIMARY KEY,\

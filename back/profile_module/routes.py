@@ -3,6 +3,8 @@ from flask import request, current_app as app
 
 
 @token_required
-def upload_image(current_user):
-    app.logger.log("upload image : {}".format(current_user))
-    
+def upload(current_user):
+    f = request.files["file"]
+    app.logger.info(f)
+    return request.form, 200
+
