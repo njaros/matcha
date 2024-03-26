@@ -29,8 +29,27 @@ def insert_message(data):
                  data.get("content"),
                  data.get("sender_id"),
                  data.get("room_id")))
-    value = cur.fetchone()[0]
     conn.commit()
     cur.close()
 
 
+def get_room_with_message(room_id):
+    cur = conn.cursor()
+    query = """
+        SELECT room.id AS room_id, 
+                room.user_1 AS user_1_id, 
+                room.user_2 AS user_2_id, 
+                message.id AS message_id, 
+                message.content AS message_content, 
+                message.sender_id AS message_sender_id, 
+                message.send_at AS message_send_at
+        FROM room
+        LEFT JOIN message ON room.id = message.room_id
+        WHERE room.id = %s;
+        """
+    cur.execute(query, (room_id,))
+    results = cur.fetchall()
+    columns = [desc[0] for desc in cur.description]
+    results_as_dict = [dict(zip(columns, row)) for row in results]
+    cur.close()
+    return results_as_dict

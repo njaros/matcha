@@ -12,7 +12,6 @@ def set_up_db():
     cur.execute("select relname from pg_class where relkind='r'\
         and relname !~ '^(pg_|sql_)';")
     exists = cur.fetchall()
-    print(exists)
     if (len(exists) == 0):
         cur.execute("""
             CREATE TABLE user_table (
@@ -61,6 +60,15 @@ def set_up_db():
                 user_id_2 VARCHAR,
                 status VARCHAR
             )
+        """)
+        
+        cur.execute("""
+            CREATE TABLE photos (
+                id uuid PRIMARY KEY,
+                mime_type VARCHAR,
+                binaries bytea,
+                user_id uuid,
+                FOREIGN KEY (user_id) REFERENCES user_table(id));
         """)
 
         cur.execute("""

@@ -49,7 +49,7 @@ def token_required(f):
                 "error": str(e)
                 }, 500
 
-        return f(*args, **kwargs)
+        return f(current_user, *args, **kwargs)
 
     return decorated
 

@@ -19,8 +19,7 @@ function App() {
 	const { socket, updateSocket } = storeSocket()
 
 	const getUserId = () => {
-		const data = readPayload(getToken())
-		setUserId(data?.user_id)
+		setUserId(tokenReader.getAttrAsString(getToken(), "user_id"));
 	}
 
 	useEffect(() => {
