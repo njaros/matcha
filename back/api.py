@@ -8,6 +8,8 @@ from extensions import socketio
 app = Flask(__name__)
 app.config['SECRET_ACCESS'] = os.environ.get('SECRET_ACCESS')
 app.config['SECRET_REFRESH'] = os.environ.get('SECRET_REFRESH')
+app.config['MAX_CONTENT_LENGTH'] = 16000000
+app.config['UPLOAD_FOLDER'] = '/app/imgs/'
 CORS(app, origins='*')
 
 

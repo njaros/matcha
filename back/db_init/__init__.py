@@ -45,11 +45,12 @@ def set_up_db():
         cur.execute("""
             CREATE TABLE photos (
                 id uuid PRIMARY KEY,
-                type VARCHAR,
+                mime_type VARCHAR,
                 binaries bytea,
-                user_id VARCHAR,
+                user_id uuid,
                 FOREIGN KEY (user_id) REFERENCES user_table(id));
         """)#ON DELETE CASCADE
+
 
         cur.execute("CREATE TABLE relationship (\
             id uuid  PRIMARY KEY,\
