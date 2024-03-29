@@ -1,52 +1,66 @@
 import { useState } from "react";
-import Axios from "../../tools/Caller";;
+import Axios from "../../tools/Caller";
 
 const Profile = () => {
-    const [file, setFile] = useState<File | null>(null);
-    const [fileName, setFileName] = useState<string>("");
-
-    const onChangeFileName = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFileName(e.target.value);
-    }
+    const [files, setFiles] = useState<FileList | null>(null);
+    const [accepted, setAccepted] = useState<string[]>([]);
+    const [denied, setDenied] = useState<string[]>([]);
 
     const onChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
-            setFile(e.target.files[0]);
+            console.log("target :", e.target.files);
+            setFiles(e.target.files);
         }
     }
 
-    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        console.log(files);
         const form = new FormData();
-        form.append("fileName", fileName);
-        if (!file)
+        if (!files)
             return;
-        form.append("file", file);
-
+        for (let i = 0; i < files.length; ++i)
+            form.append("file[]", files[i]);
+        console.log(form.getAll("file[]"));
         try {
-            const response = await Axios.post("upload", form, {
+            Axios.post("upload", form, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }
-            });
-            console.log(response);
+            }).then(
+                response => {
+                    console.log(response);
+                    setAccepted(response.data.accepted);
+                    setDenied(response.data.denied);
+                }
+            ).catch(
+                error => {
+                    console.log(error);
+                    if (error.response != undefined)
+                        setDenied(error.response.data);
+                }
+            )
         } catch (error) {
             console.error(error);
         }
+    }
+
+    function displayList(props: string[])
+    {
+        const list = props.map((elt => {
+            <li>{elt}</li>
+        }))
+        return (<ul>{list}</ul>);
     }
 
     return (
         <div>
             <h1>PROFILE PAGE</h1>
             <form onSubmit={onSubmit}>
-                <input
-                    type="text"
-                    name="fileName"
-                    onChange={onChangeFileName}
-                    value={fileName}
-                />
-                <input type="file" name="file" onChange={onChangeFile} />
+                <input type="file" name="file[]" onChange={onChangeFile} multiple required/>
                 <button type="submit">Envoi</button>
+                {accepted.length ? <div className="acceptedFiles">succesfully upload : <ul>{displayList(accepted)}</ul></div> : null}
+                {denied.length ? <div className="deniedFiles">failed to upload : <ul>{displayList(denied)}</ul></div> : null}
             </form>
         </div>
     );
