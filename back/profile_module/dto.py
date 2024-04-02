@@ -1,4 +1,4 @@
-from flask import request, current_app as app
+from flask import request, jsonify, current_app as app
 from functools import wraps
 from .sql import count_photos_by_user_id as count
 from error_status.error import *
@@ -18,23 +18,22 @@ def image_dto(f):
             file.close()
             secure = buffer[0:4]
             match secure:
-                case b'\xff\xd8\xff\xe0': MIME_TYPE = "jpg"
-                case b'\x89\x50\x4e\x47': MIME_TYPE = "png"
-                case b'\x47\x49\x46\x38': MIME_TYPE = "gif"
-                case _: denied_files.append(file.filename)
+                case b'\xff\xd8\xff\xe0': MIME_TYPE = "image/jpeg"
+                case b'\x89\x50\x4e\x47': MIME_TYPE = "image/png"
+                case b'\x47\x49\x46\x38': MIME_TYPE = "image/gif"
             if MIME_TYPE is not None:
                 if place_left > 0:
                     place_left -= 1
                     accepted_files.append((MIME_TYPE, file.filename, buffer))
                 else:
-                    denied_files((file.filename, "no space left"))
+                    denied_files.append({"filename": file.filename,
+                                         "reason": "no space left"})
             else:
-                denied_files((file.filename, "unhandled file type"))
+                denied_files.append({"filename": file.filename,
+                                     "reason": "unhandled file type"})
         if len(accepted_files) == 0:
             if len(denied_files) == 0:
                 raise(BadRequestError("no file"))
-            else:
-                raise(BadRequestError("no accepted files"))
         kwargs["accepted"] = accepted_files
         kwargs["denied"] = denied_files
         return f(*args, **kwargs)

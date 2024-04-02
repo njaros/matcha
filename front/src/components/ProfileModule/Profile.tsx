@@ -1,18 +1,51 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Axios from "../../tools/Caller";
 
-function displayList(props: string[])
+function displayListAccepted(props: string[])
 {
-    const list = props.map((elt => {
-        return <li>{elt}</li>
-    }))
+    const list = props.map((elt, key) => {
+        return <li key={key}>{elt}</li>
+    })
+    return (<ul>{list}</ul>);
+}
+
+function displayListDenied(props: {"filename": string, "reason": string}[])
+{
+    const list = props.map((elt, key) => {
+        return <li key={key}>{elt.filename}: {elt.reason}</li>
+    })
     return (<ul>{list}</ul>);
 }
 
 const Profile = () => {
     const [files, setFiles] = useState<FileList | null>(null);
     const [accepted, setAccepted] = useState<string[]>([]);
-    const [denied, setDenied] = useState<string[]>([]);
+    const [denied, setDenied] = useState<{"filename": string, "reason": string}[]>([]);
+    const [errorMsg, setErrorMsg] = useState<string>("");
+    const [photos, setPhotos] = useState<{"id": string, "mimetype": string, "imageUrl": string}[]>([])
+
+    useEffect(() => {
+        Axios.get("get_photos").then(
+            response => {
+                let newPhotos: {"id": string, "mimetype": string, "imageUrl": string}[] = [];
+                for (let i = 0; i < response.data.photos.length; ++i)
+                {
+                    let photo = response.data.photos[i];
+                    console.log(photo);
+                    newPhotos.push({
+                        "id": photo.id,
+                        "mimetype": photo.mimetype,
+                        "imageUrl": URL.createObjectURL(new Blob([atob(photo.binaries)], {type: photo.mimetype}))
+                    })
+                }
+                setPhotos(newPhotos);
+            }
+        ).catch(
+            error => {
+                console.log(error);
+            }
+        )
+    }, [])
 
     const onChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -38,6 +71,7 @@ const Profile = () => {
             }).then(
                 response => {
                     console.log(response);
+                    setErrorMsg("");
                     setAccepted(response.data.accepted);
                     setDenied(response.data.denied);
                 }
@@ -45,7 +79,11 @@ const Profile = () => {
                 error => {
                     console.log(error);
                     if (error.response != undefined)
-                        setDenied(error.response.data);
+                    {
+                        setErrorMsg(error.response.data.message)
+                        setAccepted([]);
+                        setDenied([]);
+                    }
                 }
             )
         } catch (error) {
@@ -59,9 +97,15 @@ const Profile = () => {
             <form onSubmit={onSubmit}>
                 <input type="file" name="file[]" onChange={onChangeFile} multiple required/>
                 <button type="submit">Envoi</button>
-                {accepted.length ? <div className="acceptedFiles">succesfully upload : {displayList(accepted)}</div> : null}
-                {denied.length ? <div className="deniedFiles">failed to upload : {displayList(denied)}</div> : null}
+                {errorMsg ? <div className="errorMsg">{errorMsg}</div> : null}
+                {accepted.length ? <div className="acceptedFiles">succesfully upload : {displayListAccepted(accepted)}</div> : null}
+                {denied.length ? <div className="deniedFiles">failed to upload : {displayListDenied(denied)}</div> : null}
             </form>
+            {photos.map(photo => (
+                <div key={photo.id} className="photo">
+                    <img src={photo.imageUrl} alt={`Photo ${photo.id}`} />
+                </div>
+            ))}
         </div>
     );
 }

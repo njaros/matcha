@@ -1,16 +1,27 @@
 from jwt_policy.jwt_policy import token_required
-from flask import request, current_app as app
+import base64
+from flask import jsonify, send_file, current_app as app
 from .dto import image_dto
+from error_status.error import *
+from .sql import insert_photos, get_photos_by_user_id
 
 
 @token_required
 @image_dto
 def upload(**kwargs):
-    app.logger.info([elt[1] for elt in kwargs["accepted"]])
-    app.logger.info(kwargs["denied"])
-    data = {
-        "accepted": [elt[1] for elt in kwargs["accepted"]],
-        "denied": kwargs["denied"]
-    }
-    app.logger.info(data)
-    return data, 200
+    try:
+        insert_photos(**kwargs)
+        return jsonify({"accepted": [elt[1] for elt in kwargs["accepted"]], "denied": kwargs["denied"]}), 200
+    except Exception:
+        raise(InternalServerError("Something went wrong"))
+
+
+@token_required
+def get_photos(**kwargs):
+    return jsonify({"photos":
+                        [{
+                            "id": elt[0],
+                            "mimetype": elt[1],
+                            "binaries": base64.b64encode(elt[2]).decode("utf-8")
+                            }
+                            for elt in get_photos_by_user_id(kwargs["user"]["id"])]}), 200

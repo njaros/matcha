@@ -3,7 +3,7 @@ import uuid
 from flask import current_app as app
 
 
-def insert_photos(data):
+def insert_photos(**kwargs):
     query = """
         INSERT INTO photos
         (id, mime_type, binaries, user_id)
@@ -13,8 +13,8 @@ def insert_photos(data):
     cur.executemany(query, [[uuid.uuid1(),
                              elt[0],
                              elt[2],
-                             data.get("user_id")]
-                             for elt in data.get("accepted_file")])
+                             kwargs["user"]["id"]]
+                             for elt in kwargs["accepted"]])
     conn.commit()
     cur.close()
 
@@ -40,7 +40,7 @@ def get_photos_by_user_id(user_id):
                 WHERE user_id = %s;
                 """,
                 (user_id,))
-    photos = cur.fetchmany()
+    photos = cur.fetchall()
     cur.close()
     return photos
 
