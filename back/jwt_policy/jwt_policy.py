@@ -28,8 +28,8 @@ def token_required(f):
                     "data": None,
                     "error": "Unauthorized"
                 }, 401
-            current_user = sql.get_user_by_id(data["user_id"])
-            if current_user is None:
+            kwargs["user"] = sql.get_user_by_id(data["user_id"])
+            if kwargs["user"] is None:
                 return {
                         "message": "Invalid Authentication token: \
                             user not found",
@@ -49,7 +49,7 @@ def token_required(f):
                 "error": str(e)
                 }, 500
 
-        return f(current_user, *args, **kwargs)
+        return f(*args, **kwargs)
 
     return decorated
 

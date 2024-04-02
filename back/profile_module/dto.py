@@ -1,10 +1,14 @@
 from flask import request, current_app as app
 from functools import wraps
+from .sql import count_photos_by_user_id as count
 
 
 def image_dto(f):
     @wraps(f)
     def decorated(*args, **kwargs):
+        app.logger.info(kwargs["user"])
+        place_left = 5 - count(kwargs["user"]["id"])
+        app.logger.info(place_left)
         denied_files = []
         accepted_files = []
         files = request.files.getlist("file[]")
@@ -28,5 +32,7 @@ def image_dto(f):
                 return "no file", 400
             else:
                 return denied_files, 400
-        return f(accepted_files, denied_files, *args, **kwargs)
+        kwargs["accepted"] = accepted_files
+        kwargs["denied"] = denied_files
+        return f(*args, **kwargs)
     return decorated

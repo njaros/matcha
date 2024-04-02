@@ -27,7 +27,7 @@ def count_photos_by_user_id(user_id):
                 WHERE user_id = %s;
                 """,
                 (user_id,))
-    count = cur.fetchone()
+    count = cur.fetchone()[0]
     cur.close()
     return count
 

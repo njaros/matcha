@@ -12,14 +12,16 @@ def set_up_db():
     cur.execute("select relname from pg_class where relkind='r'\
         and relname !~ '^(pg_|sql_)';")
     exists = cur.fetchall()
-    print(exists)
     if (len(exists) == 0):
-        cur.execute("CREATE TABLE user_table (\
-            id uuid PRIMARY KEY,\
-            username VARCHAR,\
-            password VARCHAR,\
-            email VARCHAR,\
-            rank INT);")
+        cur.execute("""
+            CREATE TABLE user_table (
+                id uuid PRIMARY KEY,
+                username VARCHAR,
+                password VARCHAR,
+                email VARCHAR,
+                rank INT
+            )
+        """)
 
         cur.execute("""
             CREATE TABLE room (
@@ -30,16 +32,28 @@ def set_up_db():
                 FOREIGN KEY (user_2) REFERENCES user_table(id)
             )
         """)
-        
-        cur.execute("CREATE TABLE message (\
-            id serial PRIMARY KEY,\
-            content VARCHAR,\
-            sender_id uuid,\
-            send_at TIMESTAMP DEFAULT NOW(),\
-            room_id uuid,\
-            FOREIGN KEY (sender_id) REFERENCES user_table(id),\
-            FOREIGN KEY (room_id) REFERENCES room(id));")#ON DELETE CASCADE
 
+        cur.execute("""
+            CREATE TABLE message (
+                id serial PRIMARY KEY,
+                content VARCHAR,
+                sender_id uuid,
+                send_at TIMESTAMP DEFAULT NOW(),
+                room_id uuid,
+                FOREIGN KEY (sender_id) REFERENCES user_table(id),
+                FOREIGN KEY (room_id) REFERENCES room(id)
+            )
+        """)
+
+        cur.execute("""
+            CREATE TABLE relationship (
+                id uuid PRIMARY KEY,
+                user_id_1 VARCHAR,
+                user_id_2 VARCHAR,
+                status VARCHAR
+            )
+        """)
+        
         cur.execute("""
             CREATE TABLE photos (
                 id uuid PRIMARY KEY,
@@ -47,18 +61,15 @@ def set_up_db():
                 binaries bytea,
                 user_id uuid,
                 FOREIGN KEY (user_id) REFERENCES user_table(id));
-        """)#ON DELETE CASCADE
+        """)
 
-        cur.execute("CREATE TABLE relationship (\
-            id uuid  PRIMARY KEY,\
-            user_id_1 VARCHAR,\
-            user_id_2 VARCHAR,\
-            status VARCHAR);")
+        cur.execute("""
+            CREATE TABLE HOBBIES (
+                id serial PRIMARY KEY,
+                name VARCHAR
+            )
+        """)
 
-        cur.execute("CREATE TABLE HOBBIES (\
-            id serial PRIMARY KEY,\
-            name VARCHAR);")
-        
         cur.close()
         db_conn.commit()
     return db_conn
