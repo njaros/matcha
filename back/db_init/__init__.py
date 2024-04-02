@@ -48,9 +48,8 @@ def set_up_db():
         cur.execute("""
             CREATE TABLE relationship (
                 id uuid PRIMARY KEY,
-                user_id_1 VARCHAR,
-                user_id_2 VARCHAR,
-                status VARCHAR
+                liker_id VARCHAR,
+                liked_id VARCHAR
             )
         """)
         

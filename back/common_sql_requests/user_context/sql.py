@@ -32,6 +32,8 @@ def get_user_by_username(username):
     """)
     cur.execute(query, (username,))
     user = cur.fetchone()
+    if user is None:
+        return None
     columns = [desc[0] for desc in cur.description]
     user_as_dict = dict(zip(columns, user))
     cur.close()
