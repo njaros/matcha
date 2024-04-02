@@ -6,7 +6,7 @@ from .dto import image_dto
 @token_required
 @image_dto
 def upload(accepted_files, denied_files, current_user):
-    app.logger.info(accepted_files)
+    app.logger.info([elt[1] for elt in accepted_files])
     app.logger.info(denied_files)
     data = {
         "accepted": [elt[1] for elt in accepted_files],

@@ -1,6 +1,14 @@
 import { useState } from "react";
 import Axios from "../../tools/Caller";
 
+function displayList(props: string[])
+{
+    const list = props.map((elt => {
+        return <li>{elt}</li>
+    }))
+    return (<ul>{list}</ul>);
+}
+
 const Profile = () => {
     const [files, setFiles] = useState<FileList | null>(null);
     const [accepted, setAccepted] = useState<string[]>([]);
@@ -45,22 +53,14 @@ const Profile = () => {
         }
     }
 
-    function displayList(props: string[])
-    {
-        const list = props.map((elt => {
-            <li>{elt}</li>
-        }))
-        return (<ul>{list}</ul>);
-    }
-
     return (
         <div>
             <h1>PROFILE PAGE</h1>
             <form onSubmit={onSubmit}>
                 <input type="file" name="file[]" onChange={onChangeFile} multiple required/>
                 <button type="submit">Envoi</button>
-                {accepted.length ? <div className="acceptedFiles">succesfully upload : <ul>{displayList(accepted)}</ul></div> : null}
-                {denied.length ? <div className="deniedFiles">failed to upload : <ul>{displayList(denied)}</ul></div> : null}
+                {accepted.length ? <div className="acceptedFiles">succesfully upload : {displayList(accepted)}</div> : null}
+                {denied.length ? <div className="deniedFiles">failed to upload : {displayList(denied)}</div> : null}
             </form>
         </div>
     );
