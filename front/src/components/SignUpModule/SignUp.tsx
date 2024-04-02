@@ -10,8 +10,11 @@ const Signup: React.FC = () => {
 	const [ errorMsg, setErrorMsg ] = useState<string>("");
 
 	const signupSubmit = (data: ISignUpForm) => {
-		console.log(data);
-		Axios.post("sign", data).then(
+		const form = new FormData();
+		form.append("username", data.username);
+		form.append("email", data.email);
+		form.append("password", data.password);
+		Axios.post("sign", form).then(
 			response => {
 				if (response.status == 201)
 				{
@@ -24,11 +27,10 @@ const Signup: React.FC = () => {
 			}
 		).catch(
 			error => {
-				console.log(error);
 				if (error.response)
 				{
-					if (error.response.status == 409)
-						setErrorMsg("username already exists");
+					if (error.response.status == 400)
+						setErrorMsg(error.response.data.message);
 					else
 						setErrorMsg("unhandled error");
 				}

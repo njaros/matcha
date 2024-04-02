@@ -1,6 +1,7 @@
 from flask import Blueprint
 from flask_cors import CORS
 from .routes import login, sign
+from error_status.error import *
 
 
 app = Blueprint('login', __name__)
