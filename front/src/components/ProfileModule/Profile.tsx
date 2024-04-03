@@ -25,6 +25,7 @@ const Profile = () => {
     const [errorMsg, setErrorMsg] = useState<string>("");
     const [photos, setPhotos] = useState<IPhoto[]>([]);
     const [onMount, setOnMount] = useState<boolean>(true);
+    const [boolReactBug, setBoolReactBug] = useState<boolean>(true);
 
     function getPhotos()
     {
@@ -40,7 +41,6 @@ const Profile = () => {
                         "main": photo.main
                 })
             })
-            console.log("newtof", newPhotos);
             setPhotos(newPhotos.sort((a, b) => {
                 if (a.main == true)
                     return -1;
@@ -91,7 +91,6 @@ const Profile = () => {
                 }
             }).then(
                 response => {
-                    console.log(response);
                     setErrorMsg("");
                     setAccepted(response.data.accepted);
                     setDenied(response.data.denied);
@@ -115,6 +114,8 @@ const Profile = () => {
     const delPhotoHandler = (e: any) => {
         const form = new FormData();
         const photoId = e.currentTarget.value;
+        setAccepted([]);
+        setDenied([]);
         form.append("photo_id", photoId);
         Axios.post("delete_photo", form)
         .then(response => {
@@ -123,8 +124,7 @@ const Profile = () => {
             if (response.data.mainId != "")
             {
                 newPhotos.forEach(
-                    photo =>
-                    {
+                    photo => {
                         if (photo.id == response.data.mainId)
                         photo.main = true;
                 });
@@ -143,13 +143,43 @@ const Profile = () => {
         });
     }
 
+    const changeMainPhotoHandler = (e:any) => {
+        const form = new FormData();
+        const photoId = e.currentTarget.value;
+        form.append("photo_id", photoId);
+        Axios.post("change_main_photo", form)
+        .then(response => {
+            const newPhotos = photos;
+            newPhotos.forEach(photo => {
+                if (photo.main == true)
+                photo.main = false;
+                if (photo.id == photoId)
+                photo.main = true;
+            })
+            newPhotos.sort((a, b) => {
+                if (a.main == true)
+                    return -1;
+                if (b.main == true)
+                    return 1;
+                return 0;
+            });
+            setPhotos(newPhotos);
+            setBoolReactBug(!boolReactBug);
+        })
+        .catch(error => {
+            console.log(error);
+        })
+        setAccepted([]);
+        setDenied([]);
+    }
+
     function displayListPhotos(props: IPhoto[])
     {
         const list = props.map((photo: IPhoto) => {
             return <li key={photo.id}>
                 <img src={photo.htmlSrcImg} alt={`Photo ${photo.id}`} />
                 <button onClick={delPhotoHandler} value={photo.id}>X</button>
-                {!photo.main ? <button>define to main photo</button> : null}
+                {!photo.main ? <button onClick={changeMainPhotoHandler} value={photo.id}>define to main photo</button> : null}
             </li>
         });
         return (<ul>{list}</ul>);

@@ -110,4 +110,21 @@ def set_a_main_photo(user_id):
     if main_id is None:
         return None
     return main_id[0]
-    
+
+
+def change_main_photo_by_ids(current_main_id, future_main_id):
+    cur = conn.cursor()
+    cur.execute("""
+                UPDATE photos
+                SET main = FALSE
+                WHERE id = %s;
+                """,
+                (current_main_id,))
+    cur.execute("""
+                UPDATE photos
+                SET main = TRUE
+                WHERE id = %s;
+                """,
+                (future_main_id,))
+    conn.commit()
+    cur.close()
