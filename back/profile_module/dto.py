@@ -7,11 +7,11 @@ from error_status.error import *
 def image_dto(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        place_left = 5 - count(kwargs["user"]["id"])
+        kwargs["photo_count"] = count(kwargs["user"]["id"])
+        place_left = 5 - kwargs["photo_count"]
         denied_files = []
         accepted_files = []
         files = request.files.getlist("file[]")
-        app.logger.info(files)
         for file in files:
             MIME_TYPE = None
             buffer = file.read()

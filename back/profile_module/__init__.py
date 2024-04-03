@@ -1,5 +1,5 @@
 from flask import Blueprint
-from .routes import upload, get_photos
+from .routes import *
 from flask_cors import CORS
 
 
@@ -9,3 +9,4 @@ CORS(app)
 
 app.add_url_rule('/upload', 'upload', upload, methods=['POST'])
 app.add_url_rule('/get_photos', 'get_photos', get_photos, methods=["GET"])
+app.add_url_rule('/delete_photo', 'delete_photo', delete_photo, methods=["POST"])

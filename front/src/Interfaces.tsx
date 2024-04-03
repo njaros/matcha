@@ -10,3 +10,10 @@ export interface ISignUpForm
 	email: string,
 	password: string
 }
+
+export interface IPhoto
+{
+	id: string,
+	htmlSrcImg: string,
+	main: boolean
+}
