@@ -2,6 +2,7 @@ from functools import wraps
 import jwt
 from datetime import datetime, timezone, timedelta
 from flask import request, current_app as app
+from flask_restful import abort
 from common_sql_requests.user_context import sql
 
 
@@ -12,42 +13,20 @@ def token_required(f):
         if "Authorization" in request.headers:
             token = request.headers["Authorization"].split(" ")[1]
         if not token:
-            return {
-                "message": "Authentication Token is missing!",
-                "data": None,
-                "error": "Unauthorized"
-            }, 401
+            abort(400, "no token")
         try:
             data = jwt.decode(token, app.config["SECRET_ACCESS"],
                               algorithms=["HS256"])
             expDate = data.get("exp")
             if expDate is None:
-                return {
-                    "message": "Invalid Authentication token: \
-                        no expiration date",
-                    "data": None,
-                    "error": "Unauthorized"
-                }, 401
+                abort(401, "token expiration date is expired")
             kwargs["user"] = sql.get_user_by_id(data["user_id"])
             if kwargs["user"] is None:
-                return {
-                        "message": "Invalid Authentication token: \
-                            user not found",
-                        "data": None,
-                        "error": "Unauthorized"
-                }, 401
+                abort(401, "user not found")
         except jwt.exceptions.InvalidTokenError as e:
-            return {
-                "message": "Invalid Authentication token",
-                "data": None,
-                "error": str(e)
-            }, 401
+            abort(401, "Invalid Authentication token")
         except Exception as e:
-            return {
-                "message": "Unhandled error",
-                "data": None,
-                "error": str(e)
-                }, 500
+            abort(500, "Unhandled error")
 
         return f(*args, **kwargs)
 
@@ -113,15 +92,14 @@ def update_access_token(access_token, refresh_token):
 
 
 def refresh():
-    data: dict = request.get_json()
     parse = {}
     try:
-        parse["access"] = data["access_token"]
-        parse["refresh"] = data["refresh_token"]
+        parse["access"] = request.form["access_token"]
+        parse["refresh"] = request.form["refresh_token"]
     except Exception:
         return ["jwt_policy:refresh(): bad arguments"], 400
-    newTokens = update_access_token(data["access_token"],
-                                    data["refresh_token"])
+    newTokens = update_access_token(request.form["access_token"],
+                                    request.form["refresh_token"])
     if newTokens is None:
         return ["jwt_policy:refresh(): unable to refresh tokens"], 400
     return newTokens, 200

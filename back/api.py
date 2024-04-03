@@ -2,6 +2,7 @@ from flask import Flask
 from flask_cors import CORS
 import os
 from extensions import socketio
+from error_status.error import *
 
 # create primary Flask app
 
@@ -29,6 +30,8 @@ from token_required_test_module import app as app3
 from profile_module import app as profile_module
 from relationship import app as relationship_module
 
+app.register_error_handler(BadRequestError, handle_bad_request_error)
+app.register_error_handler(InternalServerError, handle_internal_server_error)
 app.register_blueprint(login_module)
 app.register_blueprint(socket_app)
 app.register_blueprint(jwt_module)

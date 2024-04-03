@@ -60,8 +60,9 @@ def set_up_db():
                 id uuid PRIMARY KEY,
                 mime_type VARCHAR,
                 binaries bytea,
+                main boolean,
                 user_id uuid,
-                FOREIGN KEY (user_id) REFERENCES user_table(id));
+                FOREIGN KEY (user_id) REFERENCES user_table(id) ON DELETE CASCADE);
         """)
 
         cur.execute("""

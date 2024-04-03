@@ -1,37 +1,39 @@
-from flask import request, current_app as app
+from flask import request, jsonify, current_app as app
 from functools import wraps
 from .sql import count_photos_by_user_id as count
+from error_status.error import *
 
 
 def image_dto(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        app.logger.info(kwargs["user"])
-        place_left = 5 - count(kwargs["user"]["id"])
-        app.logger.info(place_left)
+        kwargs["photo_count"] = count(kwargs["user"]["id"])
+        place_left = 5 - kwargs["photo_count"]
         denied_files = []
         accepted_files = []
         files = request.files.getlist("file[]")
-        app.logger.info(files)
         for file in files:
+            MIME_TYPE = None
             buffer = file.read()
             file.close()
-            MIME_type = buffer[0:4]
-            match MIME_type:
-                case b'\xff\xd8\xff\xe0':
-                    accepted_files.append(("jpg", file.filename, buffer))
-                case b'\x89\x50\x4e\x47':
-                    accepted_files.append(("png", file.filename, buffer))
-                case b'\x47\x49\x46\x38':
-                    accepted_files.append(("gif", file.filename, buffer))
-                case _:
-                    app.logger.info(file.filename)
-                    denied_files.append(file.filename)
+            secure = buffer[0:4]
+            match secure:
+                case b'\xff\xd8\xff\xe0': MIME_TYPE = "image/jpeg"
+                case b'\x89\x50\x4e\x47': MIME_TYPE = "image/png"
+                case b'\x47\x49\x46\x38': MIME_TYPE = "image/gif"
+            if MIME_TYPE is not None:
+                if place_left > 0:
+                    place_left -= 1
+                    accepted_files.append((MIME_TYPE, file.filename, buffer))
+                else:
+                    denied_files.append({"filename": file.filename,
+                                         "reason": "no space left"})
+            else:
+                denied_files.append({"filename": file.filename,
+                                     "reason": "unhandled file type"})
         if len(accepted_files) == 0:
             if len(denied_files) == 0:
-                return "no file", 400
-            else:
-                return denied_files, 400
+                raise(BadRequestError("no file"))
         kwargs["accepted"] = accepted_files
         kwargs["denied"] = denied_files
         return f(*args, **kwargs)
