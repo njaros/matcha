@@ -49,7 +49,9 @@ def set_up_db():
             CREATE TABLE relationship (
                 id uuid PRIMARY KEY,
                 liker_id VARCHAR,
-                liked_id VARCHAR
+                liked_id VARCHAR,
+                FOREIGN KEY (liker_id) REFERENCES user_table(id),
+                FOREIGN KEY (liked_id) REFERENCES user_table(id)
             )
         """)
         

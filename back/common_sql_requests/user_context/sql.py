@@ -14,6 +14,8 @@ def get_user_by_id(user_id):
     """)
     cur.execute(query, (user_id,))
     user = cur.fetchone()
+    if user is None:
+        return None
     columns = [desc[0] for desc in cur.description]
     user_as_dict = dict(zip(columns, user))
     cur.close()
