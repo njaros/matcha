@@ -1,4 +1,3 @@
-from db_init import db_conn as conn
 from flask import request, current_app, jsonify
 from datetime import datetime, timezone
 import pytz
@@ -36,17 +35,6 @@ def get_room_with_message():
 
 def get_message():
     room = get_room_with_message()
-    obj = []
-    for row in room:
-        sender_id = row["message_sender_id"]
-        user = user_sql.get_user_by_id(sender_id)
-        message = {
-            'room_id': row['room_id'],
-            'content': row["message_content"],
-            'send_at': row['message_send_at'],
-            'sender': user
-        }
-        obj.append(message)
-    return obj, 200
+    return room['messages'], 200
 
     

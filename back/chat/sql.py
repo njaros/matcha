@@ -1,5 +1,6 @@
 from db_init import db_conn as conn
 import uuid
+from common_sql_requests.user_context import sql as user_sql
 from flask import current_app as app
 
 
@@ -38,7 +39,7 @@ def get_room_with_message(room_id):
     query = """
         SELECT room.id AS room_id, 
                 room.user_1 AS user_1_id, 
-                room.user_2 AS user_2_id, 
+                room.user_2 AS user_2_id,
                 message.id AS message_id, 
                 message.content AS message_content, 
                 message.sender_id AS message_sender_id, 
@@ -50,6 +51,21 @@ def get_room_with_message(room_id):
     cur.execute(query, (room_id,))
     results = cur.fetchall()
     columns = [desc[0] for desc in cur.description]
-    results_as_dict = [dict(zip(columns, row)) for row in results]
+    room = {}
+    messages = []
+    for row in results:
+        row_as_dict = dict(zip(columns, row))
+        message = {
+            'message_id': row_as_dict['message_id'],
+            'message_content': row_as_dict['message_content'],
+            'message_sender_id': row_as_dict['message_sender_id'],
+            'message_send_at': row_as_dict['message_send_at']
+        }
+        messages.append(message)
+
+    room['room_id'] = row_as_dict['room_id']
+    room['user_1'] = user_sql.get_user_by_id(row_as_dict['user_1_id'])
+    room['user_2'] = user_sql.get_user_by_id(row_as_dict['user_2_id'])
+    room['messages'] = messages
     cur.close()
-    return results_as_dict
+    return room
