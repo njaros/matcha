@@ -23,9 +23,9 @@ def token_required(f):
             kwargs["user"] = sql.get_user_by_id(data["user_id"])
             if kwargs["user"] is None:
                 abort(401, "user not found")
-        except jwt.exceptions.InvalidTokenError as e:
+        except jwt.exceptions.InvalidTokenError:
             abort(401, "Invalid Authentication token")
-        except Exception as e:
+        except Exception:
             abort(500, "Unhandled error")
 
         return f(*args, **kwargs)

@@ -1,8 +1,11 @@
 from flask import Flask
 from flask_cors import CORS
+from cryptography.fernet import Fernet
 import os
 from extensions import socketio
-from error_status.error import *
+from error_status.error import BadRequestError, InternalServerError, \
+    handle_bad_request_error, \
+    handle_internal_server_error
 
 # create primary Flask app
 
@@ -12,6 +15,15 @@ app.config['SECRET_REFRESH'] = os.environ.get('SECRET_REFRESH')
 app.config['MAX_CONTENT_LENGTH'] = 16000000
 app.config['UPLOAD_FOLDER'] = '/app/imgs/'
 app.config['IMG_EXT'] = set(['png', 'jpg', 'jpeg', 'gif'])
+if os.path.exists("/app/photo.key"):
+    file_key = open("/app/photo.key", "rb")
+    key = file_key.read()
+else:
+    key = Fernet.generate_key()
+    file_key = open("/app/photo.key", "wb")
+    file_key.write(key)
+file_key.close()
+app.config['SECRET_PHOTO'] = key
 
 CORS(app, origins='*')
 
@@ -43,4 +55,8 @@ app.register_blueprint(profile_module)
 
 if __name__ == "__main__":
     port = int(os.environ.get('SERVER_PORT'))
-    socketio.run(app, host='0.0.0.0', port=5066, debug=True, allow_unsafe_werkzeug=True)
+    socketio.run(app,
+                 host='0.0.0.0',
+                 port=5066,
+                 debug=True,
+                 allow_unsafe_werkzeug=True)
