@@ -1,5 +1,6 @@
 click==8.0.3
 colorama==0.4.4
+cryptography
 Flask==2.2.5
 Flask-RESTful==0.3.10
 flask-cors

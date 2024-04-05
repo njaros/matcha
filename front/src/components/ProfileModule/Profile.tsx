@@ -176,13 +176,15 @@ const Profile = () => {
     function displayListPhotos(props: IPhoto[])
     {
         const list = props.map((photo: IPhoto) => {
-            return <li key={photo.id}>
-                <img src={photo.htmlSrcImg} alt={`Photo ${photo.id}`} />
-                <button onClick={delPhotoHandler} value={photo.id}>X</button>
-                {!photo.main ? <button onClick={changeMainPhotoHandler} value={photo.id}>define to main photo</button> : null}
+            return <li className="photoCell" key={photo.id}>
+                <img src={photo.htmlSrcImg} width="500" height="500" alt={`Photo ${photo.id}`} />
+                <div>
+                    <button className="delButton" onClick={delPhotoHandler} value={photo.id}>X</button>
+                    {!photo.main ? <button className="mainButton" onClick={changeMainPhotoHandler} value={photo.id}>define to main photo</button> : null}
+                </div>
             </li>
         });
-        return (<ul>{list}</ul>);
+        return (<ul className="photosList">{list}</ul>);
     }
 
     return (
