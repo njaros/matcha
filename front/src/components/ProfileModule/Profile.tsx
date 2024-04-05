@@ -32,7 +32,7 @@ const Profile = () => {
         Axios.get("get_photos").then(
             response => {
                 let newPhotos: IPhoto[] = [];
-                response.data.photos.map(photo => {
+                response.data.photos.map((photo: any) => {
                     newPhotos.push({
                         "id": photo.id,
                         "htmlSrcImg": "data:".concat(photo.mimetype)
@@ -177,7 +177,7 @@ const Profile = () => {
     {
         const list = props.map((photo: IPhoto) => {
             return <li className="photoCell" key={photo.id}>
-                <img src={photo.htmlSrcImg} width="500" height="500" alt={`Photo ${photo.id}`} />
+                <img src={photo.htmlSrcImg} width="100" height="100" alt={`Photo ${photo.id}`} />
                 <div>
                     <button className="delButton" onClick={delPhotoHandler} value={photo.id}>X</button>
                     {!photo.main ? <button className="mainButton" onClick={changeMainPhotoHandler} value={photo.id}>define to main photo</button> : null}

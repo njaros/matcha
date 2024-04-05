@@ -3,7 +3,7 @@ import hashlib
 from jwt_policy import jwt_policy
 from login_module import sql as login_ctx
 from common_sql_requests.user_context import sql as user_ctx
-from error_status.error import *
+from error_status.error import BadRequestError
 
 
 def sign():
@@ -26,7 +26,9 @@ def login():
     returned_id = login_ctx.login_user_in_database(login_data)
     if returned_id is not None:
         current_app.logger.info(returned_id)
-        return jsonify({"access_token": jwt_policy.create_access_token(returned_id),
-                        "refresh_token": jwt_policy.create_refresh_token(returned_id)}), 200
+        return jsonify({"access_token": jwt_policy
+                        .create_access_token(returned_id),
+                        "refresh_token": jwt_policy
+                        .create_refresh_token(returned_id)}), 200
     else:
         raise (BadRequestError("Wrong username or password"))
