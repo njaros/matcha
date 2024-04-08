@@ -8,7 +8,11 @@ export interface ISignUpForm
 {
 	username: string,
 	email: string,
-	password: string
+	password: string,
+	age: number,
+	gender: string,
+	preference: string,
+	biography: string
 }
 
 export interface IPhoto

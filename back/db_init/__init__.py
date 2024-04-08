@@ -21,7 +21,7 @@ def set_up_db():
                 email VARCHAR,
                 age INT,
                 gender VARCHAR,
-                pref VARCHAR,
+                preference VARCHAR,
                 biography VARCHAR,
                 rank INT
             )
