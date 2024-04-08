@@ -21,3 +21,9 @@ def handle_internal_server_error(error):
     response = jsonify({'message': error.message})
     response.status_code = 500
     return response
+
+
+def handle_miss_key_error(error):
+    response = jsonify({'message': f'missing credential: {error.args[0]}'})
+    response.status_code = 400
+    return response
