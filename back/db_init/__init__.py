@@ -21,7 +21,7 @@ def set_up_db():
                 email VARCHAR,
                 age INT,
                 gender VARCHAR,
-                pref VARCHAR,
+                preference VARCHAR,
                 biography VARCHAR,
                 rank INT
             )
@@ -52,8 +52,8 @@ def set_up_db():
         cur.execute("""
             CREATE TABLE relationship (
                 id uuid PRIMARY KEY,
-                liker_id VARCHAR,
-                liked_id VARCHAR,
+                liker_id uuid,
+                liked_id uuid,
                 FOREIGN KEY (liker_id) REFERENCES user_table(id),
                 FOREIGN KEY (liked_id) REFERENCES user_table(id)
             )

@@ -5,12 +5,25 @@ import uuid
 def insert_new_user_in_database(sign_data):
     cur = conn.cursor()
     cur.execute(
-                "INSERT INTO user_table (id, username, password, email)\
-                    VALUES (%s, %s, %s, %s);",
+                "INSERT INTO user_table (id, \
+                    username, \
+                    password, \
+                    email, \
+                    age, \
+                    gender, \
+                    preference, \
+                    biography, \
+                    rank)\
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);",
                 (uuid.uuid1(),
                  sign_data.get("username"),
                  sign_data.get("password"),
-                 sign_data.get("email"),))
+                 sign_data.get("email"),
+                 sign_data.get("age"),
+                 sign_data.get("gender"),
+                 sign_data.get("preference"),
+                 sign_data.get("biography"),
+                 0))
     conn.commit()
     cur.close()
 
