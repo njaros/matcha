@@ -2,7 +2,7 @@ from flask import request, current_app, jsonify
 from datetime import datetime, timezone
 import pytz
 from chat import sql as chat_sql
-from common_sql_requests.user_context import sql as user_sql
+from user_module import sql as user_sql
 
 def add_message():
     content = request.form.get('content')
