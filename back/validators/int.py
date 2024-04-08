@@ -1,29 +1,32 @@
-class NotIntException(Exception):
+from error_status.error import BadRequestError
+
+
+class NotIntException(BadRequestError):
     def __init__(self):
         self.message = "This argument isn't an int"
 
 
-class IntMaxException(Exception):
+class IntMaxException(BadRequestError):
     def __init__(self, max):
         self.message = f"This value is too big, max is {max}"
 
 
-class IntMinException(Exception):
+class IntMinException(BadRequestError):
     def __init__(self, min):
         self.message = f"This value is too small, min is {min}"
 
 
-class IntForbiddenException(Exception):
+class IntForbiddenException(BadRequestError):
     def __init__(self):
         self.message = "This value is forbidden"
 
 
-class IntAllowedException(Exception):
+class IntAllowedException(BadRequestError):
     def __init__(self):
         self.message = "This value isn't allowed"
 
 
-def isInt(foo: any, **req):
+def isInt(foo: any, req: dict[str, any]={}):
     """Check if the foo argument is an int class,
     throwing an NotIntException if not.
     req (requirements) is a dictionnary.
@@ -56,10 +59,13 @@ def isInt(foo: any, **req):
         if foo not in allowed:
             raise (IntAllowedException)
         return foo
-    if (max is not None) & (foo > max):
-        raise (IntMaxException(max))
-    if (min is not None) & (foo < min):
-        raise (IntMinException(min))
-    if (forbidden is not None) & (foo in forbidden):
-        raise (IntForbiddenException)
+    if max is not None:
+        if foo > max:
+            raise (IntMaxException(max))
+    if min is not None:
+        if foo < min:
+            raise (IntMinException(min))
+    if forbidden is not None:
+        if foo in forbidden:
+            raise (IntForbiddenException)
     return foo

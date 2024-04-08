@@ -1,7 +1,8 @@
+from error_status.error import BadRequestError
 from uuid import UUID
 
 
-class NotUuidException(Exception):
+class NotUuidException(BadRequestError):
     def __init__(self):
         self.message = "This is not an Uuid"
 

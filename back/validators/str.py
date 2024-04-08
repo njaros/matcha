@@ -1,29 +1,32 @@
-class NotStrException(Exception):
+from error_status.error import BadRequestError
+
+
+class NotStrException(BadRequestError):
     def __init__(self):
         self.message = "This argument isn't a string"
 
 
-class StrMaxlenException(Exception):
+class StrMaxlenException(BadRequestError):
     def __init__(self, maxlen):
         self.message = f"This string is too long, max len is {maxlen}"
 
 
-class StrMinlenException(Exception):
+class StrMinlenException(BadRequestError):
     def __init__(self, minlen):
         self.message = f"This string is too small, min len is {minlen}"
 
 
-class StrForbiddenException(Exception):
+class StrForbiddenException(BadRequestError):
     def __init__(self):
         self.message = "This string is forbidden"
 
 
-class StrAllowedException(Exception):
+class StrAllowedException(BadRequestError):
     def __init__(self):
         self.message = "This string isn't allowed"
 
 
-def isString(foo: any, **req):
+def isString(foo: any, req: dict[str, any]={}):
     """Check if the foo argument is a string class,
     throwing an NotStrException if not.
     req (requirements) is a dictionnary.
@@ -56,10 +59,13 @@ def isString(foo: any, **req):
         if foo not in allowed:
             raise (StrAllowedException)
         return foo
-    if (maxlen is not None) & (len(foo) > maxlen):
-        raise (StrMaxlenException)
-    if (minlen is not None) & (len(foo) < minlen):
-        raise (StrMinlenException)
-    if (forbidden is not None) & (foo in forbidden):
-        raise (StrForbiddenException)
+    if maxlen is not None:
+        if len(foo) > maxlen:
+            raise (StrMaxlenException(maxlen))
+    if minlen is not None:
+        if len(foo) < minlen:
+            raise (StrMinlenException(minlen))
+    if forbidden is not None:
+        if foo in forbidden:
+            raise (StrForbiddenException)
     return foo
