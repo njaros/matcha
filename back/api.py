@@ -3,7 +3,10 @@ from flask_cors import CORS
 from cryptography.fernet import Fernet
 import os
 from extensions import socketio
-from error_status.error import BadRequestError, InternalServerError, \
+from werkzeug.exceptions import BadRequestKeyError
+from error_status.error import BadRequestError, \
+    InternalServerError, \
+    handle_miss_key_error, \
     handle_bad_request_error, \
     handle_internal_server_error
 
@@ -43,6 +46,7 @@ from profile_module import app as profile_module
 from relationship import app as relationship_module
 
 app.register_error_handler(BadRequestError, handle_bad_request_error)
+app.register_error_handler(BadRequestKeyError, handle_miss_key_error)
 app.register_error_handler(InternalServerError, handle_internal_server_error)
 app.register_blueprint(login_module)
 app.register_blueprint(socket_app)
