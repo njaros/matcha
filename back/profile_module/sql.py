@@ -1,9 +1,11 @@
 from db_init import db_conn as conn
+from cryptography.fernet import Fernet
 import uuid
 from flask import current_app as app
 
 
 def insert_photos(**kwargs):
+    hasher = Fernet(app.config['SECRET_PHOTO'])
     query = """
         INSERT INTO photos
         (id, mime_type, binaries, main, user_id)
@@ -14,17 +16,17 @@ def insert_photos(**kwargs):
     if kwargs["photo_count"] == 0:
         start += 1
         cur.executemany(query, [[uuid.uuid1(),
-                             elt[0],
-                             elt[2],
-                             True,
-                             kwargs["user"]["id"]]
-                             for elt in kwargs["accepted"][0:start]])
+                                elt[0],
+                                hasher.encrypt(elt[2]),
+                                True,
+                                kwargs["user"]["id"]]
+                                for elt in kwargs["accepted"][0:start]])
     cur.executemany(query, [[uuid.uuid1(),
-                             elt[0],
-                             elt[2],
-                             False,
-                             kwargs["user"]["id"]]
-                             for elt in kwargs["accepted"][start:]])
+                            elt[0],
+                            hasher.encrypt(elt[2]),
+                            False,
+                            kwargs["user"]["id"]]
+                            for elt in kwargs["accepted"][start:]])
     conn.commit()
     cur.close()
 

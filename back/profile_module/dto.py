@@ -14,7 +14,7 @@ def image_dto(f):
         files = request.files.getlist("file[]")
         for file in files:
             MIME_TYPE = None
-            buffer = file.read()
+            buffer: bytearray = file.read()
             file.close()
             secure = buffer[0:4]
             match secure:
