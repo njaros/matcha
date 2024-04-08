@@ -19,6 +19,10 @@ def set_up_db():
                 username VARCHAR,
                 password VARCHAR,
                 email VARCHAR,
+                age INT,
+                gender VARCHAR,
+                pref VARCHAR,
+                biography VARCHAR,
                 rank INT
             )
         """)
@@ -62,7 +66,8 @@ def set_up_db():
                 binaries bytea,
                 main boolean,
                 user_id uuid,
-                FOREIGN KEY (user_id) REFERENCES user_table(id) ON DELETE CASCADE);
+                FOREIGN KEY (user_id) REFERENCES user_table(id)
+                ON DELETE CASCADE);
         """)
 
         cur.execute("""
