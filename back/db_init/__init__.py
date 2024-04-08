@@ -19,7 +19,7 @@ def set_up_db():
                 username VARCHAR,
                 password VARCHAR,
                 email VARCHAR,
-                age INT,
+                birthdate DATE,
                 gender VARCHAR,
                 preference VARCHAR,
                 biography VARCHAR,
