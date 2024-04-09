@@ -1,4 +1,4 @@
-from validators import str, int
+from validators import str, int, date
 from functools import wraps
 from flask import request
 
@@ -12,7 +12,7 @@ def signup_dto(f):
                                            "no_sp_char": True})
         kwargs["password"] = str.isString(request.form["password"])
         kwargs["email"] = str.isString(request.form["email"], {"max": 50, "no_sp_char": True})
-        kwargs["birthDate"] = int.isStrInt(request.form["birthDate"], {"min": 18, "max": 150})
+        kwargs["birthDate"] = date.isDate(request.form["birthDate"], {"yearMin": 18, "yearMax": 150})
         kwargs["gender"] = str.isString(request.form["gender"],
                                         {"allowed": ("man", "woman", "non-binary")})
         kwargs["preference"] = str.isString(request.form["preference"],
@@ -23,7 +23,6 @@ def signup_dto(f):
                                                          "man-nb",
                                                          "woman-nb",
                                                          "all")})
-        kwargs["biography"] = str.isString(request.form.get("biography"), {"max": 500})
+        kwargs["biography"] = str.isString(request.form.get("biography"), {"max": 500, "optionnal": True})
         return f(*args, **kwargs)
     return decorated
-

@@ -17,7 +17,7 @@ const Signup: React.FC = () => {
 		form.append("username", data.username);
 		form.append("email", data.email);
 		form.append("password", data.password);
-		form.append("birthdate", birthDate.toISOString().substring(0, 10));
+		form.append("birthDate", birthDate.toISOString().substring(0, 10));
 		form.append("gender", data.gender);
 		form.append("preference", data.preference);
 
