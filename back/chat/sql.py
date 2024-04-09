@@ -34,38 +34,89 @@ def insert_message(data):
     cur.close()
 
 
+def get_room(room_id):
+    cur = conn.cursor()
+    query = """
+            SELECT 
+                json_build_object(
+                    'id', room.id,
+                    'user_1_id', room.user_1,
+                    'user_2_id', room.user_2
+                )
+            FROM room
+            WHERE room.id = %s
+            """
+    cur.execute(query, (room_id,))
+    room = cur.fetchone()
+    if room is None:
+        raise NotFoundError('Room does not exist in database')
+    cur.close()
+    return room[0]
+
+
+
 def get_room_with_message(room_id):
     cur = conn.cursor()
     query = """
-        SELECT room.id AS room_id, 
-                room.user_1 AS user_1_id, 
-                room.user_2 AS user_2_id,
-                message.id AS message_id, 
-                message.content AS message_content, 
-                message.sender_id AS message_sender_id, 
-                message.send_at AS message_send_at
-        FROM room
-        LEFT JOIN message ON room.id = message.room_id
-        WHERE room.id = %s;
-        """
-    cur.execute(query, (room_id,))
-    results = cur.fetchall()
-    columns = [desc[0] for desc in cur.description]
-    room = {}
-    messages = []
-    for row in results:
-        row_as_dict = dict(zip(columns, row))
-        message = {
-            'message_id': row_as_dict['message_id'],
-            'message_content': row_as_dict['message_content'],
-            'message_sender_id': row_as_dict['message_sender_id'],
-            'message_send_at': row_as_dict['message_send_at']
-        }
-        messages.append(message)
+            SELECT
+                json_build_object(
+                    'room_id', %s,
+                    'user_1', (SELECT json_agg(
+                                json_build_object(
+                                    'id', user_table.id,
+                                    'username', user_table.username,
+                                    'email', user_table.email,
+                                    'rank', user_table.rank,
+                                    'age', user_table.age,
+                                    'gender', user_table.gender,
+                                    'biography', user_table.biography,
+                                    'pref', user_table.pref
+                                )
+                            )
+                            FROM user_table
+                            WHERE user_table.id = room.user_1 ),
 
-    room['room_id'] = row_as_dict['room_id']
-    room['user_1'] = user_sql.get_user_by_id(row_as_dict['user_1_id'])
-    room['user_2'] = user_sql.get_user_by_id(row_as_dict['user_2_id'])
-    room['messages'] = messages
+                    'user_2', (SELECT json_agg(
+                        json_build_object(
+                            'id', user_table.id,
+                            'username', user_table.username,
+                            'email', user_table.email,
+                            'rank', user_table.rank,
+                            'age', user_table.age,
+                            'gender', user_table.gender,
+                            'biography', user_table.biography,
+                            'pref', user_table.pref
+                        )
+                    )
+                    FROM user_table
+                    WHERE user_table.id = room.user_2 ),
+                    
+                    'messages', (
+                        SELECT json_agg(
+                            json_build_object(
+                                'message_id', message.id,
+                                'message_content', message.content,
+                                'message_sender_id', message.sender_id,
+                                'message_send_at', message.send_at,
+                                'message_author', (
+                                    SELECT user_table.username 
+                                    FROM user_table 
+                                    WHERE message.sender_id = user_table.id
+                                )
+                            )
+                        )
+                        FROM message
+                        WHERE message.room_id = %s 
+                    )
+                )
+            FROM 
+                room
+            WHERE 
+                room.id = %s
+            """
+    cur.execute(query, (room_id, room_id, room_id))
+    room = cur.fetchone()
+    if room is None:
+        raise NotFoundError('Room does not exist in database')
     cur.close()
-    return room
+    return room[0]
