@@ -11,7 +11,7 @@ import Home from "./components/HomeModule/Home";
 import Profile from "./components/ProfileModule/Profile";
 import Conversation from "./components/ConversationModule/Conversation";
 import Swipe from "./components/SwipeModule/Swipe";
-import { ChakraProvider, Box } from "@chakra-ui/react"
+import { ChakraProvider, Box, Flex } from "@chakra-ui/react"
 
 function App() {
 
@@ -41,7 +41,7 @@ function App() {
 
 	return (
 		<ChakraProvider>
-			<Box className="App" width="100%" height="100%">
+			<Box justifyContent="center" display="flex" className="App" width="100%" height="100%">
 					<BrowserRouter>
 						<Routes>
 							<Route element={ <Layout /> }>
