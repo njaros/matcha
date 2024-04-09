@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import DatePicker from "react-datepicker"
 import { useNavigate } from "react-router-dom";
 import { ISignUpForm } from "../../Interfaces";
+import { Select } from "@chakra-ui/react"
 import Axios from "../../tools/Caller";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -65,10 +66,14 @@ const Signup: React.FC = () => {
                 {...register("password", {required: true})}
                 type="text"
                 placeholder="Enter your password..." />
-				<input className="gender_input"
-                {...register("gender", {required: true})}
-                type="text"
-				placeholder="Enter your gender..." />
+				<Select
+				placeholder="Your gender"
+				size='lg'
+				{...register("gender", {required: true})}>
+					<option value="man">man</option>
+					<option value="woman">woman</option>
+					<option value="non-binary">non-binary</option>
+				</Select>
 				<input className="preference_input"
                 {...register("preference", {required: true})}
                 type="text"

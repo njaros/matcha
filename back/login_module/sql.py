@@ -19,7 +19,7 @@ def insert_new_user_in_database(sign_data):
                  sign_data.get("username"),
                  sign_data.get("password"),
                  sign_data.get("email"),
-                 sign_data.get("birthdate"),
+                 sign_data.get("birthDate"),
                  sign_data.get("gender"),
                  sign_data.get("preference"),
                  sign_data.get("biography"),

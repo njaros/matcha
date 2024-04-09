@@ -18,6 +18,8 @@
 		"axios": "^1.6.7",
 		"buffer": "^6.0.3",
 		"canvg": "^4.0.1",
+		"@chakra-ui/react": "^2.8.2",
+		"@chakra-ui/icon": "^3.2.0",
 		"dom-to-image": "^2.6.0",
 		"dotenv": "^16.4.4",
 		"jsonwebtoken": "^9.0.2",

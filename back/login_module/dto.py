@@ -26,3 +26,15 @@ def signup_dto(f):
         kwargs["biography"] = str.isString(request.form.get("biography"), {"max": 500, "optionnal": True})
         return f(*args, **kwargs)
     return decorated
+
+
+def login_dto(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        kwargs["username"] = str.isString(request.form["username"],
+                                          {"maxlen": 20,
+                                           "minlen": 3,
+                                           "no_sp_char": True})
+        kwargs["password"] = str.isString(request.form["password"])
+        return f(*args, **kwargs)
+    return decorated
