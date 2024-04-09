@@ -20,11 +20,11 @@ def get_user_by_id(user_id):
             WHERE user_table.id = %s;
             """
     cur.execute(query, (user_id,))
-    user = cur.fetchone()[0]
+    user = cur.fetchone()
     if user is None:
         return None
     cur.close()
-    return user
+    return user[0]
 
 
 def get_user_by_username(username):
@@ -45,11 +45,11 @@ def get_user_by_username(username):
             WHERE user_table.username = %s;
             """
     cur.execute(query, (username,))
-    user = cur.fetchone()[0]
+    user = cur.fetchone()
     if user is None:
         return None
     cur.close()
-    return user
+    return user[0]
 
 
 def get_user_with_room(user_id):
@@ -78,11 +78,11 @@ def get_user_with_room(user_id):
             WHERE user_table.id = %s
             """
     cur.execute(query, (user_id,))
-    res = cur.fetchone()[0]
+    res = cur.fetchone()
     if res is None:
         raise NotFoundError('This user does not exist in database')
     cur.close()
-    return res
+    return res[0]
     
 
 def get_user_with_room_and_message(user_id):
@@ -130,8 +130,8 @@ def get_user_with_room_and_message(user_id):
                 user_table.id = %s;
             """
     cur.execute(query, (user_id,))
-    res = cur.fetchone()[0]
+    res = cur.fetchone()
     if res is None:
         raise NotFoundError('This user does not exist in database')
     cur.close()
-    return res
+    return res[0]
