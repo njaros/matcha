@@ -33,8 +33,8 @@ def add_room():
 def get_room_with_message():
     return chat_sql.get_room_with_message(request.form.get('room_id'))
 
+
 def get_message():
     room = get_room_with_message()
     return room['messages'], 200
 
-    
