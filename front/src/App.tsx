@@ -11,6 +11,7 @@ import Home from "./components/HomeModule/Home";
 import Profile from "./components/ProfileModule/Profile";
 import Conversation from "./components/ConversationModule/Conversation";
 import Swipe from "./components/SwipeModule/Swipe";
+import { ChakraProvider, Box } from "@chakra-ui/react"
 
 function App() {
 
@@ -39,22 +40,24 @@ function App() {
 	},[userId]) 
 
 	return (
-		<div className="App">
-			<BrowserRouter>
-				<Routes>
-					<Route element={ <Layout /> }>
-						<Route path="/login" element={ tokenReader.isLogged() ? <Navigate to="/" /> : (<Login />) } />
-						<Route path="/signUp" element={ tokenReader.isLogged() ? <Navigate to="/" /> : (<Signup />) } />
-						<Route element={<ProtectedRoutes />}>
-							<Route path="/" element={ <Home />} />
-							<Route path="/profile" element={ <Profile />} />
-							<Route path="/conversation" element={ <Conversation />} />
-							<Route path="/swipe" element={ <Swipe/> } />
-						</Route>
-					</Route>
-				</Routes>
-			</BrowserRouter>
-		</div>
+		<ChakraProvider>
+			<Box className="App" width="100%" height="100%">
+					<BrowserRouter>
+						<Routes>
+							<Route element={ <Layout /> }>
+								<Route path="/login" element={ tokenReader.isLogged() ? <Navigate to="/" /> : (<Login />) } />
+								<Route path="/signUp" element={ tokenReader.isLogged() ? <Navigate to="/" /> : (<Signup />) } />
+								<Route element={<ProtectedRoutes />}>
+									<Route path="/" element={ <Home />} />
+									<Route path="/profile" element={ <Profile />} />
+									<Route path="/conversation" element={ <Conversation />} />
+									<Route path="/swipe" element={ <Swipe/> } />
+								</Route>
+							</Route>
+						</Routes>
+					</BrowserRouter>
+			</Box>
+		</ChakraProvider>
 		)
 }
 

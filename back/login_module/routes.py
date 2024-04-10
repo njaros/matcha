@@ -17,12 +17,11 @@ def sign(**kwargs):
     return [], 201
 
 
-def login():
-    login_data = {}
-    login_data["username"] = request.form["username"]
-    login_data["password"] = hashlib.sha256(request.form["password"]
+@dto.login_dto
+def login(**kwargs):
+    kwargs["password"] = hashlib.sha256(kwargs["password"]
                                             .encode("utf-8")).hexdigest()
-    returned_id = login_ctx.login_user_in_database(login_data)
+    returned_id = login_ctx.login_user_in_database(kwargs)
     if returned_id is not None:
         current_app.logger.info(returned_id)
         return jsonify({"access_token": jwt_policy

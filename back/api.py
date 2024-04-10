@@ -3,7 +3,12 @@ from flask_cors import CORS
 from cryptography.fernet import Fernet
 import os
 from extensions import socketio
-from error_status.error import BadRequestError, InternalServerError, NotFoundError , ForbiddenError, \
+from werkzeug.exceptions import BadRequestKeyError
+from error_status.error import BadRequestError, \
+    InternalServerError, \
+    NotFoundError , \
+    ForbiddenError, \
+    handle_miss_key_error, \
     handle_bad_request_error, \
     handle_internal_server_error, \
     handle_not_found_error, \
@@ -45,11 +50,6 @@ from profile_module import app as profile_module
 from relationship import app as relationship_module
 from user_module import app as user_module
 
-app.register_error_handler(BadRequestError, handle_bad_request_error)
-app.register_error_handler(InternalServerError, handle_internal_server_error)
-app.register_error_handler(InternalServerError, handle_not_found_error)
-app.register_error_handler(ForbiddenError, handle_forbidden_error)
-app.register_error_handler(NotFoundError, handle_not_found_error)
 app.register_blueprint(login_module)
 app.register_blueprint(socket_app)
 app.register_blueprint(jwt_module)
@@ -58,6 +58,15 @@ app.register_blueprint(app3)
 app.register_blueprint(profile_module)
 app.register_blueprint(relationship_module)
 app.register_blueprint(user_module)
+
+# error management
+
+app.register_error_handler(BadRequestError, handle_bad_request_error)
+app.register_error_handler(InternalServerError, handle_internal_server_error)
+app.register_error_handler(InternalServerError, handle_not_found_error)
+app.register_error_handler(ForbiddenError, handle_forbidden_error)
+app.register_error_handler(NotFoundError, handle_not_found_error)
+app.register_error_handler(BadRequestKeyError, handle_miss_key_error)
 
 if __name__ == "__main__":
     port = int(os.environ.get('SERVER_PORT'))

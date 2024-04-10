@@ -8,8 +8,7 @@ const Header = () => {
 	const setRefreshToken = storeRefresh(state => state.updateRefreshToken);
     const navigate = useNavigate();
     const location = useLocation();
-
-    
+ 
     const logout = () => {
 		if (refreshTokenTimeoutId != undefined)
 		{

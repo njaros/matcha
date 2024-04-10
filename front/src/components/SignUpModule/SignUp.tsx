@@ -1,19 +1,29 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { NavLink, useNavigate } from "react-router-dom";
+import DatePicker from "react-datepicker"
+import { useNavigate } from "react-router-dom";
 import { ISignUpForm } from "../../Interfaces";
+import { Select } from "@chakra-ui/react"
 import Axios from "../../tools/Caller";
+import "react-datepicker/dist/react-datepicker.css";
 
 const Signup: React.FC = () => {
 	const navigate = useNavigate();
 	const { register, handleSubmit } = useForm<ISignUpForm>();
 	const [ errorMsg, setErrorMsg ] = useState<string>("");
+	const [ birthDate, setBirthDate ] = useState<Date>(new Date());
 
 	const signupSubmit = (data: ISignUpForm) => {
 		const form = new FormData();
 		form.append("username", data.username);
 		form.append("email", data.email);
 		form.append("password", data.password);
+		form.append("birthDate", birthDate.toISOString().substring(0, 10));
+		form.append("gender", data.gender);
+		form.append("preference", data.preference);
+
+		console.log(birthDate.toISOString().substring(0, 10));
+
 		Axios.post("sign", form).then(
 			response => {
 				if (response.status == 201)
@@ -56,6 +66,19 @@ const Signup: React.FC = () => {
                 {...register("password", {required: true})}
                 type="text"
                 placeholder="Enter your password..." />
+				<Select
+				placeholder="Your gender"
+				size='lg'
+				{...register("gender", {required: true})}>
+					<option value="man">man</option>
+					<option value="woman">woman</option>
+					<option value="non-binary">non-binary</option>
+				</Select>
+				<input className="preference_input"
+                {...register("preference", {required: true})}
+                type="text"
+				placeholder="You are searching for..." />
+				<DatePicker selected={birthDate} onChange={(date: Date)=>{setBirthDate(date)}} dateFormat="dd/MM/yyyy" />
                 <button className="submit_button" type="submit">SUBMIT</button>
 			</form>
 			{ errorMsg != "" && <p> {errorMsg} </p> }
