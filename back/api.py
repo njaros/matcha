@@ -6,9 +6,13 @@ from extensions import socketio
 from werkzeug.exceptions import BadRequestKeyError
 from error_status.error import BadRequestError, \
     InternalServerError, \
+    NotFoundError , \
+    ForbiddenError, \
     handle_miss_key_error, \
     handle_bad_request_error, \
-    handle_internal_server_error
+    handle_internal_server_error, \
+    handle_not_found_error, \
+    handle_forbidden_error
 
 # create primary Flask app
 
@@ -44,6 +48,7 @@ from jwt_policy import app as jwt_module
 from token_required_test_module import app as app3
 from profile_module import app as profile_module
 from relationship import app as relationship_module
+from user_module import app as user_module
 
 app.register_blueprint(login_module)
 app.register_blueprint(socket_app)
@@ -52,12 +57,16 @@ app.register_blueprint(chat_module)
 app.register_blueprint(app3)
 app.register_blueprint(profile_module)
 app.register_blueprint(relationship_module)
+app.register_blueprint(user_module)
 
 # error management
 
 app.register_error_handler(BadRequestError, handle_bad_request_error)
-app.register_error_handler(BadRequestKeyError, handle_miss_key_error)
 app.register_error_handler(InternalServerError, handle_internal_server_error)
+app.register_error_handler(InternalServerError, handle_not_found_error)
+app.register_error_handler(ForbiddenError, handle_forbidden_error)
+app.register_error_handler(NotFoundError, handle_not_found_error)
+app.register_error_handler(BadRequestKeyError, handle_miss_key_error)
 
 if __name__ == "__main__":
     port = int(os.environ.get('SERVER_PORT'))

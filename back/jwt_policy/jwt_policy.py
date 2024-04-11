@@ -3,7 +3,7 @@ import jwt
 from datetime import datetime, timezone, timedelta
 from flask import request, current_app as app
 from flask_restful import abort
-from common_sql_requests.user_context import sql
+from user_module import sql
 
 
 def token_required(f):

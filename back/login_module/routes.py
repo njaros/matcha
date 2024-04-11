@@ -2,7 +2,7 @@ from flask import request, current_app, jsonify
 import hashlib
 from jwt_policy import jwt_policy
 from login_module import sql as login_ctx
-from common_sql_requests.user_context import sql as user_ctx
+from user_module import sql as user_ctx
 from error_status.error import BadRequestError
 from . import dto
 

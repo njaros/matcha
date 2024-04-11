@@ -35,4 +35,3 @@ def get_message():
     room = get_room_with_message()
     return room['messages'], 200
 
-    
