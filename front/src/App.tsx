@@ -1,7 +1,7 @@
 import { Routes, Route, BrowserRouter, Navigate, useNavigate } from "react-router-dom";
 import ProtectedRoutes from "./components/ProtectedRoutes"
 import Layout from "./components/LayoutModules/Layout";
-import { readPayload, tokenReader, getToken} from "./tools/TokenReader";
+import { tokenReader, getToken} from "./tools/TokenReader";
 import { useEffect, useState } from "react";
 import { Socket, io } from 'socket.io-client';
 import { storeSocket } from "./tools/Stores";
@@ -11,7 +11,7 @@ import Home from "./components/HomeModule/Home";
 import Profile from "./components/ProfileModule/Profile";
 import Conversation from "./components/ConversationModule/Conversation";
 import Swipe from "./components/SwipeModule/Swipe";
-import { ChakraProvider, Box, Flex } from "@chakra-ui/react"
+import { ChakraProvider, Box } from "@chakra-ui/react"
 
 function App() {
 
@@ -41,7 +41,9 @@ function App() {
 
 	return (
 		<ChakraProvider>
-			<Box justifyContent="center" display="flex" className="App" width="100%" height="100%">
+			<Box	display="flex" justifyContent="center"
+					width="100%" height="100%"
+					overflowX="auto" overflowY="auto">
 					<BrowserRouter>
 						<Routes>
 							<Route element={ <Layout /> }>
