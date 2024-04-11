@@ -10,16 +10,24 @@ def insert_room(data):
     cur = conn.cursor()
     room_id = uuid.uuid1()
     app.logger.info(data)
-    cur.execute("INSERT INTO room (\
-                id,\
-                user_1,\
-                user_2)\
-                VALUES (%s, %s, %s);",(
-                    room_id,
-                    data.get('user_id1'),
-                    data.get('user_id2')))
+    query = """
+            INSERT INTO room (
+                id,
+                user_1,
+                user_2
+            )
+            VALUES (%s, %s, %s)
+            RETURNING json_build_object(
+                'id', id,
+                'user_1', user_1,
+                'user_2', user_2
+            );
+            """
+    cur.execute(query, (room_id, data.get('user_id1'), data.get('user_id2')))
+    room = cur.fetchone()
     conn.commit()
     cur.close()
+    return room[0]
 
 def room_exists(user1_id, user2_id):
     cur = conn.cursor()
@@ -68,12 +76,13 @@ def get_room(room_id):
     return room[0]
 
 
+
 def get_room_with_message(room_id):
     cur = conn.cursor()
     query = """
             SELECT
                 json_build_object(
-                    'room_id', message.id,
+                    'room_id', %s,
                     'user_1', (SELECT json_agg(
                                 json_build_object(
                                     'id', user_table.id,
@@ -126,9 +135,8 @@ def get_room_with_message(room_id):
                 room
             WHERE 
                 room.id = %s
-
             """
-    cur.execute(query, (room_id, room_id))
+    cur.execute(query, (room_id, room_id, room_id))
     room = cur.fetchone()
     if room is None:
         raise NotFoundError('Room does not exist in database')

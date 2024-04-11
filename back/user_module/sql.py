@@ -15,7 +15,7 @@ def get_user_by_username(username):
                     'birthDate', user_table.birthDate,
                     'gender', user_table.gender,
                     'biography', user_table.biography,
-                    'pref', user_table.pref
+                    'preference', user_table.preference
                 )
             FROM user_table
             WHERE user_table.username = %s;

@@ -1,20 +1,58 @@
 from flask import request, current_app
 from relationship import sql as relationship_sql
-
-def get_relationship_by_id():
-    return relationship_sql.get_relationship_by_id(request.form.get('id'))
-
-
-def get_relationship_by_liker_id():
-    return relationship_sql.get_relationship_by_liker_id(request.form.get('liker_id'))
+from jwt_policy.jwt_policy import token_required
+from validators import uuid
+from error_status.error import ForbiddenError
+from chat.sql import insert_room
 
 
-def get_relationship_by_liked_id():
-    return relationship_sql.get_relationship_by_liked_id(request.form.get('liked_id'))
+@token_required
+def get_relationship_by_id(**kwargs):
+    rel = relationship_sql.get_relationship_by_id(uuid.isUuid(request.form.get('id')))
+    if rel['liker_id'] == kwargs['user']['id'] or \
+        rel['liked_id'] == kwargs['user']['id']:
+        return rel
+    raise ForbiddenError('You cannot acces to this information.')
 
-def is_matched():
+
+@token_required
+def get_relationship_by_liker_id(**kwargs):
+    rel = relationship_sql.get_relationship_by_liker_id(uuid.isUuid(request.form.get('id')))
+    if rel['liker_id'] == kwargs['user']['id'] or \
+        rel['liked_id'] == kwargs['user']['id']:
+        return rel
+    raise ForbiddenError('You cannot acces to this information.')
+
+
+@token_required
+def get_relationship_by_liked_id(**kwargs):
+    rel = relationship_sql.get_relationship_by_liked_id(uuid.isUuid(request.form.get('id')))
+    if rel['liker_id'] == kwargs['user']['id'] or \
+        rel['liked_id'] == kwargs['user']['id']:
+        return rel
+    raise ForbiddenError('You cannot acces to this information.')
+
+
+@token_required
+def is_matched(**kwargs):
     data = {
-        "liker_id": request.form.get('liker_id'),
-        "liked_id": request.form.get('liked_id')
+        "liker_id": request.form['liker_id'],
+        "liked_id": request.form['liked_id']
     }
-    return relationship_sql.is_matched(data)
+    is_matched = relationship_sql.is_matched(data)
+    if is_matched['liker_id'] == kwargs['user']['id'] or \
+        is_matched['liked_id'] == kwargs['user']['id']:
+        return 'success'
+    raise ForbiddenError('You cannot acces to this information.')
+
+
+@token_required
+def create_room_when_user_are_matched(**kwargs):
+    if is_matched() == 'success':
+        return insert_room(
+            {
+                'user_id1': request.form['liker_id'], 
+                'user_id2': request.form['liked_id']
+            })
+        
+     

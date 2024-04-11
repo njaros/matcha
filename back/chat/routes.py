@@ -5,6 +5,7 @@ from chat import sql as chat_sql
 from user_module import sql as user_sql
 from validators import uuid
 
+#verifier si la personne qui ajoute le message est dans la room
 def add_message():
     
     chat_sql.insert_message(data = {
