@@ -2,6 +2,7 @@ from flask import request, jsonify, current_app as app
 from functools import wraps
 from .sql import count_photos_by_user_id as count
 from error_status.error import *
+from validators import str
 
 
 def image_dto(f):
@@ -36,5 +37,13 @@ def image_dto(f):
                 raise(BadRequestError("no file"))
         kwargs["accepted"] = accepted_files
         kwargs["denied"] = denied_files
+        return f(*args, **kwargs)
+    return decorated
+
+
+def bio_dto(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        kwargs["biography"] = str.isString(request.form["biography"], {"maxlen": 500})
         return f(*args, **kwargs)
     return decorated

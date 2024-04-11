@@ -2,14 +2,15 @@ from jwt_policy.jwt_policy import token_required
 import base64
 from cryptography.fernet import Fernet
 from flask import jsonify, request, current_app as app
-from .dto import image_dto
+from .dto import image_dto, bio_dto
 from error_status.error import BadRequestError
 from .sql import insert_photos, \
     get_photo_by_id, \
     get_photos_by_user_id, \
     set_a_main_photo, \
     delete_photo_by_id, \
-    change_main_photo_by_ids
+    change_main_photo_by_ids, \
+    change_user_biography_by_id
 
 
 @token_required
@@ -71,3 +72,9 @@ def change_main_photo(**kwargs):
         raise (BadRequestError("that photo isn't belong to you"))
     change_main_photo_by_ids(current_main_id, future_main_id)
     return [], 200
+
+
+@token_required
+@bio_dto
+def change_biography(**kwargs):
+    change_user_biography_by_id(**kwargs)

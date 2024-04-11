@@ -74,10 +74,18 @@ const Signup: React.FC = () => {
 					<option value="woman">woman</option>
 					<option value="non-binary">non-binary</option>
 				</Select>
-				<input className="preference_input"
-                {...register("preference", {required: true})}
-                type="text"
-				placeholder="You are searching for..." />
+				<Select
+				placeholder="Your preference"
+				size='lg'
+				{...register("preference", {required: true})}>
+					<option value="man">man</option>
+					<option value="woman">woman</option>
+					<option value="non-binary">non-binary</option>
+					<option value="man-woman">man or woman</option>
+					<option value="man-nb">man or non-binary</option>
+					<option value="woman-nb">woman or non-binary</option>
+					<option value="all">no preference</option>
+				</Select>
 				<DatePicker selected={birthDate} onChange={(date: Date)=>{setBirthDate(date)}} dateFormat="dd/MM/yyyy" />
                 <button className="submit_button" type="submit">SUBMIT</button>
 			</form>

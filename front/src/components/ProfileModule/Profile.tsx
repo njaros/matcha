@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Axios from "../../tools/Caller";
-import { IPhoto } from "../../Interfaces";
+import { IPhoto , IUser} from "../../Interfaces";
+import { Box, Textarea } from "@chakra-ui/react"
 
 function displayListAccepted(props: string[])
 {
@@ -22,10 +23,11 @@ const Profile = () => {
     const [files, setFiles] = useState<FileList | null>(null);
     const [accepted, setAccepted] = useState<string[]>([]);
     const [denied, setDenied] = useState<{"filename": string, "reason": string}[]>([]);
-    const [errorMsg, setErrorMsg] = useState<string>("");
+    const [errorMsg, setErrorMsg] = useState<{"section": string, "message": string}>({"section": "", "message": ""});
     const [photos, setPhotos] = useState<IPhoto[]>([]);
     const [onMount, setOnMount] = useState<boolean>(true);
     const [boolReactBug, setBoolReactBug] = useState<boolean>(true);
+    const [user, setUser] = useState<IUser>();
 
     function getPhotos()
     {
@@ -51,6 +53,33 @@ const Profile = () => {
         }
         ).catch(
             error => {
+                if (error.response.data.message != undefined)
+                    setErrorMsg({   "section": "photos", 
+                                    "message": error.response.data.message});
+                else
+                    setErrorMsg({   "section": "photos",
+                                    "message": "unhandled error "
+                                                    .concat(error.response.status.toString())});
+                console.log(error);
+            }
+        )
+    }
+
+    function getUserProfile()
+    {
+        Axios.get("get_user_by_id").then(
+            response => {
+                setUser(response.data);
+            }
+        ).catch(
+            error => {
+                if (error.response.data.message != undefined)
+                    setErrorMsg({   "section": "getUserProfile", 
+                                    "message": error.response.data.message});
+                else
+                    setErrorMsg({   "section": "getUserProfile",
+                                    "message": "unhandled error "
+                                                    .concat(error.response.status.toString())});
                 console.log(error);
             }
         )
@@ -60,6 +89,7 @@ const Profile = () => {
         if (onMount == true)
         {
             getPhotos();
+            getUserProfile();
             setOnMount(false);    
         }
         else
@@ -91,7 +121,7 @@ const Profile = () => {
                 }
             }).then(
                 response => {
-                    setErrorMsg("");
+                    setErrorMsg({"message": "", "section": ""});
                     setAccepted(response.data.accepted);
                     setDenied(response.data.denied);
                 }
@@ -188,17 +218,26 @@ const Profile = () => {
     }
 
     return (
-        <div>
+        <Box    display="flex" flexDirection="column"
+                width="100%" height="100%">
             <h1>PROFILE PAGE</h1>
-            <form onSubmit={onSubmit}>
-                <input type="file" name="file[]" onChange={onChangeFile} multiple required/>
-                <button type="submit">Envoi</button>
-                {errorMsg ? <div className="errorMsg">{errorMsg}</div> : null}
-                {accepted.length ? <div className="acceptedFiles">succesfully upload : {displayListAccepted(accepted)}</div> : null}
-                {denied.length ? <div className="deniedFiles">failed to upload : {displayListDenied(denied)}</div> : null}
-            </form>
-            {displayListPhotos(photos)}
-        </div>
+            {user?
+            <Box>
+                <h1>BIOGRAPHY SECTION</h1>
+                <Textarea>{user.biography}</Textarea>
+            </Box> : null}
+            <Box>
+                <h1>PHOTOS SECTION</h1>
+                <form onSubmit={onSubmit}>
+                    <input type="file" name="file[]" onChange={onChangeFile} multiple required/>
+                    <button type="submit">Envoi</button>
+                    {errorMsg.section == "photos" ? <div className="errorMsg">{errorMsg.message}</div> : null}
+                    {accepted.length ? <div className="acceptedFiles">succesfully upload : {displayListAccepted(accepted)}</div> : null}
+                    {denied.length ? <div className="deniedFiles">failed to upload : {displayListDenied(denied)}</div> : null}
+                </form>
+                {displayListPhotos(photos)}
+            </Box>
+        </Box>
     );
 }
 

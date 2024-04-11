@@ -18,7 +18,7 @@ def signup_dto(f):
         kwargs["preference"] = str.isString(request.form["preference"],
                                             {"allowed": ("man",
                                                          "woman",
-                                                         "non-binay",
+                                                         "non-binary",
                                                          "man-woman",
                                                          "man-nb",
                                                          "woman-nb",

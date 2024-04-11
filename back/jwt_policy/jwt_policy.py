@@ -3,7 +3,7 @@ import jwt
 from datetime import datetime, timezone, timedelta
 from flask import request, current_app as app
 from flask_restful import abort
-from user_module import sql
+from .sql import get_user_by_id
 
 
 def token_required(f):
@@ -20,7 +20,7 @@ def token_required(f):
             expDate = data.get("exp")
             if expDate is None:
                 abort(401, "token expiration date is expired")
-            kwargs["user"] = sql.get_user_by_id(data["user_id"])
+            kwargs["user"] = get_user_by_id(data["user_id"])
             if kwargs["user"] is None:
                 abort(401, "user not found")
         except jwt.exceptions.InvalidTokenError:

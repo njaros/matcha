@@ -2,7 +2,6 @@ from db_init import db_conn as conn
 from flask import current_app as app
 import uuid
 from error_status.error import NotFoundError
-from user_module.sql import get_user_by_id
 from chat.sql import insert_room
 
 def insert_liker_and_liked(data):

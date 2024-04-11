@@ -4,6 +4,9 @@ import uuid
 from flask import current_app as app
 
 
+# -------------- PHOTOS ----------------
+
+
 def insert_photos(**kwargs):
     hasher = Fernet(app.config['SECRET_PHOTO'])
     query = """
@@ -130,3 +133,33 @@ def change_main_photo_by_ids(current_main_id, future_main_id):
                 (future_main_id,))
     conn.commit()
     cur.close()
+
+
+# -------------- BIOGRAPHY -----------------
+
+
+def change_user_biography_by_id(**kwargs):
+    cur = conn.cursor()
+    cur.execute("""
+                UPDATE user_table
+                SET biography = %s
+                WHERE id = %s;
+                """,
+                (kwargs["biography"], kwargs["user"]["id"]))
+    conn.commit()
+    cur.close()
+
+
+def get_user_biography_by_id(**kwargs):
+    cur = conn.cursor()
+    cur.execute("""
+                SELECT biography
+                FROM user_table
+                WHERE id = %s;
+                """,
+                (kwargs["user"]["id"],))
+    res = cur.fetchone()
+    cur.close()
+    if res in None:
+        return ""
+    return res[0]
