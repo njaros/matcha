@@ -19,3 +19,15 @@ export interface IPhoto
 	htmlSrcImg: string,
 	main: boolean
 }
+
+export interface IUser
+{
+	id: string,
+	username: string,
+	email: string,
+	rank: number,
+	birthDate: string,
+	gender: string,
+	biography: string,
+	preference: string
+}

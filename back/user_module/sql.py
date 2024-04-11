@@ -2,30 +2,6 @@ from db_init import db_conn as conn
 from error_status.error import NotFoundError
 from flask import current_app as app
 
-def get_user_by_id(user_id):
-    cur = conn.cursor()
-    query = """
-            SELECT
-                json_build_object(
-                    'id', user_table.id,
-                    'username', user_table.username,
-                    'email', user_table.email,
-                    'rank', user_table.rank,
-                    'age', user_table.age,
-                    'gender', user_table.gender,
-                    'biography', user_table.biography,
-                    'pref', user_table.pref
-                )
-            FROM user_table
-            WHERE user_table.id = %s;
-            """
-    cur.execute(query, (user_id,))
-    user = cur.fetchone()
-    if user is None:
-        return None
-    cur.close()
-    return user[0]
-
 
 def get_user_by_username(username):
     cur = conn.cursor()
@@ -36,7 +12,7 @@ def get_user_by_username(username):
                     'username', user_table.username,
                     'email', user_table.email,
                     'rank', user_table.rank,
-                    'age', user_table.age,
+                    'birthDate', user_table.birthDate,
                     'gender', user_table.gender,
                     'biography', user_table.biography,
                     'pref', user_table.pref
@@ -52,8 +28,8 @@ def get_user_by_username(username):
     return user[0]
 
 
-def get_user_with_room(user_id):
-    if get_user_by_id(user_id) is None:
+def get_user_with_room(user):
+    if user is None:
         raise NotFoundError('This user does not exist in database')
     cur = conn.cursor()
     query = """
@@ -77,7 +53,7 @@ def get_user_with_room(user_id):
             FROM user_table
             WHERE user_table.id = %s
             """
-    cur.execute(query, (user_id,))
+    cur.execute(query, (user['id'],))
     res = cur.fetchone()
     if res is None:
         raise NotFoundError('This user does not exist in database')
@@ -85,8 +61,8 @@ def get_user_with_room(user_id):
     return res[0]
     
 
-def get_user_with_room_and_message(user_id):
-    if get_user_by_id(user_id) is None:
+def get_user_with_room_and_message(user):
+    if user is None:
         raise NotFoundError('This user does not exist in database')
     cur = conn.cursor()
     query = """
@@ -129,7 +105,7 @@ def get_user_with_room_and_message(user_id):
             WHERE
                 user_table.id = %s;
             """
-    cur.execute(query, (user_id,))
+    cur.execute(query, (user["id"],))
     res = cur.fetchone()
     if res is None:
         raise NotFoundError('This user does not exist in database')
