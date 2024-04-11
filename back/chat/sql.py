@@ -68,13 +68,12 @@ def get_room(room_id):
     return room[0]
 
 
-
 def get_room_with_message(room_id):
     cur = conn.cursor()
     query = """
             SELECT
                 json_build_object(
-                    'room_id', %s,
+                    'room_id', message.id,
                     'user_1', (SELECT json_agg(
                                 json_build_object(
                                     'id', user_table.id,
@@ -127,8 +126,9 @@ def get_room_with_message(room_id):
                 room
             WHERE 
                 room.id = %s
+
             """
-    cur.execute(query, (room_id, room_id, room_id))
+    cur.execute(query, (room_id, room_id))
     room = cur.fetchone()
     if room is None:
         raise NotFoundError('Room does not exist in database')
