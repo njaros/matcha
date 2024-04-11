@@ -18,8 +18,8 @@ const ProtectedRoutes: React.FC = () => {
     const askNewTokens = () =>
     {
         const form = new FormData();
-        form.append("access_token", access);
         form.append("refresh_token", refreshToken);
+        console.log("refresh token = ", refreshToken)
         Axios.post("/refresh", form)
         .then(
             response => {
