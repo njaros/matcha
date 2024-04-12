@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import Axios from "../../tools/Caller";
 import { IPhoto , IUser} from "../../Interfaces";
-import { Box, Textarea, List, ListItem, Image, Button } from "@chakra-ui/react"
+import { Box, Textarea, List, ListItem, Image, Button, FormControl, Input, Text, Center } from "@chakra-ui/react"
+import { useForm } from "react-hook-form";
+import { isStringNotUndefinedOrEmpty } from "../../tools/Thingy";
 
 function displayListAccepted(props: string[])
 {
@@ -28,6 +30,8 @@ const Profile = () => {
     const [onMount, setOnMount] = useState<boolean>(true);
     const [boolReactBug, setBoolReactBug] = useState<boolean>(true);
     const [user, setUser] = useState<IUser>();
+    const [readOnly, setReadOnly] = useState<boolean>(true);
+    const { register, handleSubmit, reset, resetField } = useForm<IUser>();
 
     function getPhotos()
     {
@@ -90,7 +94,7 @@ const Profile = () => {
         {
             getPhotos();
             getUserProfile();
-            setOnMount(false);    
+            setOnMount(false);
         }
         else
         {
@@ -203,6 +207,11 @@ const Profile = () => {
         setDenied([]);
     }
 
+    const toggleReadonly = () =>
+    {
+        setReadOnly(!readOnly);
+    }
+
     function displayListPhotos(props: IPhoto[])
     {
         const list = props.map((photo: IPhoto) => {
@@ -217,27 +226,73 @@ const Profile = () => {
         return (<List className="photosList">{list}</List>);
     }
 
+    const InputUser = (props: {readonly: boolean, val: string, title: "email" | "username" | "birthDate" | "gender" | "biography" | "preference"}) => {
+        return (
+            <Box display="flex" flexDirection="row" justifyContent="flex-start" alignItems="center">
+                <Text width="30%" marginRight="5%" textOverflow="ellipsis" overflow="hidden" whiteSpace="nowrap">Your {props.title}</Text>
+                {props.readonly ?
+                <Input margin="4px" readOnly value={props.val}/> :
+                <Input margin="4px" {...register(props.title)} />
+                }
+            </Box>
+        )
+    }
+
+    const profileSubmit = (data: IUser) => {
+        console.log("data = ", data);
+        const form = new FormData();
+        if (isStringNotUndefinedOrEmpty(data.username))
+            form.append("username", data.username);
+        if (isStringNotUndefinedOrEmpty(data.email))
+            form.append("email", data.email);
+        if (isStringNotUndefinedOrEmpty(data.birthDate))
+            form.append("birthDate", data.birthDate);
+        if (isStringNotUndefinedOrEmpty(data.biography))
+            form.append("biography", data.biography);
+        if (isStringNotUndefinedOrEmpty(data.gender))
+            form.append("gender", data.gender);
+        if (isStringNotUndefinedOrEmpty(data.preference))
+        form.append("preference", data.preference);
+        Axios.post("update_user", form).then(
+            response => {
+                
+                console.log(response);
+            }
+        ).catch(
+            error => {
+                console.log(error);
+            }
+        )
+    }
+
     return (
         <Box    display="flex" flexDirection="column"
                 width="100%" height="100%">
-            <h1>PROFILE PAGE</h1>
+            <Center fontSize="xxx-large">PROFILE PAGE</Center>
             {user?
-            <Box>
-                <Box margin = "5%">
-                    <h1>USER INFO SECTION</h1>
-                    <List margin="5%">
-                        <ListItem>Your username : {user.username}</ListItem>
-                        <ListItem>Your email : {user.email}</ListItem>
-                        <ListItem>Your birth date : {user.birthDate}</ListItem>
-                        <ListItem>Your are a {user.gender}</ListItem>
-                        <ListItem>Your are looking for {user.preference}</ListItem>
-                    </List>
-                </Box>
-                <Box margin = "5%">
-                    <h1>BIOGRAPHY SECTION</h1>
-                    <Textarea margin = "5%">{user.biography}</Textarea>
-                </Box>
-            </Box>
+            <form onSubmit={handleSubmit(profileSubmit)}>
+                <FormControl    display="flex" flexDirection="column">
+                    <Box margin = "5%">
+                        <Center marginBottom="5%">ACCOUNT INFO</Center>
+                        <InputUser readonly={readOnly} val={user.username} title="username"/>
+                        <InputUser readonly={readOnly} val={user.email} title="email"/>
+                        <InputUser readonly={readOnly} val={user.birthDate} title="birthDate"/>
+                        <InputUser readonly={readOnly} val={user.gender} title="gender"/>
+                        <InputUser readonly={readOnly} val={user.preference} title="preference"/>
+                    </Box>
+                    <Box margin = "5%">
+                        <Center>Your Biography</Center>
+                        <Textarea readOnly={readOnly} margin = "5%" defaultValue={user.biography}/>
+                    </Box>
+                    {readOnly?
+                    <Button onClick={toggleReadonly}>Modify profile</Button> :
+                    <Box display="flex" >
+                        <Button width="80%" onClick={toggleReadonly}>Cancel</Button>
+                        <Button marginLeft="5%" width="15%" type="submit">Send</Button>
+                    </Box>
+                    }
+                </FormControl>
+            </form>
             : null}
             <Box margin="5%">
                 <h1>PHOTOS SECTION</h1>
