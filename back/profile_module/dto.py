@@ -2,7 +2,7 @@ from flask import request, jsonify, current_app as app
 from functools import wraps
 from .sql import count_photos_by_user_id as count
 from error_status.error import *
-from validators import str
+from validators import str, date
 
 
 def image_dto(f):
@@ -45,5 +45,39 @@ def bio_dto(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         kwargs["biography"] = str.isString(request.form["biography"], {"maxlen": 500})
+        return f(*args, **kwargs)
+    return decorated
+
+
+def update_user_dto(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        kwargs["username"] = str.isString(request.form.get("username"),
+                                          {"maxlen": 20,
+                                           "minlen": 3,
+                                           "no_sp_char": True,
+                                           "optionnal": True})
+        kwargs["email"] = str.isString(request.form.get("email"), {"optionnal": True})
+        kwargs["birthDate"] = date.isDate(request.form.get("birthDate"),
+                                          {"optionnal": True,
+                                           "yearMin": 18,
+                                           "yearMax": 150})
+        kwargs["gender"] = str.isString(request.form.get("gender"),
+                                        {"optionnal": True,
+                                         "allowed": ("man", "woman", "non-binary")})
+        kwargs["biography"] = str.isString(request.form.get("biography"),
+                                           {"optionnal": True,
+                                            "maxlen": 500})
+        kwargs["preference"] = str.isString(request.form.get("preference"),
+                                            {"optionnal": True,
+                                             "allowed": ("man",
+                                                         "woman",
+                                                         "non-binary",
+                                                         "man-woman",
+                                                         "man-nb",
+                                                         "woman-nb",
+                                                         "all")})
+        if len(kwargs) == 1:
+            raise BadRequestError("Nothing to modify")
         return f(*args, **kwargs)
     return decorated
