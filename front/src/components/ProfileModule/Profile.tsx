@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Axios from "../../tools/Caller";
 import { IPhoto , IUser} from "../../Interfaces";
-import { Box, Textarea } from "@chakra-ui/react"
+import { Box, Textarea, List, ListItem, Image, Button } from "@chakra-ui/react"
 
 function displayListAccepted(props: string[])
 {
@@ -206,15 +206,15 @@ const Profile = () => {
     function displayListPhotos(props: IPhoto[])
     {
         const list = props.map((photo: IPhoto) => {
-            return <li className="photoCell" key={photo.id}>
-                <img src={photo.htmlSrcImg} width="100" height="100" alt={`Photo ${photo.id}`} />
-                <div>
-                    <button className="delButton" onClick={delPhotoHandler} value={photo.id}>X</button>
-                    {!photo.main ? <button className="mainButton" onClick={changeMainPhotoHandler} value={photo.id}>define to main photo</button> : null}
-                </div>
-            </li>
+            return <ListItem display="flex" flexDirection="row" margin="5%" className="photoCell" key={photo.id}>
+                <Image src={photo.htmlSrcImg} width="100" height="100" alt={`Photo ${photo.id}`} />
+                <Box display="flex" flexDirection="column">
+                    <Button margin="4px" className="delButton" onClick={delPhotoHandler} value={photo.id}>X</Button>
+                    {!photo.main ? <Button margin="4px" className="mainButton" onClick={changeMainPhotoHandler} value={photo.id}>define to main photo</Button> : null}
+                </Box>
+            </ListItem>
         });
-        return (<ul className="photosList">{list}</ul>);
+        return (<List className="photosList">{list}</List>);
     }
 
     return (
@@ -223,19 +223,34 @@ const Profile = () => {
             <h1>PROFILE PAGE</h1>
             {user?
             <Box>
-                <h1>BIOGRAPHY SECTION</h1>
-                <Textarea>{user.biography}</Textarea>
-            </Box> : null}
-            <Box>
+                <Box margin = "5%">
+                    <h1>USER INFO SECTION</h1>
+                    <List margin="5%">
+                        <ListItem>Your username : {user.username}</ListItem>
+                        <ListItem>Your email : {user.email}</ListItem>
+                        <ListItem>Your birth date : {user.birthDate}</ListItem>
+                        <ListItem>Your are a {user.gender}</ListItem>
+                        <ListItem>Your are looking for {user.preference}</ListItem>
+                    </List>
+                </Box>
+                <Box margin = "5%">
+                    <h1>BIOGRAPHY SECTION</h1>
+                    <Textarea margin = "5%">{user.biography}</Textarea>
+                </Box>
+            </Box>
+            : null}
+            <Box margin="5%">
                 <h1>PHOTOS SECTION</h1>
-                <form onSubmit={onSubmit}>
-                    <input type="file" name="file[]" onChange={onChangeFile} multiple required/>
-                    <button type="submit">Envoi</button>
-                    {errorMsg.section == "photos" ? <div className="errorMsg">{errorMsg.message}</div> : null}
-                    {accepted.length ? <div className="acceptedFiles">succesfully upload : {displayListAccepted(accepted)}</div> : null}
-                    {denied.length ? <div className="deniedFiles">failed to upload : {displayListDenied(denied)}</div> : null}
-                </form>
-                {displayListPhotos(photos)}
+                <Box margin="5%">
+                    <form onSubmit={onSubmit}>
+                        <input type="file" name="file[]" onChange={onChangeFile} multiple required/>
+                        <button type="submit">Envoi</button>
+                        {errorMsg.section == "photos" ? <div className="errorMsg">{errorMsg.message}</div> : null}
+                        {accepted.length ? <div className="acceptedFiles">succesfully upload : {displayListAccepted(accepted)}</div> : null}
+                        {denied.length ? <div className="deniedFiles">failed to upload : {displayListDenied(denied)}</div> : null}
+                    </form>
+                    {displayListPhotos(photos)}
+                </Box>
             </Box>
         </Box>
     );

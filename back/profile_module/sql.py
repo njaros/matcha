@@ -163,3 +163,23 @@ def get_user_biography_by_id(**kwargs):
     if res in None:
         return ""
     return res[0]
+
+
+# --------------- UPDATE USER ---------------
+
+
+def update_user(**kwargs):
+    cur = conn.cursor()
+    cur.execute("""
+                UPDATE user_table
+                SET username = COALESCE(%s, username)
+                    email = COALESCE(%s, email)
+                    birthDate = COALESCE(%s, birthDate)
+                    gender = COALESCE(%s, gender)
+                    biography = COALESCE(%s, biography)
+                    preference = COALESCE(%s, preference)
+                WHERE id = %s;""",
+                (kwargs["username"], kwargs["email"], kwargs["birthDate"],
+                 kwargs["gender"], kwargs["biography"], kwargs["preference"], kwargs["user"]["id"]))
+    conn.commit()
+    cur.close()

@@ -3,7 +3,6 @@ from error_status.error import NotFoundError
 from flask import current_app as app
 
 
-
 def get_user_by_id(user_id):
     cur = conn.cursor()
     query = """

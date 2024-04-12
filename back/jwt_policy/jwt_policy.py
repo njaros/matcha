@@ -1,9 +1,11 @@
 from functools import wraps
 import jwt
 from datetime import datetime, timezone, timedelta
+from error_status.error import BadRequestError, InternalServerError
 from flask import request, current_app as app
-from flask_restful import abort
 from .sql import get_user_by_id
+from validators import str
+from uuid import UUID
 
 
 def token_required(f):
@@ -13,20 +15,21 @@ def token_required(f):
         if "Authorization" in request.headers:
             token = request.headers["Authorization"].split(" ")[1]
         if not token:
-            abort(400, "no token")
+            raise BadRequestError("no token")
+        kwargs["access_token"] = token
         try:
             data = jwt.decode(token, app.config["SECRET_ACCESS"],
                               algorithms=["HS256"])
             expDate = data.get("exp")
             if expDate is None:
-                abort(401, "token expiration date is expired")
+                raise BadRequestError("token expiration date is expired")
             kwargs["user"] = get_user_by_id(data["user_id"])
             if kwargs["user"] is None:
-                abort(401, "user not found")
+                raise BadRequestError("user not found in database")
         except jwt.exceptions.InvalidTokenError:
-            abort(401, "Invalid Authentication token")
+            raise BadRequestError("Invalid Authentication token")
         except Exception:
-            abort(500, "Unhandled error")
+            raise InternalServerError("Unhandled error")
 
         return f(*args, **kwargs)
 
@@ -61,45 +64,28 @@ def create_refresh_token(user_id):
         )
 
 
-def update_access_token(access_token, refresh_token):
+def update_access_token(**kwargs):
     try:
-        access_data = jwt.decode(access_token,
-                                 app.config["SECRET_ACCESS"],
-                                 algorithms="HS256")
-    except Exception:
-        return None
-    try:
-        refresh_data = jwt.decode(refresh_token,
+        refresh_data = jwt.decode(kwargs["refresh_token"],
                                   app.config["SECRET_REFRESH"],
                                   algorithms="HS256")
     except Exception:
-        return None
-    access_id = access_data.get("user_id")
-    refresh_id = access_data.get("user_id")
-    if access_id is None or access_id != refresh_id:
-        return None
-    exp_access = access_data.get("exp")
-    exp_refresh = refresh_data.get("exp")
-    if exp_access is None or exp_refresh is None:
-        return None
+        raise BadRequestError("failed to read refresh_token")
+    access_id = UUID(kwargs["user"]["id"])
+    refresh_id = UUID(refresh_data["user_id"])
+    if access_id != refresh_id:
+        raise BadRequestError("incoherent user token owner")
+    exp_refresh = refresh_data["exp"]
     now = datetime.now(tz=timezone.utc).timestamp()
-    if exp_access < now or exp_refresh < now:
-        return None
+    if exp_refresh < now:
+        raise BadRequestError("refresh_token expired")
     if exp_refresh - now < 3600:
         return [create_access_token(access_id),
                 create_refresh_token(access_id)]
     return [create_access_token(access_id)]
 
 
-def refresh():
-    parse = {}
-    try:
-        parse["access"] = request.form["access_token"]
-        parse["refresh"] = request.form["refresh_token"]
-    except Exception:
-        return ["jwt_policy:refresh(): bad arguments"], 400
-    newTokens = update_access_token(request.form["access_token"],
-                                    request.form["refresh_token"])
-    if newTokens is None:
-        return ["jwt_policy:refresh(): unable to refresh tokens"], 400
-    return newTokens, 200
+@token_required
+def refresh(**kwargs):
+    kwargs["refresh_token"] = str.isString(request.form["refresh_token"])
+    return update_access_token(**kwargs), 200
