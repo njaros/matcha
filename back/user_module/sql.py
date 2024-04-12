@@ -28,9 +28,8 @@ def get_user_by_username(username):
     return user[0]
 
 
-def get_user_with_room(user):
-    if user is None:
-        raise NotFoundError('This user does not exist in database')
+def get_user_with_room(user_id):
+
     cur = conn.cursor()
     query = """
             SELECT 
@@ -53,7 +52,7 @@ def get_user_with_room(user):
             FROM user_table
             WHERE user_table.id = %s
             """
-    cur.execute(query, (user['id'],))
+    cur.execute(query, (user_id,))
     res = cur.fetchone()
     if res is None:
         raise NotFoundError('This user does not exist in database')
@@ -61,9 +60,8 @@ def get_user_with_room(user):
     return res[0]
     
 
-def get_user_with_room_and_message(user):
-    if user is None:
-        raise NotFoundError('This user does not exist in database')
+def get_user_with_room_and_message(user_id):
+
     cur = conn.cursor()
     query = """
             SELECT
@@ -105,7 +103,7 @@ def get_user_with_room_and_message(user):
             WHERE
                 user_table.id = %s;
             """
-    cur.execute(query, (user["id"],))
+    cur.execute(query, (user_id,))
     res = cur.fetchone()
     if res is None:
         raise NotFoundError('This user does not exist in database')

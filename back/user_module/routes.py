@@ -14,9 +14,9 @@ def get_user_by_username():
 
 @token_required
 def get_user_with_room(**kwargs):
-    return user_sql_request.get_user_with_room(kwargs['user'])
+    return user_sql_request.get_user_with_room(kwargs['user']['id'])
 
 
 @token_required
 def get_user_with_room_and_message(**kwargs):
-    return user_sql_request.get_user_with_room_and_message(request.form.get('id'))
+    return user_sql_request.get_user_with_room_and_message(kwargs['user']['id'])
