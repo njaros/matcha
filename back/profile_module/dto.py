@@ -77,7 +77,5 @@ def update_user_dto(f):
                                                          "man-nb",
                                                          "woman-nb",
                                                          "all")})
-        if len(kwargs) == 1:
-            raise BadRequestError("Nothing to modify")
         return f(*args, **kwargs)
     return decorated

@@ -78,21 +78,26 @@ def delete_photo_by_id(photo_id):
     return res
 
 
-def get_photo_by_id(photo_id):
+def get_photos_by_id(photo_id):
     cur = conn.cursor()
     cur.execute("""
-                SELECT *
+                SELECT
+                    json_build_object(
+                        'id', photos.id,
+                        'mime_type', photos.mime_type,
+                        'binaries', photos.binaries,
+                        'main', photos.main,
+                        'user_id', photos.user_id
+                    )
                 FROM photos
                 WHERE id = %s
                 """,
                 (photo_id,))
     res = cur.fetchone()
+    cur.close()
     if res is None:
         return None
-    columns = [desc[0] for desc in cur.description]
-    res_as_dict = dict(zip(columns, res))
-    cur.close()
-    return res_as_dict
+    return res[0]
 
 
 def set_a_main_photo(user_id):
@@ -172,14 +177,25 @@ def update_user(**kwargs):
     cur = conn.cursor()
     cur.execute("""
                 UPDATE user_table
-                SET username = COALESCE(%s, username)
-                    email = COALESCE(%s, email)
-                    birthDate = COALESCE(%s, birthDate)
-                    gender = COALESCE(%s, gender)
-                    biography = COALESCE(%s, biography)
+                SET username = COALESCE(%s, username),
+                    email = COALESCE(%s, email),
+                    birthDate = COALESCE(%s, birthDate),
+                    gender = COALESCE(%s, gender),
+                    biography = COALESCE(%s, biography),
                     preference = COALESCE(%s, preference)
-                WHERE id = %s;""",
+                WHERE id = %s
+                RETURNING
+                    json_build_object(
+                        'username', user_table.username,
+                        'email', user_table.email,
+                        'birthDate', user_table.birthDate,
+                        'gender', user_table.gender,
+                        'biography', user_table.biography,
+                        'preference', user_table.preference);
+                """,
                 (kwargs["username"], kwargs["email"], kwargs["birthDate"],
                  kwargs["gender"], kwargs["biography"], kwargs["preference"], kwargs["user"]["id"]))
+    user_updated = cur.fetchone()
     conn.commit()
     cur.close()
+    return user_updated[0]

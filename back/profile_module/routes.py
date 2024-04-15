@@ -5,6 +5,8 @@ from flask import jsonify, request, current_app as app
 from .dto import image_dto, bio_dto, update_user_dto
 from error_status.error import BadRequestError
 from . import sql
+from user_module.sql import get_user_by_username
+from tools import thingy
 
 
 @token_required
@@ -31,10 +33,10 @@ def get_photos(**kwargs):
 
 @token_required
 def delete_photo(**kwargs):
-    photo = sql.get_photo_by_id(request.form["photo_id"])
+    photo = sql.get_photos_by_id(request.form["photo_id"])
     if photo is None:
         raise (BadRequestError("photo not found"))
-    if str(photo["user_id"]) != str(kwargs["user"]["id"]):
+    if photo["user_id"] != kwargs["user"]["id"]:
         raise (BadRequestError("That is not your property !!"))
     if sql.delete_photo_by_id(photo["id"]) == 0:
         raise (BadRequestError("failed to delete photo"))
@@ -78,5 +80,15 @@ def change_biography(**kwargs):
 @token_required
 @update_user_dto
 def update_user(**kwargs):
-    sql.update_user(**kwargs)
-    return [], 200
+    notice = None
+    if kwargs["username"] is not None:
+        if get_user_by_username(kwargs["username"]) is not None:
+            notice = "username already taken"
+            kwargs["username"] = None
+            if thingy.notNoneLen(kwargs) < 3:
+                raise BadRequestError(notice + ", nothing to modify")
+    app.logger.info(kwargs)
+    if thingy.notNoneLen(kwargs) < 3:
+        raise BadRequestError("nothing to modify")
+    updated_user = sql.update_user(**kwargs)
+    return jsonify({"notice": notice, "updated_user": updated_user}), 200
