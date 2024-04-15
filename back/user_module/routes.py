@@ -20,3 +20,8 @@ def get_user_with_room(**kwargs):
 @token_required
 def get_user_with_room_and_message(**kwargs):
     return user_sql_request.get_user_with_room_and_message(kwargs['user']['id'])
+
+
+@token_required
+def get_me(**kwargs):
+    return kwargs['user']

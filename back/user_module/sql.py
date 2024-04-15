@@ -27,8 +27,32 @@ def get_user_by_username(username):
     cur.close()
     return user[0]
 
+def get_user_by_id(id):
+    cur = conn.cursor()
+    query = """
+            SELECT
+                json_build_object(
+                    'id', user_table.id,
+                    'username', user_table.username,
+                    'email', user_table.email,
+                    'rank', user_table.rank,
+                    'birthDate', user_table.birthDate,
+                    'gender', user_table.gender,
+                    'biography', user_table.biography,
+                    'preference', user_table.preference
+                )
+            FROM user_table
+            WHERE user_table.id = %s;
+            """
+    cur.execute(query, (id,))
+    user = cur.fetchone()
+    if user is None:
+        return None
+    cur.close()
+    return user[0]
 
-def get_user_with_room(user_id):
+
+def get_user_by_id_with_room(user_id):
 
     cur = conn.cursor()
     query = """

@@ -82,17 +82,17 @@ def get_room_with_message(room_id):
     query = """
             SELECT
                 json_build_object(
-                    'room_id', %s,
+                    'room_id', room.id,
                     'user_1', (SELECT json_agg(
                                 json_build_object(
                                     'id', user_table.id,
                                     'username', user_table.username,
                                     'email', user_table.email,
                                     'rank', user_table.rank,
-                                    'age', user_table.age,
+                                    'birthdate', user_table.birthdate,
                                     'gender', user_table.gender,
                                     'biography', user_table.biography,
-                                    'pref', user_table.pref
+                                    'preference', user_table.preference
                                 )
                             )
                             FROM user_table
@@ -104,10 +104,10 @@ def get_room_with_message(room_id):
                             'username', user_table.username,
                             'email', user_table.email,
                             'rank', user_table.rank,
-                            'age', user_table.age,
+                            'birthdate', user_table.birthdate,
                             'gender', user_table.gender,
                             'biography', user_table.biography,
-                            'pref', user_table.pref
+                            'preference', user_table.preference
                         )
                     )
                     FROM user_table
@@ -136,7 +136,7 @@ def get_room_with_message(room_id):
             WHERE 
                 room.id = %s
             """
-    cur.execute(query, (room_id, room_id, room_id))
+    cur.execute(query, (room_id, room_id))
     room = cur.fetchone()
     if room is None:
         raise NotFoundError('Room does not exist in database')

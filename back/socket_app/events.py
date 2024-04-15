@@ -1,7 +1,7 @@
 from extensions import socketio
 from flask_socketio import join_room, leave_room
 from flask import request, current_app
-from user_module.sql import get_user_with_room
+from user_module.sql import get_user_by_id_with_room
 from uuid import UUID
 
 connected_clients = {}
@@ -12,13 +12,18 @@ def handle_connection():
     current_app.logger.info('Connection of socket ID: {}'.format(client_id))
     user_id = request.args.get('userId')
     token = request.args.get('token')
-    room_name = f'user-{user_id}'
-    join_room(room_name)
-    current_app.logger.info(f"Client {client_id} joined room {room_name}")
+    room_user = f'user-{user_id}'
+    join_room(room_user)
+    current_app.logger.info(f"Client {client_id} joined room {room_user}")
     connected_clients[client_id] = {'user_id': user_id, 'token': token}
-    # for room_id in get_user_with_room(UUID(user_id)):
-    #     join_room(room_id)
-    #faire join les socket dans leur room respectives
+    user = get_user_by_id_with_room(user_id)
+    if user is None:
+        current_app.logger.info('User not found in database.')
+        return
+    if 'rooms' in user:
+        for room in user['rooms']:
+            join_room(f"room-{room['room_id']}")
+
 
 @socketio.on('disconnect')
 def handle_disconnect():
