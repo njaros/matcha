@@ -90,5 +90,5 @@ def update_user(**kwargs):
     app.logger.info(kwargs)
     if thingy.notNoneLen(kwargs) < 3:
         raise BadRequestError("nothing to modify")
-    sql.update_user(**kwargs)
-    return jsonify({"notice": notice}), 200
+    updated_user = sql.update_user(**kwargs)
+    return jsonify({"notice": notice, "updated_user": updated_user}), 200

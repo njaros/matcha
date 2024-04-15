@@ -183,8 +183,19 @@ def update_user(**kwargs):
                     gender = COALESCE(%s, gender),
                     biography = COALESCE(%s, biography),
                     preference = COALESCE(%s, preference)
-                WHERE id = %s;""",
+                WHERE id = %s
+                RETURNING
+                    json_build_object(
+                        'username', user_table.username,
+                        'email', user_table.email,
+                        'birthDate', user_table.birthDate,
+                        'gender', user_table.gender,
+                        'biography', user_table.biography,
+                        'preference', user_table.preference);
+                """,
                 (kwargs["username"], kwargs["email"], kwargs["birthDate"],
                  kwargs["gender"], kwargs["biography"], kwargs["preference"], kwargs["user"]["id"]))
+    user_updated = cur.fetchone()
     conn.commit()
     cur.close()
+    return user_updated[0]
