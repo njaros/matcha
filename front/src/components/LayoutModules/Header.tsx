@@ -1,12 +1,11 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { tokenReader } from "../../tools/TokenReader";
-import { storeRefresh, storeTimeout } from "../../tools/Stores";
+import { storeTimeout } from "../../tools/Stores";
 import { cookieMan } from "../../tools/CookieMan";
 import { Box } from "@chakra-ui/react"
 
 const Header = () => {
     const { refreshTokenTimeoutId, updateRefreshTimeout } = storeTimeout();
-	const setRefreshToken = storeRefresh(state => state.updateRefreshToken);
     const navigate = useNavigate();
     const location = useLocation();
  
@@ -16,7 +15,6 @@ const Header = () => {
 			clearTimeout(refreshTokenTimeoutId);
 			updateRefreshTimeout(undefined);
 		}
-		setRefreshToken("");
 		cookieMan.eraseCookie('token');
 		navigate("./login", { relative: "path" });
 	}

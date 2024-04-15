@@ -3,7 +3,6 @@ import Axios from "../../tools/Caller";
 import { IPhoto , IUser} from "../../Interfaces";
 import { Box, Textarea, List, ListItem, Image, Button, FormControl, Input, Text, Center } from "@chakra-ui/react"
 import { useForm } from "react-hook-form";
-import { isStringNotUndefinedOrEmpty } from "../../tools/Thingy";
 
 function displayListAccepted(props: string[])
 {

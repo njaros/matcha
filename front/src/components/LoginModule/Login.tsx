@@ -4,26 +4,20 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ILoginInForm } from "../../Interfaces";
 import Axios from "../../tools/Caller";
 import { cookieMan } from "../../tools/CookieMan";
-import { storeRefresh } from "../../tools/Stores";
 
 const Login: React.FC = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
     const { register, handleSubmit } = useForm<ILoginInForm>();
 	const [wrong, setWrong] = useState<boolean>(false);
-	const setRefreshToken = storeRefresh(state => state.updateRefreshToken);
 
 	const loginSubmit = (data: ILoginInForm) => {
-        const form = new FormData();
-        form.append("username", data.username);
-        form.append("password", data.password);
-		Axios.post("login", form)
+		Axios.post("login", data, {withCredentials: true})
 			.then(response => {
 				console.log(response);
 				if (response.status == 200)
 				{
 					cookieMan.addCookie('token', response.data.access_token);
-					setRefreshToken(response.data.refresh_token);
 					const from = (location.state as any)?.from || "/";
 					navigate(from);
 				}

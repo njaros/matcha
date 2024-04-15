@@ -2,10 +2,24 @@ from functools import wraps
 import jwt
 from datetime import datetime, timezone, timedelta
 from error_status.error import BadRequestError, InternalServerError
-from flask import request, current_app as app
+from flask import request, current_app as app, make_response
 from .sql import get_user_by_id
 from validators import str
 from uuid import UUID
+
+
+def options_get_handler(f):
+    """Sometimes CORS is boring af
+    this wrap allows to make the credentials works for
+    GET request"""
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if request.method == "OPTIONS":
+            response = make_response()
+            response.status = 200
+            return response
+        return(f(*args, *kwargs))
+    return decorated
 
 
 def token_required(f):
@@ -44,7 +58,7 @@ def create_access_token(user_id):
     return jwt.encode(
                     {"user_id": hex,
                      "exp": datetime.now(tz=timezone.utc) +
-                     timedelta(minutes=10)},
+                     timedelta(seconds=10)},
                     app.config["SECRET_ACCESS"],
                     algorithm="HS256"
                 )
@@ -79,13 +93,22 @@ def update_access_token(**kwargs):
     now = datetime.now(tz=timezone.utc).timestamp()
     if exp_refresh < now:
         raise BadRequestError("refresh_token expired")
+    response = make_response({"access_token":
+                              create_access_token(access_id)})
+    response.status = 200
     if exp_refresh - now < 3600:
-        return [create_access_token(access_id),
-                create_refresh_token(access_id)]
-    return [create_access_token(access_id)]
+        response.set_cookie("refresh_token",
+                            create_refresh_token(access_id),
+                            httponly= True)
+    return response
 
 
+#@options_get_handler
 @token_required
 def refresh(**kwargs):
-    kwargs["refresh_token"] = str.isString(request.form["refresh_token"])
-    return update_access_token(**kwargs), 200
+    app.logger.info(request.cookies.get("refresh_token"))
+    kwargs["refresh_token"] = str.isString(request.cookies["refresh_token"])
+    app.logger.info(kwargs["refresh_token"])
+    response = update_access_token(**kwargs)
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    return response

@@ -1,6 +1,6 @@
 from validators import str, int, date
 from functools import wraps
-from flask import request
+from flask import request, current_app as app
 
 
 def signup_dto(f):
@@ -31,10 +31,12 @@ def signup_dto(f):
 def login_dto(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        kwargs["username"] = str.isString(request.form["username"],
+        app.logger.info("FEGESGOISBGISEHFGIUF")
+        app.logger.info(request.json)
+        kwargs["username"] = str.isString(request.json["username"],
                                           {"maxlen": 20,
                                            "minlen": 3,
                                            "no_sp_char": True})
-        kwargs["password"] = str.isString(request.form["password"])
+        kwargs["password"] = str.isString(request.json["password"])
         return f(*args, **kwargs)
     return decorated

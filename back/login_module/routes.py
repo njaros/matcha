@@ -1,4 +1,4 @@
-from flask import request, current_app, jsonify
+from flask import request, current_app, jsonify, make_response
 import hashlib
 from jwt_policy import jwt_policy
 from login_module import sql as login_ctx
@@ -23,10 +23,12 @@ def login(**kwargs):
                                             .encode("utf-8")).hexdigest()
     returned_id = login_ctx.login_user_in_database(kwargs)
     if returned_id is not None:
-        current_app.logger.info(returned_id)
-        return jsonify({"access_token": jwt_policy
-                        .create_access_token(returned_id),
-                        "refresh_token": jwt_policy
-                        .create_refresh_token(returned_id)}), 200
+        response = make_response({"access_token": jwt_policy
+                        .create_access_token(returned_id)})
+        response.set_cookie("refresh_token",
+                            jwt_policy.create_refresh_token(returned_id),
+                            httponly = True)
+        response.status = 200
+        return response
     else:
         raise (BadRequestError("Wrong username or password"))
