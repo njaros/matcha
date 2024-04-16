@@ -59,11 +59,13 @@ const ProtectedRoutes: React.FC = () => {
         let accessPayload: JwtPayload | undefined;
 		let timeIdTmp: NodeJS.Timeout | undefined;
 
+        //console.log("timeoutId = ", refreshTokenTimeoutId);
         if (refreshTokenTimeoutId != undefined)
 		{
 			clearTimeout(refreshTokenTimeoutId);
             updateRefreshTimeout(undefined);
 		}
+        //console.log("access = ", access);
 		if (access != "") {
 			accessPayload = tokenReader.readPayload(access);
 			if (accessPayload != undefined) {

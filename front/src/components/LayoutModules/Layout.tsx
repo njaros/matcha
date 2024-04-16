@@ -3,10 +3,14 @@ import Header from "./Header";
 import Footer from "./Footer";
 import { Box } from "@chakra-ui/react"
 //Ici qu'il faudra mettre les modules du genre pop-ups qui doivent pop de n importe ou
-const Layout = () => {
+const Layout = (props: {
+    logged: boolean,
+    handleLog: (newState: boolean) => void,
+    handleAccess: (newAccess: string) => void}) =>
+{
     return (
         <Box display="flex" flexDirection="column" justifyContent="space-between">
-            <Header />
+            <Header logged={props.logged} handleLog={props.handleLog} handleAccess={props.handleAccess} />
             <Outlet />
             <Footer />
         </Box>

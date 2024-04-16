@@ -27,7 +27,8 @@ def get_photos(**kwargs):
                         "binaries": base64.b64encode(
                             hasher.decrypt(elt["binaries"])).decode("utf-8"),
                         "main": elt["main"]}
-                     for elt in sql.get_photos_by_user_id(kwargs["user"]["id"])]
+                     for elt in sql.get_photos_by_user_id(
+                         kwargs["user"]["id"])]
                     }), 200
 
 

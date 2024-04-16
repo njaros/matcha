@@ -5,7 +5,10 @@ import { ILoginInForm } from "../../Interfaces";
 import Axios from "../../tools/Caller";
 import { cookieMan } from "../../tools/CookieMan";
 
-const Login: React.FC = () => {
+const Login = (props:{
+    handleLog: (newState: boolean) => void,
+    handleAccess: (newAccess: string) => void}) =>
+{
 	const navigate = useNavigate();
 	const location = useLocation();
     const { register, handleSubmit } = useForm<ILoginInForm>();
@@ -18,6 +21,8 @@ const Login: React.FC = () => {
 				if (response.status == 200)
 				{
 					cookieMan.addCookie('token', response.data.access_token);
+                    props.handleAccess(response.data.access_token);
+                    props.handleLog(true);
 					const from = (location.state as any)?.from || "/";
 					navigate(from);
 				}
