@@ -1,5 +1,7 @@
 import { Socket, io } from "socket.io-client";
 import { create } from "zustand";
+import { Room } from "./interface";
+
 
 interface IstoreTimeout {
 	refreshTokenTimeoutId: NodeJS.Timeout | undefined,
@@ -10,6 +12,16 @@ interface IstoreSocket {
 	socket: Socket | null,
 	updateSocket: (newSocket: Socket) => void
 }
+
+interface IstoreRoom {
+	room: Room | undefined, 
+	updateRoom: (newRoom: Room) => void
+}
+
+export const storeRoom = create<IstoreRoom>()((set) => ({
+	room: undefined,
+	updateRoom: (newRoom: Room) => set({room: newRoom})
+}))
 
 export const storeTimeout = create<IstoreTimeout>()((set) => ({
 	refreshTokenTimeoutId: undefined,

@@ -42,6 +42,26 @@ def room_exists(user1_id, user2_id):
     return result is not None
 
 
+def get_room_list_by_id(user_id):
+    cur = conn.cursor()
+    query = """
+            SELECT
+                json_build_object(
+                    'id', id,
+                    'user_1', user_1,
+                    'user_2, user_2
+                )
+            FROM room
+            WHERE user_1 = %s OR user_2 = %s
+            """
+    cur.execute(query, (user_id, user_id))
+    res = cur.fetchone()
+    if res is None:
+        raise NotFoundError('This user does not have any conversation.')
+    cur.close()
+    return res[0]
+
+
 def insert_message(data):
     cur = conn.cursor()
     cur.execute("INSERT INTO message (\
