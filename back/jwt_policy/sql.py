@@ -1,6 +1,5 @@
 from db_init import db_conn as conn
 from error_status.error import NotFoundError
-from flask import current_app as app
 
 
 def get_user_by_id(user_id):
@@ -23,6 +22,6 @@ def get_user_by_id(user_id):
     cur.execute(query, (user_id,))
     user = cur.fetchone()
     if user is None:
-        return None
+        raise NotFoundError(f"user {user_id} not found")
     cur.close()
     return user[0]
