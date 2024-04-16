@@ -4,7 +4,7 @@ from .jwt_policy import refresh
 
 
 app = Blueprint('refresh', __name__)
-CORS(app)
+CORS(app, supports_credentials=True)
 
 
-app.add_url_rule('/refresh', 'refresh', refresh, methods=['POST'])
+app.add_url_rule('/refresh', 'refresh', refresh, methods=['GET'])

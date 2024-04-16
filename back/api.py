@@ -6,7 +6,7 @@ from extensions import socketio
 from werkzeug.exceptions import BadRequestKeyError
 from error_status.error import BadRequestError, \
     InternalServerError, \
-    NotFoundError , \
+    NotFoundError, \
     ForbiddenError, \
     handle_miss_key_error, \
     handle_bad_request_error, \

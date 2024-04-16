@@ -1,23 +1,26 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { tokenReader } from "../../tools/TokenReader";
-import { storeRefresh, storeTimeout } from "../../tools/Stores";
+import { storeTimeout } from "../../tools/Stores";
 import { cookieMan } from "../../tools/CookieMan";
 import { Box } from "@chakra-ui/react"
 
-const Header = () => {
+const Header = (props: {
+    logged: boolean,
+    handleLog: (newState: boolean) => void,
+    handleAccess: (newAccess: string) => void}) =>
+{
     const { refreshTokenTimeoutId, updateRefreshTimeout } = storeTimeout();
-	const setRefreshToken = storeRefresh(state => state.updateRefreshToken);
     const navigate = useNavigate();
     const location = useLocation();
  
     const logout = () => {
-		if (refreshTokenTimeoutId != undefined)
-		{
-			clearTimeout(refreshTokenTimeoutId);
-			updateRefreshTimeout(undefined);
-		}
-		setRefreshToken("");
-		cookieMan.eraseCookie('token');
+        if (refreshTokenTimeoutId != undefined)
+            {
+                clearTimeout(refreshTokenTimeoutId);
+                updateRefreshTimeout(undefined);
+            }
+        cookieMan.eraseCookie('token');
+        props.handleLog(false);
+        props.handleAccess("");
 		navigate("./login", { relative: "path" });
 	}
 
@@ -35,7 +38,7 @@ const Header = () => {
             <h1><NavLink to="/">MATCHOOOO</NavLink></h1>
         </Box>
         <Box>
-            { tokenReader.isLogged() ?
+            { props.logged ?
             <ul>
                 <li><NavLink to="/profile">Profile</NavLink></li>
                 <li><NavLink to="/swipe">Swipe</NavLink></li>

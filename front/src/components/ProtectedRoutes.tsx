@@ -1,7 +1,7 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom"
+import { Navigate, Outlet, useLocation, useNavigate } from "react-router-dom"
 import { tokenReader } from "../tools/TokenReader";
 import React, { useEffect, useState } from "react";
-import { storeRefresh, storeTimeout } from "../tools/Stores";
+import { storeTimeout } from "../tools/Stores";
 import { JwtPayload } from "jsonwebtoken";
 import Axios from "../tools/Caller";
 import { cookieMan } from "../tools/CookieMan";
@@ -11,29 +11,22 @@ import { cookieMan } from "../tools/CookieMan";
 //in the children modules content
 const ProtectedRoutes: React.FC = () => {
 	const location = useLocation();
+    const navigate = useNavigate();
     const [ access, setAccess ] = useState<string>(tokenReader.getToken());
-    const { refreshToken, updateRefreshToken } = storeRefresh();
     const { refreshTokenTimeoutId, updateRefreshTimeout } = storeTimeout();
 
     const askNewTokens = () =>
     {
-        const form = new FormData();
-        form.append("refresh_token", refreshToken);
-        console.log("refresh token = ", refreshToken)
-        Axios.post("/refresh", form)
+        Axios.get("/refresh", {withCredentials: true})
         .then(
             response => {
+                console.log(response);
                 switch (response.status)
                 {
                     case 200:
-                        cookieMan.addCookie("token", response.data[0]);
-                        setAccess(response.data[0]);
-                        if (response.data.lenght == 2)
-                            updateRefreshToken(response.data[1]);
+                        cookieMan.addCookie("token", response.data.access_token);
+                        setAccess(response.data.access_token);
                         break;
-                    default:
-                        console.log("unhandled status: ", response.status);
-                        console.log(response);
                 }
             }
         )
@@ -54,36 +47,34 @@ const ProtectedRoutes: React.FC = () => {
                 {
                     console.log("server error: ", error)
                 }
+                cookieMan.eraseCookie("token");
+                navigate("./login", { relative: "path" });
             }
         )
     }
 
 	useEffect(() => {
 		let msAccessLeft = 0;
-        let msRefreshLeft = 0;
         let accessExp: number | undefined;
-        let refreshExp: number | undefined;
         let accessPayload: JwtPayload | undefined;
-		let refreshPayload: JwtPayload | undefined;
 		let timeIdTmp: NodeJS.Timeout | undefined;
 
+        //console.log("timeoutId = ", refreshTokenTimeoutId);
         if (refreshTokenTimeoutId != undefined)
 		{
 			clearTimeout(refreshTokenTimeoutId);
             updateRefreshTimeout(undefined);
 		}
-		if (access != "" && refreshToken != "") {
+        //console.log("access = ", access);
+		if (access != "") {
 			accessPayload = tokenReader.readPayload(access);
-			refreshPayload = tokenReader.readPayload(refreshToken);
-			if (accessPayload != undefined && refreshPayload != undefined) {
+			if (accessPayload != undefined) {
 				accessExp = accessPayload.exp;
-				refreshExp = refreshPayload.exp;
-				if (accessExp != undefined && refreshExp != undefined) {
+				if (accessExp != undefined) {
 					msAccessLeft = accessExp - Date.now() / 1000;
-					msRefreshLeft = refreshExp - Date.now() / 1000;
-					if (msAccessLeft > 0 && msRefreshLeft > 0) {
+					if (msAccessLeft > 0) {
 						timeIdTmp = setTimeout(askNewTokens,
-							Math.max(0, Math.min(msAccessLeft - 1, msRefreshLeft - 1)) * 1000)
+							Math.max(0, msAccessLeft - 1) * 1000)
 						updateRefreshTimeout(timeIdTmp)
 					}
 				}
