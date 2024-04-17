@@ -135,15 +135,15 @@ function App() {
 		}
 	}, [access, logged])
 
-	//END OF TOKEN MANAGEMENT
-
 	const handleLog = (newState: boolean) => {
 		setLogged(newState);
 	}
-
+	
 	const handleAccess = (newAccess: string) => {
 		setAccess(newAccess);
 	}
+
+	//END OF TOKEN MANAGEMENT
 
 	return (
 		<ChakraProvider>
