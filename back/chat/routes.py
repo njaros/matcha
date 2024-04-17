@@ -37,6 +37,6 @@ def get_message():
     return room['messages'], 200
 
 def get_room_list_by_id():
-    current_app.logger.info(request.form.get('id'))
-    return chat_sql.get_room_list_by_id(uuid.isUuid(request.form.get('id')))
+    data = request.json
+    return chat_sql.get_room_list_by_id(uuid.isUuid(data['id']))
 

@@ -1,42 +1,41 @@
-import { useEffect, useState } from "react";
-import { storeSocket, storeRoom } from "../../tools/Stores";
+import { useEffect, useState, useRef } from "react";
+import { storeSocket, storeRoom, storeMe, storeRoomList } from "../../tools/Stores";
 import { Button, FormControl, Input } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import Axios from "../../tools/Caller";
+import ChannelList from "./channel";
+import Chatbox from "./Chatbox";
 
 function Conversation(){
     
     const socket = storeSocket(state => state.socket)
     const [room, updateRoom] = storeRoom(state => [state.room, state.updateRoom]);
-    const [me, setMe] = useState<
-    {
-        id: string,
-        username: string
-    } | undefined>(undefined)
+    const [roomList, updateRoomList] = storeRoomList(state => [state.roomList, state.updateRoomList])
+    const me = storeMe(state => state.me)
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const userResponse = await Axios.get('/user/get_me')
-                console.log('DATA: ', userResponse.data)
-                setMe({id: userResponse.data.id, username: userResponse.data.username})
-                const roomResponse = await Axios.post('/chat/get_room_list_by_id', {id: userResponse.data.id})
-                console.log(roomResponse.data)
-            } catch (error) {
-                console.error(error);
-            }
-        };
-    
-        fetchData()
-    
-    }, [])
-    
+        if (me){
+            const fetchData = async () => {
+                try {
+                    console.log('me', me)
+                    const roomResponse = await Axios.post('/chat/get_room_list_by_id', { id: me?.id });
+                    updateRoomList(roomResponse.data)
+                    console.log('room: ', roomResponse.data);
+                } catch (error) {
+                    console.error(error);
+                }
+            };
+            fetchData();
+        }
+    }, [me]);
 
+    //  console.log('DATA: ', me)
     return (
-    <div>
+    <>    
         <h1>CONVERSATION PAGE</h1>
-
-    </div>
+        <ChannelList />
+        <Chatbox />
+    </>
     );
 }
 

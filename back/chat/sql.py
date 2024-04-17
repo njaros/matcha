@@ -9,7 +9,6 @@ def insert_room(data):
         raise(ForbiddenError('Room already exist'))
     cur = conn.cursor()
     room_id = uuid.uuid1()
-    app.logger.info(data)
     query = """
             INSERT INTO room (
                 id,
@@ -47,19 +46,39 @@ def get_room_list_by_id(user_id):
     query = """
             SELECT
                 json_build_object(
-                    'id', id,
-                    'user_1', user_1,
-                    'user_2, user_2
+                    'id', room.id,
+                    'user_1', (
+                        SELECT json_agg(
+                            json_build_object(
+                                'user_id', room.user_1, 
+                                'username', user1.username
+                            )
+                        )
+                    ),
+                    'user_2', (
+                        SELECT json_agg(
+                            json_build_object(
+                                'user_id', room.user_2, 
+                                'username', user2.username
+                            )
+                        )
+                    )
                 )
             FROM room
-            WHERE user_1 = %s OR user_2 = %s
+            JOIN user_table AS user1 ON room.user_1 = user1.id
+            JOIN user_table AS user2 ON room.user_2 = user2.id
+            WHERE room.user_1 = %s OR room.user_2 = %s
+            GROUP BY room.id
             """
+
     cur.execute(query, (user_id, user_id))
-    res = cur.fetchone()
-    if res is None:
+    res = cur.fetchall()
+    if not res:
         raise NotFoundError('This user does not have any conversation.')
     cur.close()
-    return res[0]
+    app.logger.info(res)
+    return res
+
 
 
 def insert_message(data):

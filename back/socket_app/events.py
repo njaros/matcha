@@ -20,9 +20,11 @@ def handle_connection():
     if user is None:
         current_app.logger.info('User not found in database.')
         return
-    if 'rooms' is not None in user:
-        for room in user['rooms']:
-            join_room(f"room-{room['room_id']}")
+    if 'rooms' not in user or not isinstance(user['rooms'], list):
+        current_app.logger.info('User does not have any rooms.')
+        return
+    for room in user['rooms']:
+        join_room(f"room-{room['room_id']}")
 
 
 @socketio.on('disconnect')

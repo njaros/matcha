@@ -3,7 +3,7 @@ import Layout from "./components/LayoutModules/Layout";
 import { tokenReader, getToken} from "./tools/TokenReader";
 import { useEffect, useState } from "react";
 import { Socket, io } from 'socket.io-client';
-import { storeSocket, storeTimeout } from "./tools/Stores";
+import { storeMe, storeSocket, storeTimeout } from "./tools/Stores";
 import Login from "./components/LoginModule/Login";
 import Signup from "./components/SignUpModule/SignUp";
 import Home from "./components/HomeModule/Home";
@@ -23,11 +23,26 @@ function App() {
 	const [ logged, setLogged ] = useState<boolean>(tokenReader.isLogged())
 	const [ access, setAccess ] = useState<string>(tokenReader.getToken());
     const { refreshTokenTimeoutId, updateRefreshTimeout } = storeTimeout();
+	const [ me, updateMe ] = storeMe(state => [state.me, state.updateMe])
 
 	const getUserId = () => {
 		setUserId(tokenReader.getAttrAsString(getToken(), "user_id"))
 	}
 
+	useEffect(() => {
+		const fetchMe = async () => {
+			try {
+				const res = await Axios.get('/user/get_me')
+				updateMe(res.data)
+			}
+			catch (err){
+				if (err)
+					console.log(err)
+			}
+		}
+		fetchMe()
+	}, [])
+	
 	useEffect(() => {
 
 		getUserId()

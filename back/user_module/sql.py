@@ -1,7 +1,7 @@
 from db_init import db_conn as conn
 from error_status.error import NotFoundError
 from flask import current_app as app
-
+from uuid import UUID
 
 def get_user_by_username(username):
     cur = conn.cursor()
@@ -53,7 +53,6 @@ def get_user_by_id(id):
 
 
 def get_user_by_id_with_room(user_id):
-
     cur = conn.cursor()
     query = """
             SELECT 
@@ -66,7 +65,7 @@ def get_user_by_id_with_room(user_id):
                             json_build_object(
                                 'room_id', room.id,
                                 'user_1_id', room.user_1,
-                                'user_2,id', room.user_2
+                                'user_2_id', room.user_2
                             )
                         )
                         FROM room
