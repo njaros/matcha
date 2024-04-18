@@ -51,5 +51,5 @@ def handle_miss_key_error(error):
 
 def handle_miss_key_error_internal(error):
     response = jsonify({'message': f'code impl error, no key {error.args[0]} on dict'})
-    response.status_code = 500
+    response.status_code = 400
     return response

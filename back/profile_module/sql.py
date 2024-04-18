@@ -2,7 +2,7 @@ from db_init import db_conn as conn
 from cryptography.fernet import Fernet
 import uuid
 from flask import current_app as app
-
+from psycopg.rows import dict_row
 
 # -------------- PHOTOS ----------------
 
@@ -35,20 +35,20 @@ def insert_photos(**kwargs):
 
 
 def count_photos_by_user_id(user_id):
-    cur = conn.cursor()
+    cur = conn.cursor(row_factory=dict_row)
     cur.execute("""
-                SELECT COUNT(*)
+                SELECT COUNT(*) AS count
                 FROM photos
                 WHERE user_id = %s;
                 """,
                 (user_id,))
-    count = cur.fetchone()[0]
+    res = cur.fetchone()
     cur.close()
-    return count
+    return res['count']
 
 
 def get_photos_by_user_id(user_id):
-    cur = conn.cursor()
+    cur = conn.cursor(row_factory=dict_row)
     cur.execute("""
                 SELECT *
                 FROM photos
@@ -61,7 +61,7 @@ def get_photos_by_user_id(user_id):
     columns = [desc[0] for desc in cur.description]
     photos_as_dict = [dict(zip(columns, row)) for row in photos]
     cur.close()
-    return photos_as_dict
+    return photos
 
 
 def delete_photo_by_id(photo_id):
@@ -79,16 +79,14 @@ def delete_photo_by_id(photo_id):
 
 
 def get_photos_by_id(photo_id):
-    cur = conn.cursor()
+    cur = conn.cursor(row_factory=dict_row)
     cur.execute("""
                 SELECT
-                    json_build_object(
-                        'id', photos.id,
-                        'mime_type', photos.mime_type,
-                        'binaries', photos.binaries,
-                        'main', photos.main,
-                        'user_id', photos.user_id
-                    )
+                    photos.id AS id,
+                    photos.mime_type AS mime_type,
+                    photos.binaries AS binaries,
+                    photos.main AS main,
+                    photos.user_id AS user_id
                 FROM photos
                 WHERE id = %s
                 """,
@@ -97,11 +95,11 @@ def get_photos_by_id(photo_id):
     cur.close()
     if res is None:
         return None
-    return res[0]
+    return res
 
 
 def set_a_main_photo(user_id):
-    cur = conn.cursor()
+    cur = conn.cursor(row_factory=dict_row)
     cur.execute("""
                 UPDATE photos
                 SET main = TRUE
@@ -119,7 +117,7 @@ def set_a_main_photo(user_id):
     cur.close()
     if main_id is None:
         return None
-    return main_id[0]
+    return main_id
 
 
 def change_main_photo_by_ids(current_main_id, future_main_id):
@@ -156,7 +154,7 @@ def change_user_biography_by_id(**kwargs):
 
 
 def get_user_biography_by_id(**kwargs):
-    cur = conn.cursor()
+    cur = conn.cursor(row_factory=dict_row)
     cur.execute("""
                 SELECT biography
                 FROM user_table
@@ -167,14 +165,14 @@ def get_user_biography_by_id(**kwargs):
     cur.close()
     if res in None:
         return ""
-    return res[0]
+    return res
 
 
 # --------------- UPDATE USER ---------------
 
 
 def update_user(**kwargs):
-    cur = conn.cursor()
+    cur = conn.cursor(row_factory=dict_row)
     cur.execute("""
                 UPDATE user_table
                 SET username = COALESCE(%s, username),
@@ -198,4 +196,4 @@ def update_user(**kwargs):
     user_updated = cur.fetchone()
     conn.commit()
     cur.close()
-    return user_updated[0]
+    return user_updated

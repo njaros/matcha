@@ -1,5 +1,6 @@
 import os
 import psycopg
+from psycopg.rows import dict_row
 
 
 def set_up_db():
