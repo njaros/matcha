@@ -230,12 +230,12 @@ const Profile = () => {
     {
         const list = props.map((photo: IPhoto) => {
             return <ListItem display="flex" flexDirection="row" margin="5%" className="photoCell" key={photo.id}>
-                <Image src={photo.htmlSrcImg} width="100" height="100" alt={`Photo ${photo.id}`} />
-                <Box display="flex" flexDirection="column">
-                    <Button margin="4px" className="delButton" onClick={delPhotoHandler} value={photo.id}>X</Button>
-                    {!photo.main ? <Button margin="4px" className="mainButton" onClick={changeMainPhotoHandler} value={photo.id}>define to main photo</Button> : null}
-                </Box>
-            </ListItem>
+                        <Image src={photo.htmlSrcImg} width="100" height="100" alt={`Photo ${photo.id}`}/>
+                        <Box display="flex" flexDirection="column">
+                            <Button margin="4px" className="delButton" onClick={delPhotoHandler} value={photo.id}>X</Button>
+                            {!photo.main ? <Button margin="4px" className="mainButton" onClick={changeMainPhotoHandler} value={photo.id}>define to main photo</Button> : null}
+                        </Box>
+                    </ListItem>
         });
         return (<List className="photosList">{list}</List>);
     }

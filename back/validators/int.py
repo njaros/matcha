@@ -8,7 +8,9 @@ class NotStrException(BadRequestError):
 
 class NotStrIntException(BadRequestError):
     def __init__(self, param):
-        self.message = f"the argument {param} is not an int (must only contain digit)"
+        self.message = (
+            f"the argument {param} is not an int (must only contain digit)"
+        )
 
 
 class NotIntException(BadRequestError):
@@ -36,7 +38,7 @@ class IntAllowedException(BadRequestError):
         self.message = f"value {param} isn't allowed"
 
 
-def isInt(foo: any, req: dict[str, any]={}):
+def isInt(foo: any, req: dict[str, any] = {}):
     """Check if the foo argument is an int class,
     throwing an NotIntException if not.
     req (requirements) is a dictionnary.
@@ -86,7 +88,7 @@ def isInt(foo: any, req: dict[str, any]={}):
     return foo
 
 
-def isStrInt(foo: any, req: dict[str, any]={}):
+def isStrInt(foo: any, req: dict[str, any] = {}):
     """Check if the foo argument is an str class and only
     composed by digit element, throwing NotStrException or NotStrIntException
     if not.
@@ -109,7 +111,7 @@ def isStrInt(foo: any, req: dict[str, any]={}):
         raise (NotStrException)
     try:
         nb = int(foo)
-    except(ValueError):
+    except ValueError:
         raise (NotStrIntException(foo))
 
     max = req.get("max")

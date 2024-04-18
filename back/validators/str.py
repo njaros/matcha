@@ -19,12 +19,12 @@ class StrMinlenException(BadRequestError):
 
 class StrForbiddenException(BadRequestError):
     def __init__(self, param):
-        self.message = f"\"{param}\" is forbidden"
+        self.message = f'"{param}" is forbidden'
 
 
 class StrAllowedException(BadRequestError):
     def __init__(self, param):
-        self.message = f"\"{param}\" isn't allowed"
+        self.message = f'"{param}" isn\'t allowed'
 
 
 class StrForbiddenCharException(BadRequestError):
@@ -35,7 +35,7 @@ class StrForbiddenCharException(BadRequestError):
 forbidden_chars = re.compile(r'[\x00-\x1F\x7F-\x9F&<>"/\'%]')
 
 
-def isString(foo: any, req: dict[str, any]={}):
+def isString(foo: any, req: dict[str, any] = {}):
     """Check if the foo argument is a string class,
     throwing an NotStrException if not.
     req (requirements) is a dictionnary.
