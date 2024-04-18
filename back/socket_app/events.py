@@ -20,10 +20,10 @@ def handle_connection():
     if user is None:
         current_app.logger.info('User not found in database.')
         return
-    if 'rooms' not in user or not isinstance(user['rooms'], list):
+    if 'room' not in user or not isinstance(user['room'], list):
         current_app.logger.info('User does not have any rooms.')
         return
-    for room in user['rooms']:
+    for room in user['room']:
         join_room(f"room-{room['room_id']}")
 
 

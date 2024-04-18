@@ -28,28 +28,29 @@ def get_user_by_username(username):
     app.logger.info(user)
     return user
 
+
 def get_user_by_id(id):
     cur = conn.cursor(row_factory=dict_row)
     query = """
             SELECT
-                id,
-                username,
-                email,
-                rank,
-                birthDate,
-                gender,
-                biography,
-                preference
+                user_table.id AS id,
+                user_table.username AS username,
+                user_table.email AS email,
+                user_table.rank AS rank,
+                user_table.birthDate AS birthDate,
+                user_table.gender AS gender,
+                user_table.biography AS biography,
+                user_table.preference  AS preference 
             FROM user_table
-            WHERE id = %s;
+            WHERE user_table.id = %s;
             """
-
     cur.execute(query, (id,))
     user = cur.fetchone()
     if user is None:
         return None
     cur.close()
-    return user[0]
+    app.logger.info(user)
+    return user
 
 
 def get_user_with_room(user_id):
@@ -73,7 +74,6 @@ def get_user_with_room(user_id):
             FROM user_table
             WHERE user_table.id = %s
             """
-
     cur.execute(query, (user_id,))
     res = cur.fetchone()
     if res is None:

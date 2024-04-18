@@ -23,7 +23,7 @@ def insert_room(data):
     room = cur.fetchone()
     conn.commit()
     cur.close()
-    return room[0]
+    return room
 
 def room_exists(user1_id, user2_id):
     cur = conn.cursor(row_factory=dict_row)
@@ -69,15 +69,11 @@ def get_room_list_by_id(user_id):
             WHERE room.user_1 = %s OR room.user_2 = %s
             GROUP BY room.id, user1.username, user2.username
         """
-
-
     cur.execute(query, (user_id, user_id, user_id))
     res = cur.fetchall()
     if not res:
         raise NotFoundError('This user does not have any conversation.')
-    # room_list = [room['room_info'] for room in res]
     cur.close()
-    # app.logger.info(room_list)
     return res
 
 
@@ -97,7 +93,6 @@ def insert_message(data):
         data.get("sender_id"),
         data.get("room_id")
     ))
-
     conn.commit()
     cur.close()
 
@@ -117,7 +112,7 @@ def get_room(room_id):
     if room is None:
         raise NotFoundError('Room does not exist in database')
     cur.close()
-    return room[0]
+    return room
 
 
 
