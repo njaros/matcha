@@ -1,6 +1,6 @@
 import fs from "fs/promises";
 
-// sadly ss is forbidden by web browser. So this class is unusable
+// sadly fs is forbidden by web browser. So this class is unusable
 export default class TmpMan
 {
 	private static instance: TmpMan;

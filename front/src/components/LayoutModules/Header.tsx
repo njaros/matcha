@@ -1,7 +1,8 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { storeTimeout } from "../../tools/Stores";
+import { storeGps, storeTimeout } from "../../tools/Stores";
 import { cookieMan } from "../../tools/CookieMan";
 import { Box } from "@chakra-ui/react"
+import { useEffect, useState } from "react";
 
 const Header = (props: {
     logged: boolean,
@@ -11,6 +12,7 @@ const Header = (props: {
     const { refreshTokenTimeoutId, updateRefreshTimeout } = storeTimeout();
     const navigate = useNavigate();
     const location = useLocation();
+    const { gps, updateGps } = storeGps();
  
     const logout = () => {
         if (refreshTokenTimeoutId != undefined)
@@ -23,6 +25,39 @@ const Header = (props: {
         props.handleAccess("");
 		navigate("./login", { relative: "path" });
 	}
+
+    function success(pos) {
+        var crd = pos.coords;
+        console.log("your current position is: ");
+        console.log(`Latitude : ${crd.latitude}`);
+        console.log(`Longitude : ${crd.longitude}`);
+        console.log(`More or less ${crd.accuracy} meters.`)
+    }
+
+    function error(err) {
+        console.warn(`ERROR(${err.code}): ${err.message}`);
+    }
+
+    var options = {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0
+    };
+
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.permissions.query({name: "geolocation"}).then(function(result)
+            {
+                console.log(result);
+                if (result.state in ["granted", "prompt"])
+                    navigator.geolocation.getCurrentPosition(success, error, options);
+                else {
+                    
+                }
+            });
+        }
+        else {console.log("no geolocation in this Bowser");}
+    })
 
     return (
     <Box    display="flex"
@@ -50,6 +85,7 @@ const Header = (props: {
                 <NavLink to="/signup">Not registered ? Sign Up !</NavLink> :
                 <NavLink to="/login">Already registered ? Log In !</NavLink>}
             </ul>}
+            <Box>Your position : {}</Box>
         </Box>
     </Box>
     );
