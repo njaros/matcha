@@ -6,14 +6,14 @@ from tools import date_tools
 
 class NotStrException(BadRequestError):
     def __init__(self):
-        self.message = "the date input must be a string \
-            formatted like \"yyyy-mm-dd\"."
+        self.message = 'the date input must be a string \
+            formatted like "yyyy-mm-dd".'
 
 
 class NotDateException(BadRequestError):
     def __init__(self, param):
-        self.message = f"{param} is a bad date format, \
-            it must be this format \"yyyy-mm-dd\"."
+        self.message = f'{param} is a bad date format, \
+            it must be this format "yyyy-mm-dd".'
 
 
 class NotValidDateException(BadRequestError):
@@ -23,15 +23,19 @@ class NotValidDateException(BadRequestError):
 
 class TooYoungException(BadRequestError):
     def __init__(self, age, min):
-        self.message = f"minimum years old required is {min}, but yours is {age}"
+        self.message = (
+            f"minimum years old required is {min}, but yours is {age}"
+        )
 
 
 class TooOldException(BadRequestError):
     def __init__(self, age, max):
-        self.message = f"maximum years old possible is {max}, but yours is {age}"
+        self.message = (
+            f"maximum years old possible is {max}, but yours is {age}"
+        )
 
 
-def isDate(foo: any, req: dict[str, any]={}):
+def isDate(foo: any, req: dict[str, any] = {}):
     """Check if the foo argument is a date string
     formated like this: foo = "yyyy-mm-dd".
     If not it raises a NotDateException.
@@ -59,15 +63,15 @@ def isDate(foo: any, req: dict[str, any]={}):
 
     if type(foo) is not str:
         raise (NotStrException)
-    
+
     if len(foo) != 10:
         raise (NotDateException(foo))
-    
+
     rg = re.compile(r"""\d{4}\-\d{2}\-\d{2}""")
     m = rg.match(foo)
     if m is None:
         raise (NotDateException(foo))
-    
+
     try:
         datetime.datetime(int(foo[0:4]), int(foo[5:7]), int(foo[8:10]))
     except ValueError as e:
