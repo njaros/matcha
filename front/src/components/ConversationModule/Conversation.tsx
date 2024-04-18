@@ -14,13 +14,12 @@ function Conversation(){
     const me = storeMe(state => state.me)
 
     useEffect(() => {
+<<<<<<< Updated upstream
         if (me){
             const fetchData = async () => {
                 try {
-                    console.log('me', me)
                     const roomResponse = await Axios.post('/chat/get_room_list_by_id', { id: me?.id });
                     updateRoomList(roomResponse.data)
-                    console.log('room: ', roomResponse.data);
                 } catch (error) {
                     console.error(error);
                 }
@@ -28,8 +27,25 @@ function Conversation(){
             fetchData();
         }
     }, [me]);
+=======
+        const fetchData = async () => {
+            try {
+                const userResponse = await Axios.get('/user/get_me')
+                console.log('get me: ', userResponse.data)
+                setMe({id: userResponse.data.id, username: userResponse.data.username})
+                const roomResponse = await Axios.post('/chat/get_room_list_by_id', {id: userResponse.data.id})
+                console.log('get_room: ', roomResponse.data)
+            } catch (error) {
+                console.error(error);
+            }
+        };
+    
+        fetchData()
+    
+    }, [])
+    
+>>>>>>> Stashed changes
 
-    //  console.log('DATA: ', me)
     return (
     <>    
         <h1>CONVERSATION PAGE</h1>
@@ -53,7 +69,6 @@ export default Conversation;
 //     } | undefined>(undefined)
 
 //     useEffect(() => {
-
 //             Axios.get('/user/get_me').then(
 //                 res => {
 //                     console.log(res.data)

@@ -9,9 +9,9 @@ from uuid import UUID
 def get_user_by_id(**kwargs):
     return kwargs['user']
 
-
-def get_user_by_username():
-    return user_sql_request.get_user_by_username(request.form.get('username'))
+@token_required
+def get_user_by_username(**kwargs):
+    return user_sql_request.get_user_by_username(kwargs['user']['username'])
 
 
 @token_required

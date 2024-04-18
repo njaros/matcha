@@ -3,6 +3,7 @@ from flask import current_app as app
 import uuid
 from error_status.error import NotFoundError
 from chat.sql import insert_room
+from psycopg.rows import dict_row
 
 def insert_liker_and_liked(data):
     cur = conn.cursor()
@@ -18,14 +19,12 @@ def insert_liker_and_liked(data):
 
 
 def get_relationship_by_id(id):
-    cur = conn.cursor()
+    cur = conn.cursor(row_factory=dict_row)
     query = """
             SELECT
-                json_build_object(
-                    'id', relationship.id,
-                    'liker_id', relationship.liker_id,
-                    'liked_id', relationship.liked_id
-                )
+                relationship.id AS id,
+                relationship.liker_id AS liker_id,
+                relationship.liked_id AS liked_id
             FROM relationship
             WHERE relationship.id = %s
             """
@@ -34,58 +33,52 @@ def get_relationship_by_id(id):
     if res is None:
         raise NotFoundError('this relationship does not exist.')
     cur.close()
-    return res[0]
+    return res
 
 
 def get_relationship_by_liker_id(id):
-    cur = conn.cursor()
+    cur = conn.cursor(row_factory=dict_row)
     query = """
             SELECT
-                json_build_object(
-                    'id', relationship.id,
-                    'liker_id', relationship.liker_id,
-                    'liked_id', relationship.liked_id
-                )
+                relationship.id AS id,
+                relationship.liker_id AS liker_id,
+                relationship.liked_id AS liked_id
             FROM relationship
-            WHERE relationship.liker_id = %s
+            WHERE relationship.liker_id= %s
             """
     cur.execute(query, (id,))
     res = cur.fetchone()
     if res is None:
         raise NotFoundError('this relationship does not exist.')
     cur.close()
-    return res[0]
+    return res
 
 
 def get_relationship_by_liked_id(id):
-    cur = conn.cursor()
+    cur = conn.cursor(row_factory=dict_row)
     query = """
             SELECT
-                json_build_object(
-                    'id', relationship.id,
-                    'liker_id', relationship.liker_id,
-                    'liked_id', relationship.liked_id
-                )
+                relationship.id AS id,
+                relationship.liker_id AS liker_id,
+                relationship.liked_id AS liked_id
             FROM relationship
-            WHERE relationship.liked_id = %s
+            WHERE relationship.liked_id= %s
             """
     cur.execute(query, (id,))
     res = cur.fetchone()
     if res is None:
         raise NotFoundError('this relationship does not exist.')
     cur.close()
-    return res[0]
+    return res
 
 
 def is_matched(data):
-    cur = conn.cursor()
+    cur = conn.cursor(row_factory=dict_row)
     query = """
             SELECT
-                json_build_object(
-                    'id', relationship.id,
-                    'liker_id', relationship.liker_id,
-                    'liked_id', relationship.liked_id
-                )
+                relationship.id AS id,
+                relationship.liker_id AS liker_id,
+                relationship.liked_id AS liked_id
             FROM relationship
             WHERE liker_id = %s AND Liked_id = %s; 
             """
@@ -94,4 +87,4 @@ def is_matched(data):
     if res is None:
         raise(NotFoundError('Users are not matched'))
     cur.close()
-    return res[0]
+    return res

@@ -8,6 +8,7 @@ export interface MessageData {
 
 export interface Room {
     id: string,
+    name: string,
     user_1_id: string,
     user_2_id: string,
     message: MessageData[]
@@ -26,6 +27,7 @@ export interface Me {
 
 export interface RoomList {
     id: string,
+    name: string,
     user1: {
         user_id: string,
         username: string

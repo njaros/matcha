@@ -24,13 +24,13 @@ interface IstoreMe{
 }
 
 interface IstoreRoomList{
-	roomList: RoomList | undefined,
-	updateRoomList: (newRoomList: RoomList) => void
+	roomList: RoomList[] | undefined,
+	updateRoomList: (newRoomList: RoomList[]) => void
 }
 
 export const storeRoomList = create<IstoreRoomList>()((set) => ({
 	roomList: undefined,
-	updateRoomList: (newRoomList: RoomList) => set({roomList: newRoomList})
+	updateRoomList: (newRoomList: RoomList[]) => set({roomList: newRoomList})
 }))
 
 export const storeMe = create<IstoreMe>()((set) => ({

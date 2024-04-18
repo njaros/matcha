@@ -1,21 +1,19 @@
 from db_init import db_conn as conn
 from error_status.error import NotFoundError
-
+from psycopg.rows import dict_row
 
 def get_user_by_id(user_id):
-    cur = conn.cursor()
+    cur = conn.cursor(row_factory=dict_row)
     query = """
             SELECT
-                json_build_object(
-                    'id', user_table.id,
-                    'username', user_table.username,
-                    'email', user_table.email,
-                    'rank', user_table.rank,
-                    'birthDate', user_table.birthDate,
-                    'gender', user_table.gender,
-                    'biography', user_table.biography,
-                    'preference', user_table.preference
-                )
+                user_table.id AS id
+                user_table.username AS username
+                user_table.email AS email
+                user_table.rank AS rank
+                user_table.birthDate AS birthDate
+                user_table.gender AS gender
+                user_table.biography AS biography
+                user_table.preference AS preference
             FROM user_table
             WHERE user_table.id = %s;
             """
@@ -24,4 +22,4 @@ def get_user_by_id(user_id):
     if user is None:
         raise NotFoundError(f"user {user_id} not found")
     cur.close()
-    return user[0]
+    return user
