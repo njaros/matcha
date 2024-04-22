@@ -13,6 +13,7 @@ const Header = (props: {
     const navigate = useNavigate();
     const location = useLocation();
     const { gps, updateGps } = storeGps();
+    const [ gpsError, setGpsError ] = useState<string | undefined>(undefined);
  
     const logout = () => {
         if (refreshTokenTimeoutId != undefined)
@@ -26,16 +27,18 @@ const Header = (props: {
 		navigate("./login", { relative: "path" });
 	}
 
-    function success(pos) {
+    function success(pos: GeolocationPosition) {
         var crd = pos.coords;
         console.log("your current position is: ");
         console.log(`Latitude : ${crd.latitude}`);
         console.log(`Longitude : ${crd.longitude}`);
-        console.log(`More or less ${crd.accuracy} meters.`)
+        console.log(`More or less ${crd.accuracy} meters.`);
+        updateGps(crd);
     }
 
-    function error(err) {
+    function error(err: GeolocationPositionError) {
         console.warn(`ERROR(${err.code}): ${err.message}`);
+        setGpsError(`couldn't get position: ${err.message}`);
     }
 
     var options = {
@@ -49,15 +52,17 @@ const Header = (props: {
             navigator.permissions.query({name: "geolocation"}).then(function(result)
             {
                 console.log(result);
-                if (result.state in ["granted", "prompt"])
+                if (result.state == "granted" || result.state == "prompt")
+                {
                     navigator.geolocation.getCurrentPosition(success, error, options);
+                }
                 else {
-                    
+                    updateGps(undefined);
                 }
             });
         }
         else {console.log("no geolocation in this Bowser");}
-    })
+    }, [])
 
     return (
     <Box    display="flex"
@@ -85,7 +90,8 @@ const Header = (props: {
                 <NavLink to="/signup">Not registered ? Sign Up !</NavLink> :
                 <NavLink to="/login">Already registered ? Log In !</NavLink>}
             </ul>}
-            <Box>Your position : {}</Box>
+            {gpsError != undefined && <Box>{gpsError}</Box>}
+            {gps != undefined && <Box>Your position : latitude: {gps.latitude} longitude: {gps.longitude}</Box>}
         </Box>
     </Box>
     );

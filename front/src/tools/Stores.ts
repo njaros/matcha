@@ -3,14 +3,9 @@ import { create } from "zustand";
 import { Room, Me, RoomList } from "./interface";
 
 
-interface IGps {
-	latitude: number,
-	longitude: number
-}
-
 interface IstoreGps {
-	gps: IGps | undefined;
-	updateGps: (newGps: IGps | undefined) => void
+	gps: GeolocationCoordinates | undefined;
+	updateGps: (newGps: GeolocationCoordinates | undefined) => void
 }
 
 interface IstoreTimeout {
@@ -65,5 +60,5 @@ export const storeSocket = create<IstoreSocket>()((set) => ({
 
 export const storeGps = create<IstoreGps>()((set) => ({
 	gps: undefined,
-	updateGps: (newGps: IGps | undefined) => set({gps: newGps})
+	updateGps: (newGps: GeolocationCoordinates | undefined) => set({gps: newGps})
 }))
