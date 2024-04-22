@@ -34,7 +34,7 @@ const Profile = () => {
 
     function getPhotos()
     {
-        Axios.get("get_photos").then(
+        Axios.get("profile/get_photos").then(
             response => {
                 let newPhotos: IPhoto[] = [];
                 response.data.photos.map((photo: any) => {
@@ -70,12 +70,13 @@ const Profile = () => {
 
     function getUserProfile()
     {
-        Axios.get("get_user_by_id").then(
+        Axios.get("user/get_user_by_id").then(
             response => {
+                console.log(response.data);
                 setUser(response.data);
                 setValue("username", response.data.username);
                 setValue("email", response.data.email);
-                setValue("birthDate", response.data.birthDate);
+                setValue("birthdate", response.data.birthDate);
                 setValue("biography", response.data.biography);
                 setValue("gender", response.data.gender);
                 setValue("preference", response.data.preference);
@@ -124,7 +125,7 @@ const Profile = () => {
         for (let i = 0; i < files.length; ++i)
             form.append("file[]", files[i]);
         try {
-            Axios.post("upload", form, {
+            Axios.post("profile/upload", form, {
                 headers: {
                     "Content-Type": "multipart/form-data"
                 }
@@ -156,7 +157,7 @@ const Profile = () => {
         setAccepted([]);
         setDenied([]);
         form.append("photo_id", photoId);
-        Axios.post("delete_photo", form)
+        Axios.post("profile/delete_photo", form)
         .then(response => {
             const newPhotos = photos.filter(
                 photo => photo.id != photoId);
@@ -186,7 +187,7 @@ const Profile = () => {
         const form = new FormData();
         const photoId = e.currentTarget.value;
         form.append("photo_id", photoId);
-        Axios.post("change_main_photo", form)
+        Axios.post("profile/change_main_photo", form)
         .then(response => {
             const newPhotos = photos;
             newPhotos.forEach(photo => {
@@ -219,7 +220,7 @@ const Profile = () => {
         {
             setValue("username", user.username);
             setValue("email", user.email);
-            setValue("birthDate", user.birthDate);
+            setValue("birthdate", user.birthdate);
             setValue("biography", user.biography);
             setValue("gender", user.gender);
             setValue("preference", user.preference);
@@ -240,7 +241,7 @@ const Profile = () => {
         return (<List className="photosList">{list}</List>);
     }
 
-    const InputUser = (props: {readonly: boolean, val: string, title: "email" | "username" | "birthDate" | "gender" | "biography" | "preference"}) => {
+    const InputUser = (props: {readonly: boolean, val: string, title: "email" | "username" | "birthdate" | "gender" | "biography" | "preference"}) => {
         return (
             <Box display="flex" flexDirection="row" justifyContent="flex-start" alignItems="center">
                 <Text width="30%" marginRight="5%" textOverflow="ellipsis" overflow="hidden" whiteSpace="nowrap">Your {props.title}</Text>
@@ -271,15 +272,15 @@ const Profile = () => {
             form.append("username", data.username);
         if (data.email != user?.email)
             form.append("email", data.email);
-        if (data.birthDate != user?.birthDate)
-            form.append("birthDate", data.birthDate);
+        if (data.birthdate != user?.birthdate)
+            form.append("birthDate", data.birthdate);
         if (data.biography != user?.biography)
             form.append("biography", data.biography);
         if (data.gender != user?.gender)
             form.append("gender", data.gender);
         if (data.preference != user?.preference)
             form.append("preference", data.preference);
-        Axios.post("update_user", form).then(
+        Axios.post("profile/update_user", form).then(
             response => {
                 console.log(response);
                 setUser(response.data.updated_user)
@@ -306,7 +307,7 @@ const Profile = () => {
                         <Center marginBottom="5%">ACCOUNT INFO</Center>
                         <InputUser readonly={readOnly} val={user.username} title="username"/>
                         <InputUser readonly={readOnly} val={user.email} title="email"/>
-                        <InputUser readonly={readOnly} val={user.birthDate} title="birthDate"/>
+                        <InputUser readonly={readOnly} val={user.birthdate} title="birthdate"/>
                         <InputUser readonly={readOnly} val={user.gender} title="gender"/>
                         <InputUser readonly={readOnly} val={user.preference} title="preference"/>
                         <InputUserBiography readonly={readOnly} val={user.biography}/>

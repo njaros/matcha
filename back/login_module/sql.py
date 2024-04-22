@@ -2,6 +2,7 @@ from db_init import db_conn as conn
 import uuid
 from psycopg.rows import dict_row
 
+
 def insert_new_user_in_database(sign_data):
     cur = conn.cursor()
     cur.execute(
@@ -40,4 +41,4 @@ def login_user_in_database(login_data):
     if id is None:
         return None
     cur.close()
-    return id
+    return id["id"]

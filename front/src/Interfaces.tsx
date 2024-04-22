@@ -26,7 +26,7 @@ export interface IUser
 	username: string,
 	email: string,
 	rank: number,
-	birthDate: string,
+	birthdate: string,
 	gender: string,
 	biography: string,
 	preference: string

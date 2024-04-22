@@ -7,7 +7,9 @@ from uuid import UUID
 
 @token_required
 def get_user_by_id(**kwargs):
+    current_app.logger.info(kwargs["user"])
     return kwargs['user']
+
 
 @token_required
 def get_user_by_username(**kwargs):

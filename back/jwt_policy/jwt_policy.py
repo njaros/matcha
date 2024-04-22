@@ -54,7 +54,7 @@ def create_access_token(user_id):
     return jwt.encode(
                     {"user_id": hex,
                      "exp": datetime.now(tz=timezone.utc) +
-                     timedelta(minutes=5)},
+                     timedelta(minutes=10)},
                     app.config["SECRET_ACCESS"],
                     algorithm="HS256"
                 )
@@ -81,7 +81,7 @@ def update_access_token(**kwargs):
                                   algorithms="HS256")
     except Exception:
         raise BadRequestError("failed to read refresh_token")
-    access_id = UUID(kwargs["user"]["id"])
+    access_id = kwargs["user"]["id"]
     refresh_id = UUID(refresh_data["user_id"])
     if access_id != refresh_id:
         raise BadRequestError("incoherent user token owner")

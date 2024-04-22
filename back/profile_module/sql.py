@@ -58,8 +58,6 @@ def get_photos_by_user_id(user_id):
     photos = cur.fetchall()
     if photos is None:
         return None
-    columns = [desc[0] for desc in cur.description]
-    photos_as_dict = [dict(zip(columns, row)) for row in photos]
     cur.close()
     return photos
 
@@ -182,14 +180,7 @@ def update_user(**kwargs):
                     biography = COALESCE(%s, biography),
                     preference = COALESCE(%s, preference)
                 WHERE id = %s
-                RETURNING
-                    json_build_object(
-                        'username', user_table.username,
-                        'email', user_table.email,
-                        'birthDate', user_table.birthDate,
-                        'gender', user_table.gender,
-                        'biography', user_table.biography,
-                        'preference', user_table.preference);
+                RETURNING username, email, birthdate, gender, biography, preference
                 """,
                 (kwargs["username"], kwargs["email"], kwargs["birthDate"],
                  kwargs["gender"], kwargs["biography"], kwargs["preference"], kwargs["user"]["id"]))
