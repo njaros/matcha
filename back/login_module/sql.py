@@ -1,6 +1,6 @@
 from db_init import db_conn as conn
 import uuid
-
+from psycopg.rows import dict_row
 
 def insert_new_user_in_database(sign_data):
     cur = conn.cursor()
@@ -29,7 +29,7 @@ def insert_new_user_in_database(sign_data):
 
 
 def login_user_in_database(login_data):
-    cur = conn.cursor()
+    cur = conn.cursor(row_factory=dict_row)
     cur.execute(
         "SELECT id FROM user_table "
         "WHERE username = %s AND password = %s;",
@@ -40,4 +40,4 @@ def login_user_in_database(login_data):
     if id is None:
         return None
     cur.close()
-    return id[0]
+    return id

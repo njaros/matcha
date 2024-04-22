@@ -5,6 +5,7 @@ from chat import sql as chat_sql
 from user_module import sql as user_sql
 from validators import uuid
 
+#verifier si la personne qui ajoute le message est dans la room
 def add_message():
     
     chat_sql.insert_message(data = {
@@ -34,4 +35,10 @@ def get_room_with_message():
 def get_message():
     room = get_room_with_message()
     return room['messages'], 200
+
+def get_room_list_by_id():
+    data = request.json
+    return chat_sql.get_room_list_by_id(uuid.isUuid(data['id']))
+    # current_app.logger.info(request.data)
+    # return chat_sql.get_room_list_by_id(uuid.isUuid(request.form.get('id')))
 
