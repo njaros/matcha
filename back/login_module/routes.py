@@ -1,9 +1,10 @@
-from flask import make_response
+from flask import make_response, request, current_app
 import hashlib
 from jwt_policy import jwt_policy
 from login_module import sql as login_ctx
 from user_module import sql as user_ctx
 from error_status.error import BadRequestError
+from tools import GPS_tools
 from . import dto
 
 
@@ -21,12 +22,19 @@ def sign(**kwargs):
 def login(**kwargs):
     kwargs["password"] = hashlib.sha256(kwargs["password"]
                                         .encode("utf-8")).hexdigest()
-    returned_id = login_ctx.login_user_in_database(kwargs)
-    if returned_id is not None:
+    login_ctx.login_user_in_database(kwargs)
+    if kwargs["id"] is not None:
+        if kwargs["latitude"] is None:
+            ip_loc = GPS_tools.get_gps_from_ip(request.remote_addr)
+            current_app.logger.info(ip_loc)
+            if ip_loc is not None:
+                kwargs["latitude"] = ip_loc.latitude
+                kwargs["longitude"] = ip_loc.longitude
+                login_ctx.update_gps_loc_by_id(kwargs)
         response = make_response({"access_token": jwt_policy
-                                  .create_access_token(returned_id)})
+                                  .create_access_token(kwargs["id"])})
         response.set_cookie("refresh_token",
-                            jwt_policy.create_refresh_token(returned_id),
+                            jwt_policy.create_refresh_token(kwargs["id"]),
                             httponly=True,
                             secure=True,
                             samesite="none")

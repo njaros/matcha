@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ILoginInForm } from "../../Interfaces";
 import Axios from "../../tools/Caller";
 import { cookieMan } from "../../tools/CookieMan";
+import { storeGps } from "../../tools/Stores";
 
 const Login = (props:{
     handleLog: (newState: boolean) => void,
@@ -13,8 +14,14 @@ const Login = (props:{
 	const location = useLocation();
     const { register, handleSubmit } = useForm<ILoginInForm>();
 	const [wrong, setWrong] = useState<boolean>(false);
+    const gps = storeGps.getState().gps;
 
 	const loginSubmit = (data: ILoginInForm) => {
+        if (gps != undefined)
+        {
+            data.latitude = gps.latitude;
+            data.longitude = gps.longitude;
+        }
 		Axios.post("login", data, {withCredentials: true})
 			.then(response => {
 				console.log(response);

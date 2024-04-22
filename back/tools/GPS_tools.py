@@ -1,4 +1,7 @@
 from math import acos, cos, sin, pi
+import requests
+import ipaddress
+from flask import current_app
 
 
 class Dms:
@@ -195,6 +198,20 @@ which are {latitude}, {longitude}"
 def gps_distance(a: Gps, b: Gps):
     """Returns the distance between two gps position"""
     return a.distance(b)
+
+
+def get_gps_from_ip(ip: str):
+    if ipaddress.ip_address(ip).is_private:
+        url = "https://ipinfo.io/json"
+    else:
+        url = f"https://ipinfo.io/{ip}/json"
+    response = requests.get(url, timeout=1)
+    response.raise_for_status()
+    loc: str = response.json().get("loc")
+    if loc is None:
+        return None
+    coma = loc.find(',')
+    return Gps(float(loc[0:coma]), float(loc[coma + 1:]))
 
 
 if __name__ == "__main__":

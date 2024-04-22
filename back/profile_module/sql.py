@@ -180,10 +180,16 @@ def update_user(**kwargs):
                     biography = COALESCE(%s, biography),
                     preference = COALESCE(%s, preference)
                 WHERE id = %s
-                RETURNING username, email, birthdate, gender, biography, preference
+                RETURNING   username,
+                            email,
+                            birthdate,
+                            gender,
+                            biography,
+                            preference
                 """,
                 (kwargs["username"], kwargs["email"], kwargs["birthDate"],
-                 kwargs["gender"], kwargs["biography"], kwargs["preference"], kwargs["user"]["id"]))
+                 kwargs["gender"], kwargs["biography"], kwargs["preference"],
+                 kwargs["user"]["id"]))
     user_updated = cur.fetchone()
     conn.commit()
     cur.close()

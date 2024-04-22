@@ -1,7 +1,9 @@
 export interface ILoginInForm
 {
     username: string,
-    password: string
+    password: string,
+	latitude?: number,
+	longitude?: number
 }
 
 export interface ISignUpForm

@@ -1,4 +1,4 @@
-from validators import str, date
+from validators import str, date, gps
 from functools import wraps
 from flask import request
 
@@ -41,5 +41,14 @@ def login_dto(f):
                                            "minlen": 3,
                                            "no_sp_char": True})
         kwargs["password"] = str.isString(request.json["password"])
+        kwargs["latitude"] = gps.isLatitude(request.json.get("latitude"),
+                                            {"optionnal": True})
+        if kwargs["latitude"] is None:
+            kwargs["longitude"] = None
+        else:
+            kwargs["longitude"] = gps.isLongitude(request.json.get("longitude"),
+                                                  {"optionnal": True})
+            if kwargs["longitude"] is None:
+                kwargs["latitude"] = None
         return f(*args, **kwargs)
     return decorated

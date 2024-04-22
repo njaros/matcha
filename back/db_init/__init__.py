@@ -24,7 +24,9 @@ def set_up_db():
                 gender VARCHAR,
                 preference VARCHAR,
                 biography VARCHAR,
-                rank INT
+                rank INT,
+                latitude real,
+                longitude real
             )
         """)
 
