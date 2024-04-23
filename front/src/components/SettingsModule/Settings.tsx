@@ -1,6 +1,7 @@
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import Profile from "./Profile";
 import Photo from "./Photo";
+import Geoloc from "./Geoloc";
 
 const Settings = () => {
     return (
@@ -18,7 +19,7 @@ const Settings = () => {
                     <Photo />
                 </TabPanel>
                 <TabPanel>
-                    vvv
+                    <Geoloc />
                 </TabPanel>
             </TabPanels>
         </Tabs>

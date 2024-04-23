@@ -145,7 +145,7 @@ function App() {
 		}
 		
 		return () => {
-			console.log("useEffect of protected route returns");
+			console.log("useEffect of app returns");
 			clearTimeout(timeIdTmp);
 		}
 	}, [access, logged])
