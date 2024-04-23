@@ -7,13 +7,13 @@ import { storeMe, storeSocket, storeTimeout } from "./tools/Stores";
 import Login from "./components/LoginModule/Login";
 import Signup from "./components/SignUpModule/SignUp";
 import Home from "./components/HomeModule/Home";
-import Profile from "./components/ProfileModule/Profile";
 import Conversation from "./components/ConversationModule/Conversation";
 import Swipe from "./components/SwipeModule/Swipe";
 import { ChakraProvider, Box } from "@chakra-ui/react"
 import Axios from "./tools/Caller";
 import { cookieMan } from "./tools/CookieMan";
 import { JwtPayload } from "jsonwebtoken";
+import Settings from "./components/SettingsModule/Settings";
 
 function App() {
 
@@ -172,7 +172,7 @@ function App() {
 								<Route path="/signUp" element={ logged ? <Navigate to="/" /> : (<Signup />) } />
 								<Route element={ logged ? <Outlet /> : <Navigate to="/login" /> } >
 									<Route path="/" element={ <Home />} />
-									<Route path="/profile" element={ <Profile />} />
+									<Route path="/settings" element={ <Settings />} />
 									<Route path="/conversation" element={ <Conversation />} />
 									<Route path="/swipe" element={ <Swipe/> } />
 								</Route>

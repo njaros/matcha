@@ -80,7 +80,7 @@ const Header = (props: {
         <Box>
             { props.logged ?
             <ul>
-                <li><NavLink to="/profile">Profile</NavLink></li>
+                <li><NavLink to="/settings">Settings</NavLink></li>
                 <li><NavLink to="/swipe">Swipe</NavLink></li>
                 <li><NavLink to="/conversation">Conversation</NavLink></li>
                 <li><button onClick={logout}>Log Out</button></li>

@@ -5,6 +5,7 @@ import { ILoginInForm } from "../../Interfaces";
 import Axios from "../../tools/Caller";
 import { cookieMan } from "../../tools/CookieMan";
 import { storeGps } from "../../tools/Stores";
+import { CircularProgress, Spinner } from "@chakra-ui/react";
 
 const Login = (props:{
     handleLog: (newState: boolean) => void,
@@ -14,9 +15,11 @@ const Login = (props:{
 	const location = useLocation();
     const { register, handleSubmit } = useForm<ILoginInForm>();
 	const [wrong, setWrong] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
     const gps = storeGps.getState().gps;
 
 	const loginSubmit = (data: ILoginInForm) => {
+        setLoading(true);
         if (gps != undefined)
         {
             data.latitude = gps.latitude;
@@ -41,6 +44,9 @@ const Login = (props:{
         .catch(error => {
             console.log(error);
             setWrong(true);
+        })
+        .finally(() => {
+            setLoading(false);
         });
     }
 
@@ -57,7 +63,9 @@ const Login = (props:{
                 type="text"
                 placeholder="Enter your password..." />
                 {wrong && <div className="log_error">wrong username or password</div>}
-                <button className="submit_button" type="submit">SUBMIT</button>
+                {loading ?
+                <Spinner color="purple" size="lg"/> :
+                <button className="submit_button" type="submit">SUBMIT</button>}
             </form>
         </div>
     )
