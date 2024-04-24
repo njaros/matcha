@@ -1,5 +1,6 @@
-#root {
-    background: rgb(191, 224, 224);
+html, body, #root {
     height: 100vh;
-    width: 100%;
+    width: 100vw;
+    overflow-y: auto;
+    background-color: rgb(124, 207, 207);
 }

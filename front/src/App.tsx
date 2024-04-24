@@ -161,10 +161,7 @@ function App() {
 	//END OF TOKEN MANAGEMENT
 
 	return (
-		<ChakraProvider>
-			<Box	display="flex" justifyContent="center"
-					width="100%" height="100%"
-					overflowX="auto" overflowY="auto">
+		<Box display="flex" flexDirection="column" height="100%" width="70%">
 					<BrowserRouter>
 						<Routes>
 							<Route element={ <Layout logged={logged} handleLog={handleLog} handleAccess={handleAccess} /> }>
@@ -179,8 +176,7 @@ function App() {
 							</Route>
 						</Routes>
 					</BrowserRouter>
-			</Box>
-		</ChakraProvider>
+		</Box>
 		)
 }
 
