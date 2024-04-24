@@ -1,7 +1,11 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { storeGps, storeTimeout } from "../../tools/Stores";
 import { cookieMan } from "../../tools/CookieMan";
-import { Box } from "@chakra-ui/react"
+import { Box, Icon } from "@chakra-ui/react"
+import { MdFavorite } from "react-icons/md"
+import { ImExit } from "react-icons/im"
+import { FaBinoculars } from "react-icons/fa"
+import { SettingsIcon } from "@chakra-ui/icons"
 import { useEffect, useState } from "react";
 
 const Header = (props: {
@@ -72,26 +76,25 @@ const Header = (props: {
             borderRadius="lg">
         <Box    display="flex"
                 justifyContent="center"
-                margin="15%"
+                margin="10%"
                 fontSize="xxx-large">
             <h1><NavLink to="/">MATCHOOOO</NavLink></h1>
         </Box>
-        <Box>
             { props.logged ?
-            <ul>
-                <li><NavLink to="/settings">Settings</NavLink></li>
-                <li><NavLink to="/swipe">Swipe</NavLink></li>
-                <li><NavLink to="/conversation">Conversation</NavLink></li>
-                <li><button onClick={logout}>Log Out</button></li>
-            </ul> :
-            <ul>
+            <Box display="flex" flexDirection="row" justifyContent="space-evenly">
+                <NavLink to="/swipe"><Icon as={FaBinoculars} color="pink.400" boxSize={8}/></NavLink>
+                <NavLink to="/conversation"><Icon as={MdFavorite} color="pink.400" boxSize={8}/></NavLink>
+                <NavLink to="/settings"><SettingsIcon color="pink.400" boxSize={8} /></NavLink>
+                <button onClick={logout}><Icon as={ImExit} color="pink.400" boxSize={8}/></button>
+            </Box>
+            :
+            <Box>
                 {location.pathname == "/login" ?
                 <NavLink to="/signup">Not registered ? Sign Up !</NavLink> :
                 <NavLink to="/login">Already registered ? Log In !</NavLink>}
-            </ul>}
+            </Box>}
             {gpsError != undefined && <Box>{gpsError}</Box>}
             {gps != undefined && <Box>Your position : latitude: {gps.latitude} longitude: {gps.longitude}</Box>}
-        </Box>
     </Box>
     );
 }
