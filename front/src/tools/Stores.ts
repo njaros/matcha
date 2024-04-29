@@ -3,6 +3,11 @@ import { create } from "zustand";
 import { Room, Me, RoomList } from "./interface";
 
 
+interface IFocus {
+	focus: string;
+	updateFocus: (newFocus: string) => void
+}
+
 interface IstoreGps {
 	gps: GeolocationCoordinates | undefined;
 	updateGps: (newGps: GeolocationCoordinates | undefined) => void
@@ -32,6 +37,11 @@ interface IstoreRoomList{
 	roomList: RoomList[] | undefined,
 	updateRoomList: (newRoomList: RoomList[]) => void
 }
+
+export const storeGeoFocus = create<IFocus>()((set) => ({
+	focus: "",
+	updateFocus: (newFocus: string) => set({focus: newFocus})
+}))
 
 export const storeRoomList = create<IstoreRoomList>()((set) => ({
 	roomList: undefined,

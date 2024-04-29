@@ -5,7 +5,7 @@ import { ILoginInForm } from "../../Interfaces";
 import Axios from "../../tools/Caller";
 import { cookieMan } from "../../tools/CookieMan";
 import { storeGps } from "../../tools/Stores";
-import { CircularProgress, Spinner } from "@chakra-ui/react";
+import { Spinner } from "@chakra-ui/react";
 
 const Login = (props:{
     handleLog: (newState: boolean) => void,

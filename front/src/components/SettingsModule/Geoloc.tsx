@@ -2,49 +2,63 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css"
 import L, { Map as LeafLetMap } from "leaflet";
 import { Box, Button } from "@chakra-ui/react";
+import Axios from "../../tools/Caller";
 
-const Geoloc = () => {
-    const [ clickedPos, setClickedPos ] = useState<[number, number] | null>(null)
-    const [ mapCtx, setMap ] = useState<LeafLetMap | null>(null)
-    const [ hideMap, setHideMap ] = useState<boolean>(true)
+const Geoloc = (props: {focus: boolean}) => {
+    const [ mapCtx, setMap ] = useState<LeafLetMap | null>(null);
+    const [ hideMap, setHideMap ] = useState<boolean>(true);
+    const [ posClicked, setPosClicked ] = useState<[number, number] | null>(null)
+    const [ registeredPos, setRegisteredPos ] = useState<[number, number] | null>(null);
     var popup = L.popup();
     
+    function sendPosToServer() {
+        alert("pouet" + posClicked);
+        Axios.post("profile/set_pos", posClicked)
+        .then((response) => {
+            console.log(response);
+            setRegisteredPos(posClicked);
+        })
+        .catch((error) => {
+            console.log(error);
+        })
+    }
+
     const handleMapClick = (e: L.LeafletMouseEvent) => {
-        const { lat, lng } = e.latlng;
-        popup.setLatLng(e.latlng).setContent("You clicked the map at " + e.latlng.toString())
+        setPosClicked([e.latlng.lat, e.latlng.lng]);
+        popup.setLatLng(e.latlng).setContent("You clicked the map at " + e.latlng.toString() + 
+        "\nClick on this popup to register this position")
         .openOn(e.target)
-        setClickedPos([lat, lng]);
+        .addEventListener("click", sendPosToServer);
     };
 
     const mapRef = useCallback((node: HTMLDivElement | null) => {
-        if (node != null && mapCtx == null && !hideMap)
+        if (props.focus == true)
         {
-            const map = new LeafLetMap(node);
-            L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            if (mapCtx != null)
+                mapCtx.invalidateSize();
+            else if (node != null && !hideMap)
             {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            }).addTo(map);
-            map.on("click", handleMapClick);
-            var corner1 = L.latLng(40.712, -74.227),
-            corner2 = L.latLng(40.774, -74.125),
-            bounds = L.latLngBounds(corner1, corner2)
-            map.fitBounds(bounds, {padding: [500, 500], maxZoom: 21})
-            map.setView([51.505, -0.09], 13);
-            setMap(map);
+                    const map = new LeafLetMap(node);
+                    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                }).addTo(map);
+                map.on("click", handleMapClick);
+                var corner1 = L.latLng(40.712, -74.227),
+                corner2 = L.latLng(40.774, -74.125),
+                bounds = L.latLngBounds(corner1, corner2)
+                map.fitBounds(bounds, {padding: [500, 500], maxZoom: 21})
+                map.setView([51.505, -0.09], 13);
+                setMap(map);
+            }
         }
-    }, [hideMap])
+    }, [hideMap, props.focus])
 
     useEffect(() => {
         return () => {
             mapCtx?.remove();
         }
     }, [])
-
-    const handleValidatePosition = () => {
-        if (clickedPos) {
-          console.log("Coordonnées sélectionnées :", clickedPos);
-        }
-      };
 
     const triggerMap = () => {
         setHideMap(!hideMap);
