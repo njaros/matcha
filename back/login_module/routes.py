@@ -32,7 +32,9 @@ def login(**kwargs):
                 kwargs["longitude"] = ip_loc.longitude
                 login_ctx.update_gps_loc_by_id(kwargs)
         response = make_response({"access_token": jwt_policy
-                                  .create_access_token(kwargs["id"])})
+                                  .create_access_token(kwargs["id"]),
+                                  "latitude": kwargs["latitude"],
+                                  "longitude": kwargs["longitude"]})
         response.set_cookie("refresh_token",
                             jwt_policy.create_refresh_token(kwargs["id"]),
                             httponly=True,

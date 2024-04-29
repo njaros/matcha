@@ -3,32 +3,52 @@ import "leaflet/dist/leaflet.css"
 import L, { Map as LeafLetMap } from "leaflet";
 import { Box, Button } from "@chakra-ui/react";
 import Axios from "../../tools/Caller";
+import { storeGps } from "../../tools/Stores";
 
 const Geoloc = (props: {focus: boolean}) => {
     const [ mapCtx, setMap ] = useState<LeafLetMap | null>(null);
     const [ hideMap, setHideMap ] = useState<boolean>(true);
-    const [ posClicked, setPosClicked ] = useState<[number, number] | null>(null)
-    const [ registeredPos, setRegisteredPos ] = useState<[number, number] | null>(null);
+    const [ posClicked, setPosClicked ] = useState<{latitude: number, longitude: number} | null>(null)
+    const [ posInfo, setPosInfo ] = useState<{country: string, city: string} | null>(null)
+    const { gps, updateGpsLatLng } = storeGps();
     var popup = L.popup();
     
+    function getCountryAndCity(lat: number, lon: number) {
+        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
+        .then(response => response.json().then(
+            data => {
+                setPosInfo({
+                    country: data.address.country,
+                    city: data.address.city})
+                console.log(data)
+            }
+        ))
+        .catch(error => console.warn(error))
+    }
+
     function sendPosToServer() {
-        alert("pouet" + posClicked);
+        console.log("posClicked = ", posClicked);
         Axios.post("profile/set_pos", posClicked)
         .then((response) => {
             console.log(response);
-            setRegisteredPos(posClicked);
+            updateGpsLatLng(posClicked!);
         })
         .catch((error) => {
             console.log(error);
         })
     }
 
+    const popupContent = document.createElement("div");
+    popupContent.innerText = "click validate to register this localisation\n";
+    const buttonValidate = document.createElement("button");
+    buttonValidate.innerHTML = "validate";
+    buttonValidate.onclick = sendPosToServer;
+    popupContent.appendChild(buttonValidate);
+
     const handleMapClick = (e: L.LeafletMouseEvent) => {
-        setPosClicked([e.latlng.lat, e.latlng.lng]);
-        popup.setLatLng(e.latlng).setContent("You clicked the map at " + e.latlng.toString() + 
-        "\nClick on this popup to register this position")
+        setPosClicked({latitude: e.latlng.lat, longitude: e.latlng.lng});
+        popup.setLatLng(e.latlng).setContent(popupContent)
         .openOn(e.target)
-        .addEventListener("click", sendPosToServer);
     };
 
     const mapRef = useCallback((node: HTMLDivElement | null) => {
@@ -38,11 +58,11 @@ const Geoloc = (props: {focus: boolean}) => {
                 mapCtx.invalidateSize();
             else if (node != null && !hideMap)
             {
-                    const map = new LeafLetMap(node);
-                    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                {
-                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                }).addTo(map);
+                const map = new LeafLetMap(node);
+                L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                            {
+                                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                            }).addTo(map);
                 map.on("click", handleMapClick);
                 var corner1 = L.latLng(40.712, -74.227),
                 corner2 = L.latLng(40.774, -74.125),
@@ -55,10 +75,12 @@ const Geoloc = (props: {focus: boolean}) => {
     }, [hideMap, props.focus])
 
     useEffect(() => {
+        if (gps)
+            getCountryAndCity(gps.latitude, gps.longitude)
         return () => {
             mapCtx?.remove();
         }
-    }, [])
+    }, [gps])
 
     const triggerMap = () => {
         setHideMap(!hideMap);
@@ -70,6 +92,7 @@ const Geoloc = (props: {focus: boolean}) => {
                 flexDirection="column"
                 alignItems="center"
                 justifyContent="flex-start">
+            {posInfo && <Box fontSize="large">your known current position is city: {posInfo.city} country: {posInfo.country}</Box>}
             <Button height="10%" onClick={triggerMap}>set pos manually</Button>
             <Box ref={mapRef} hidden={hideMap} height="50vh" width="67vw" />    
         </Box>
