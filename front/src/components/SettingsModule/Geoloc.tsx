@@ -8,7 +8,6 @@ import { storeGps } from "../../tools/Stores";
 const Geoloc = (props: {focus: boolean}) => {
     const [ mapCtx, setMap ] = useState<LeafLetMap | null>(null);
     const [ hideMap, setHideMap ] = useState<boolean>(true);
-    const [ posClicked, setPosClicked ] = useState<{latitude: number, longitude: number} | null>(null)
     const [ posInfo, setPosInfo ] = useState<{country: string, city: string} | null>(null)
     const { gps, updateGpsLatLng } = storeGps();
     var popup = L.popup();
@@ -26,27 +25,30 @@ const Geoloc = (props: {focus: boolean}) => {
         .catch(error => console.warn(error))
     }
 
-    function sendPosToServer() {
-        console.log("posClicked = ", posClicked);
+    function sendPosToServer(e: any) {
+        const posAsStr: string = e.target.value;
+        const posClicked = {
+            latitude: parseFloat(posAsStr.substring(posAsStr.indexOf("(") + 1, posAsStr.indexOf(","))),
+            longitude: parseFloat(posAsStr.substring(posAsStr.indexOf(",") + 2, posAsStr.indexOf(")")))
+        }
         Axios.post("profile/set_pos", posClicked)
         .then((response) => {
             console.log(response);
-            updateGpsLatLng(posClicked!);
+            updateGpsLatLng(posClicked);
         })
         .catch((error) => {
             console.log(error);
         })
     }
 
-    const popupContent = document.createElement("div");
-    popupContent.innerText = "click validate to register this localisation\n";
-    const buttonValidate = document.createElement("button");
-    buttonValidate.innerHTML = "validate";
-    buttonValidate.onclick = sendPosToServer;
-    popupContent.appendChild(buttonValidate);
-
     const handleMapClick = (e: L.LeafletMouseEvent) => {
-        setPosClicked({latitude: e.latlng.lat, longitude: e.latlng.lng});
+        const popupContent = document.createElement("div");
+        popupContent.innerText = "click validate to register this localisation\n";
+        const buttonValidate = document.createElement("button");
+        buttonValidate.innerHTML = "validate";
+        buttonValidate.value = e.latlng.toString();
+        buttonValidate.onclick = sendPosToServer;
+        popupContent.appendChild(buttonValidate);
         popup.setLatLng(e.latlng).setContent(popupContent)
         .openOn(e.target)
     };
