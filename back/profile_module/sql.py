@@ -8,7 +8,7 @@ from psycopg.rows import dict_row
 
 
 def insert_photos(**kwargs):
-    hasher = Fernet(app.config['SECRET_PHOTO'])
+    hasher = Fernet(app.config["SECRET_PHOTO"])
     query = """
         INSERT INTO photos
         (id, mime_type, binaries, main, user_id)
@@ -18,43 +18,61 @@ def insert_photos(**kwargs):
     cur = conn.cursor()
     if kwargs["photo_count"] == 0:
         start += 1
-        cur.executemany(query, [[uuid.uuid1(),
-                                elt[0],
-                                hasher.encrypt(elt[2]),
-                                True,
-                                kwargs["user"]["id"]]
-                                for elt in kwargs["accepted"][0:start]])
-    cur.executemany(query, [[uuid.uuid1(),
-                            elt[0],
-                            hasher.encrypt(elt[2]),
-                            False,
-                            kwargs["user"]["id"]]
-                            for elt in kwargs["accepted"][start:]])
+        cur.executemany(
+            query,
+            [
+                [
+                    uuid.uuid1(),
+                    elt[0],
+                    hasher.encrypt(elt[2]),
+                    True,
+                    kwargs["user"]["id"],
+                ]
+                for elt in kwargs["accepted"][0:start]
+            ],
+        )
+    cur.executemany(
+        query,
+        [
+            [
+                uuid.uuid1(),
+                elt[0],
+                hasher.encrypt(elt[2]),
+                False,
+                kwargs["user"]["id"],
+            ]
+            for elt in kwargs["accepted"][start:]
+        ],
+    )
     conn.commit()
     cur.close()
 
 
 def count_photos_by_user_id(user_id):
     cur = conn.cursor(row_factory=dict_row)
-    cur.execute("""
+    cur.execute(
+        """
                 SELECT COUNT(*) AS count
                 FROM photos
                 WHERE user_id = %s;
                 """,
-                (user_id,))
+        (user_id,),
+    )
     res = cur.fetchone()
     cur.close()
-    return res['count']
+    return res["count"]
 
 
 def get_photos_by_user_id(user_id):
     cur = conn.cursor(row_factory=dict_row)
-    cur.execute("""
+    cur.execute(
+        """
                 SELECT *
                 FROM photos
                 WHERE user_id = %s;
                 """,
-                (user_id,))
+        (user_id,),
+    )
     photos = cur.fetchall()
     if photos is None:
         return None
@@ -64,12 +82,14 @@ def get_photos_by_user_id(user_id):
 
 def delete_photo_by_id(photo_id):
     cur = conn.cursor()
-    cur.execute("""
+    cur.execute(
+        """
                 DELETE FROM photos
                 WHERE id = %s
                 RETURNING *;
                 """,
-                (photo_id,))
+        (photo_id,),
+    )
     res = cur.fetchone()
     conn.commit()
     cur.close()
@@ -78,7 +98,8 @@ def delete_photo_by_id(photo_id):
 
 def get_photos_by_id(photo_id):
     cur = conn.cursor(row_factory=dict_row)
-    cur.execute("""
+    cur.execute(
+        """
                 SELECT
                     photos.id AS id,
                     photos.mime_type AS mime_type,
@@ -88,7 +109,8 @@ def get_photos_by_id(photo_id):
                 FROM photos
                 WHERE id = %s
                 """,
-                (photo_id,))
+        (photo_id,),
+    )
     res = cur.fetchone()
     cur.close()
     if res is None:
@@ -98,7 +120,8 @@ def get_photos_by_id(photo_id):
 
 def set_a_main_photo(user_id):
     cur = conn.cursor(row_factory=dict_row)
-    cur.execute("""
+    cur.execute(
+        """
                 UPDATE photos
                 SET main = TRUE
                 WHERE id = (
@@ -109,7 +132,8 @@ def set_a_main_photo(user_id):
                 )
                 RETURNING id;
                 """,
-                (user_id,))
+        (user_id,),
+    )
     main_id = cur.fetchone()
     conn.commit()
     cur.close()
@@ -120,18 +144,22 @@ def set_a_main_photo(user_id):
 
 def change_main_photo_by_ids(current_main_id, future_main_id):
     cur = conn.cursor()
-    cur.execute("""
+    cur.execute(
+        """
                 UPDATE photos
                 SET main = FALSE
                 WHERE id = %s;
                 """,
-                (current_main_id,))
-    cur.execute("""
+        (current_main_id,),
+    )
+    cur.execute(
+        """
                 UPDATE photos
                 SET main = TRUE
                 WHERE id = %s;
                 """,
-                (future_main_id,))
+        (future_main_id,),
+    )
     conn.commit()
     cur.close()
 
@@ -141,24 +169,28 @@ def change_main_photo_by_ids(current_main_id, future_main_id):
 
 def change_user_biography_by_id(**kwargs):
     cur = conn.cursor()
-    cur.execute("""
+    cur.execute(
+        """
                 UPDATE user_table
                 SET biography = %s
                 WHERE id = %s;
                 """,
-                (kwargs["biography"], kwargs["user"]["id"]))
+        (kwargs["biography"], kwargs["user"]["id"]),
+    )
     conn.commit()
     cur.close()
 
 
 def get_user_biography_by_id(**kwargs):
     cur = conn.cursor(row_factory=dict_row)
-    cur.execute("""
+    cur.execute(
+        """
                 SELECT biography
                 FROM user_table
                 WHERE id = %s;
                 """,
-                (kwargs["user"]["id"],))
+        (kwargs["user"]["id"],),
+    )
     res = cur.fetchone()
     cur.close()
     if res in None:
@@ -171,7 +203,8 @@ def get_user_biography_by_id(**kwargs):
 
 def update_user(**kwargs):
     cur = conn.cursor(row_factory=dict_row)
-    cur.execute("""
+    cur.execute(
+        """
                 UPDATE user_table
                 SET username = COALESCE(%s, username),
                     email = COALESCE(%s, email),
@@ -187,10 +220,71 @@ def update_user(**kwargs):
                             biography,
                             preference
                 """,
-                (kwargs["username"], kwargs["email"], kwargs["birthDate"],
-                 kwargs["gender"], kwargs["biography"], kwargs["preference"],
-                 kwargs["user"]["id"]))
+        (
+            kwargs["username"],
+            kwargs["email"],
+            kwargs["birthDate"],
+            kwargs["gender"],
+            kwargs["biography"],
+            kwargs["preference"],
+            kwargs["user"]["id"],
+        ),
+    )
     user_updated = cur.fetchone()
     conn.commit()
     cur.close()
     return user_updated
+
+
+# ------------------- GPS ------------------
+
+
+def update_gps(**kwargs):
+    cur = conn.cursor()
+    cur.execute(
+        """
+                UPDATE user_table
+                SET latitude = %s,
+                    longitude = %s
+                where id = %s;
+                """,
+        (
+            kwargs["gps"].latitude,
+            kwargs["gps"].longitude,
+            kwargs["user"]["id"],
+        ),
+    )
+    conn.commit()
+    cur.close()
+
+
+def lock_gps(**kwargs):
+    cur = conn.cursor()
+    cur.execute(
+        """
+                UPDATE user_table
+                SET gpsfixed = true
+                WHERE id = %s;
+        """,
+        (
+            kwargs["user"]["id"],
+        )
+    )
+    conn.commit()
+    cur.close()
+
+
+def unlock_gps(**kwargs):
+    cur = conn.cursor()
+    cur.execute(
+        """
+                UPDATE user_table
+                SET gpsfixed = false
+                WHERE id = %s;
+        """,
+        (
+            kwargs["user"]["id"],
+        )
+    )
+    conn.commit()
+    cur.close()

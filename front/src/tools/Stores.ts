@@ -11,8 +11,10 @@ interface IFocus {
 
 interface IstoreGps {
 	gps: GeolocationCoordinates | undefined;
+	fixed: boolean;
 	updateGps: (newGps: GeolocationCoordinates | undefined) => void,
 	updateGpsLatLng: (latLng: {latitude: number, longitude: number}) => void
+	updateGpsFixed: (val: boolean) => void
 }
 
 interface IstoreTimeout {
@@ -72,6 +74,7 @@ export const storeSocket = create<IstoreSocket>()((set) => ({
 
 export const storeGps = create<IstoreGps>()((set) => ({
 	gps: undefined,
+	fixed: false,
 	updateGps: (newGps: GeolocationCoordinates | undefined) => set({gps: newGps}),
 	updateGpsLatLng: (latLng: {latitude: number, longitude: number}) => set({
 		gps: {
@@ -83,5 +86,6 @@ export const storeGps = create<IstoreGps>()((set) => ({
 			latitude: latLng.latitude,
 			longitude: latLng.longitude
 		}
-	})
+	}),
+	updateGpsFixed: (val: boolean) => set({fixed: val})
 }))

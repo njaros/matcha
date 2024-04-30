@@ -1,25 +1,38 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css"
 import L, { Map as LeafLetMap } from "leaflet";
-import { Box, Button } from "@chakra-ui/react";
+import { Box, Button, FormControl, FormLabel, Switch } from "@chakra-ui/react";
 import Axios from "../../tools/Caller";
 import { storeGps } from "../../tools/Stores";
+import { lngModulo } from "../../tools/Thingy";
 
 const Geoloc = (props: {focus: boolean}) => {
     const [ mapCtx, setMap ] = useState<LeafLetMap | null>(null);
     const [ hideMap, setHideMap ] = useState<boolean>(true);
     const [ posInfo, setPosInfo ] = useState<{country: string, city: string} | null>(null)
     const { gps, updateGpsLatLng } = storeGps();
+    const { fixed, updateGpsFixed } = storeGps();
     var popup = L.popup();
     
     function getCountryAndCity(lat: number, lon: number) {
         fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
         .then(response => response.json().then(
             data => {
+                console.log(data);
                 setPosInfo({
                     country: data.address.country,
-                    city: data.address.city})
-                console.log(data)
+                    city:   data.address.city != undefined ?
+                            data.address.city :
+                            data.address.village != undefined ?
+                            data.address.village :
+                            data.address.city != undefined ?
+                            data.address.city :
+                            data.address.town != undefined ?
+                            data.address.town :
+                            data.address.county != undefined ?
+                            data.address.county :
+                            data.address.state
+                })
             }
         ))
         .catch(error => console.warn(error))
@@ -29,8 +42,10 @@ const Geoloc = (props: {focus: boolean}) => {
         const posAsStr: string = e.target.value;
         const posClicked = {
             latitude: parseFloat(posAsStr.substring(posAsStr.indexOf("(") + 1, posAsStr.indexOf(","))),
-            longitude: parseFloat(posAsStr.substring(posAsStr.indexOf(",") + 2, posAsStr.indexOf(")")))
+            longitude: lngModulo(parseFloat(posAsStr.substring(posAsStr.indexOf(",") + 2, posAsStr.indexOf(")"))))
         }
+        console.log(posAsStr);
+        console.log(posClicked);
         Axios.post("profile/set_pos", posClicked)
         .then((response) => {
             console.log(response);
@@ -70,32 +85,64 @@ const Geoloc = (props: {focus: boolean}) => {
                 corner2 = L.latLng(40.774, -74.125),
                 bounds = L.latLngBounds(corner1, corner2)
                 map.fitBounds(bounds, {padding: [500, 500], maxZoom: 21})
-                map.setView([51.505, -0.09], 13);
+                if (gps)
+                    map.setView([gps.latitude, gps.longitude], 10);
+                else
+                    map.setView([51.505, -0.09], 10);
                 setMap(map);
             }
         }
     }, [hideMap, props.focus])
 
     useEffect(() => {
-        if (gps)
-            getCountryAndCity(gps.latitude, gps.longitude)
         return () => {
+            console.log("qwfqwf")
             mapCtx?.remove();
         }
+    }, [])
+
+    useEffect(() => {
+        if (gps)
+            getCountryAndCity(gps.latitude, gps.longitude)
     }, [gps])
 
     const triggerMap = () => {
         setHideMap(!hideMap);
     }
 
+    const fixedGpsHandler = () => {
+        if (fixed)
+        {
+            Axios.get("profile/unlock_gps")
+            .then(() => {
+                updateGpsFixed(!fixed);
+            })
+            .catch((error) => {
+                console.warn(error);
+            })
+        }
+        else
+        {
+            Axios.get("profile/lock_gps")
+            .then(() => {
+                updateGpsFixed(!fixed);
+            })
+            .catch((error) => {
+                console.warn(error);
+            })
+        }
+    }
+
     return (
         <Box    width="100%"
                 display="flex"
-                flexDirection="column"
-                alignItems="center"
-                justifyContent="flex-start">
-            {posInfo && <Box fontSize="large">your known current position is city: {posInfo.city} country: {posInfo.country}</Box>}
-            <Button height="10%" onClick={triggerMap}>set pos manually</Button>
+                flexDirection="column">
+            {posInfo && <Box display="flex" alignSelf="center" marginBottom="3%" fontSize="large">Your displayed position is {posInfo.city}, {posInfo.country}</Box>}
+            <FormControl display="flex" flexDirection="row">
+                <Box>Enable GPS Locking ?</Box>
+                <Switch isChecked={fixed} onChange={fixedGpsHandler}></Switch>
+            </FormControl>
+            <Button height="10%" marginBottom="1%" onClick={triggerMap}>set pos manually</Button>
             <Box ref={mapRef} hidden={hideMap} height="50vh" width="67vw" />    
         </Box>
     )

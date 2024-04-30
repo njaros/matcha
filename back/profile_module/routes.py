@@ -2,7 +2,7 @@ from jwt_policy.jwt_policy import token_required
 import base64
 from cryptography.fernet import Fernet
 from flask import jsonify, request, current_app as app
-from .dto import image_dto, bio_dto, update_user_dto
+from .dto import image_dto, bio_dto, update_user_dto, set_pos_dto
 from error_status.error import BadRequestError
 from . import sql
 from user_module.sql import get_user_by_username
@@ -13,23 +13,38 @@ from tools import thingy
 @image_dto
 def upload(**kwargs):
     sql.insert_photos(**kwargs)
-    return jsonify({"accepted": [elt[1] for elt in kwargs["accepted"]],
-                    "denied": kwargs["denied"]}), 200
+    return (
+        jsonify(
+            {
+                "accepted": [elt[1] for elt in kwargs["accepted"]],
+                "denied": kwargs["denied"],
+            }
+        ),
+        200,
+    )
 
 
 @token_required
 def get_photos(**kwargs):
-    hasher = Fernet(app.config['SECRET_PHOTO'])
-    return jsonify({"photos":
-                    [{
+    hasher = Fernet(app.config["SECRET_PHOTO"])
+    return (
+        jsonify(
+            {
+                "photos": [
+                    {
                         "id": elt["id"],
                         "mimetype": elt["mime_type"],
                         "binaries": base64.b64encode(
-                            hasher.decrypt(elt["binaries"])).decode("utf-8"),
-                        "main": elt["main"]}
-                     for elt in sql.get_photos_by_user_id(
-                         kwargs["user"]["id"])]
-                    }), 200
+                            hasher.decrypt(elt["binaries"])
+                        ).decode("utf-8"),
+                        "main": elt["main"],
+                    }
+                    for elt in sql.get_photos_by_user_id(kwargs["user"]["id"])
+                ]
+            }
+        ),
+        200,
+    )
 
 
 @token_required
@@ -93,3 +108,22 @@ def update_user(**kwargs):
         raise BadRequestError("nothing to modify")
     updated_user = sql.update_user(**kwargs)
     return jsonify({"notice": notice, "updated_user": updated_user}), 200
+
+
+@token_required
+@set_pos_dto
+def set_pos(**kwargs):
+    sql.update_gps(**kwargs)
+    return [], 200
+
+
+@token_required
+def lock_gps(**kwargs):
+    sql.lock_gps(**kwargs)
+    return [], 200
+
+
+@token_required
+def unlock_gps(**kwargs):
+    sql.unlock_gps(**kwargs)
+    return [], 200

@@ -35,23 +35,27 @@ def login_user_in_database(kwargs):
     cur.execute(
         """
         UPDATE user_table
-        SET latitude = COALESCE(%s, latitude),
-            longitude = COALESCE(%s, longitude)
+        SET latitude = CASE WHEN gpsfixed = false THEN COALESCE(%s, latitude)
+                            ELSE latitude
+                            END,
+            longitude = CASE WHEN gpsfixed = false THEN COALESCE(%s, longitude)
+                            ELSE longitude
+                            END
         WHERE username = %s AND password = %s
-        RETURNING id;
+        RETURNING *;
         """,
         (kwargs.get("latitude"),
          kwargs.get("longitude"),
          kwargs.get("username"),
          kwargs.get("password"),)
     )
-    id = cur.fetchone()
-    if id is None:
+    user = cur.fetchone()
+    if user is None:
         cur.close()
         return None
     conn.commit()
     cur.close()
-    kwargs["id"] = id["id"]
+    kwargs["user"] = user
 
 
 def update_gps_loc_by_id(kwargs):

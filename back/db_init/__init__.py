@@ -26,7 +26,8 @@ def set_up_db():
                 biography VARCHAR,
                 rank INT,
                 latitude real,
-                longitude real
+                longitude real,
+                gpsfixed boolean not null default false
             )
         """)
 

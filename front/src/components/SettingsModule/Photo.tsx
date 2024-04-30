@@ -108,7 +108,10 @@ const Photo = () => {
                     console.log(error);
                     if (error.response != undefined)
                     {
-                        setErrorMsg(error.response.data.message)
+                        if (error.response.status == 413)
+                            setErrorMsg({"message": "entity too large", "section": "upload photo"})
+                        else
+                            setErrorMsg({"message": error.response.data.message, "section": "upload photo"})
                         setAccepted([]);
                         setDenied([]);
                     }
@@ -200,7 +203,7 @@ const Photo = () => {
                     <form onSubmit={onSubmit}>
                         <input type="file" name="file[]" onChange={onChangeFile} multiple required/>
                         <button type="submit">Envoi</button>
-                        {errorMsg.section == "photos" ? <div className="errorMsg">{errorMsg.message}</div> : null}
+                        {errorMsg.section != "" ? <div className="errorMsg">error: {errorMsg.section}: {errorMsg.message}</div> : null}
                         {accepted.length ? <div className="acceptedFiles">succesfully upload : {displayListAccepted(accepted)}</div> : null}
                         {denied.length ? <div className="deniedFiles">failed to upload : {displayListDenied(denied)}</div> : null}
                     </form>

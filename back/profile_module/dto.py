@@ -1,8 +1,9 @@
-from flask import request
+from flask import request, current_app
 from functools import wraps
 from .sql import count_photos_by_user_id as count
 from error_status.error import BadRequestError
 from validators import str, date
+from tools import GPS_tools
 
 
 def image_dto(f):
@@ -99,4 +100,15 @@ def update_user_dto(f):
         )
         return f(*args, **kwargs)
 
+    return decorated
+
+
+def set_pos_dto(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        latitude = request.get_json()["latitude"]
+        longitude = request.get_json()["longitude"]
+        kwargs["gps"] = GPS_tools.Gps(latitude, longitude)
+        current_app.logger.info(kwargs["gps"])
+        return f(*args, **kwargs)
     return decorated

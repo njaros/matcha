@@ -17,14 +17,15 @@ const Header = (props: {
     const navigate = useNavigate();
     const location = useLocation();
     const { gps, updateGps } = storeGps();
-    const [ gpsError, setGpsError ] = useState<string | undefined>(undefined);
+    const [ logoutClicked, setLogoutClicked] = useState<boolean>(false);
  
     const logout = () => {
         if (refreshTokenTimeoutId != undefined)
-            {
-                clearTimeout(refreshTokenTimeoutId);
-                updateRefreshTimeout(undefined);
-            }
+        {
+            clearTimeout(refreshTokenTimeoutId);
+            updateRefreshTimeout(undefined);
+        }
+        setLogoutClicked(!logoutClicked);
         cookieMan.eraseCookie('token');
         props.handleLog(false);
         props.handleAccess("");
@@ -42,7 +43,6 @@ const Header = (props: {
 
     function error(err: GeolocationPositionError) {
         console.warn(`ERROR(${err.code}): ${err.message}`);
-        setGpsError(`couldn't get position: ${err.message}`);
     }
 
     var options = {
@@ -65,8 +65,10 @@ const Header = (props: {
                 }
             });
         }
-        else {console.log("no geolocation in this Bowser");}
-    }, [])
+        else {
+            updateGps(undefined);
+        }
+    }, [logoutClicked])
 
     return (
     <Box    display="flex"
@@ -93,8 +95,6 @@ const Header = (props: {
                 <NavLink to="/signup">Not registered ? Sign Up !</NavLink> :
                 <NavLink to="/login">Already registered ? Log In !</NavLink>}
             </Box>}
-            {gpsError != undefined && <Box>{gpsError}</Box>}
-            {gps != undefined && <Box>Your position : latitude: {gps.latitude} longitude: {gps.longitude}</Box>}
     </Box>
     );
 }

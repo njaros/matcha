@@ -13,7 +13,8 @@ from error_status.error import BadRequestError, \
     handle_internal_server_error, \
     handle_not_found_error, \
     handle_forbidden_error, \
-    handle_miss_key_error_internal
+    handle_miss_key_error_internal, \
+    handle_value_error
 
 # create primary Flask app
 
@@ -69,6 +70,7 @@ app.register_error_handler(ForbiddenError, handle_forbidden_error)
 app.register_error_handler(NotFoundError, handle_not_found_error)
 app.register_error_handler(BadRequestKeyError, handle_miss_key_error)
 app.register_error_handler(KeyError, handle_miss_key_error_internal)
+app.register_error_handler(ValueError, handle_value_error)
 
 if __name__ == "__main__":
     port = int(os.environ.get('SERVER_PORT'))
