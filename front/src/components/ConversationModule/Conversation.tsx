@@ -31,7 +31,6 @@ function Conversation(){
     <>    
         <h1>CONVERSATION PAGE</h1>
         <ChannelList />
-        <Chatbox />
     </>
     );
 }

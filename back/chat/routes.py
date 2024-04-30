@@ -4,17 +4,21 @@ import pytz
 from chat import sql as chat_sql
 from user_module import sql as user_sql
 from validators import uuid
+from jwt_policy.jwt_policy import token_required
 
 #verifier si la personne qui ajoute le message est dans la room
-def add_message():
+
+@token_required
+def add_message(**kwargs):
     
     chat_sql.insert_message(data = {
-        'content': request.form.get('content'),
-        'sender_id': uuid.isUuid(request.form.get('sender_id')),
-        'room_id': uuid.isUuid(request.form.get('room_id')),
+        'content': request.json['content'],
+        'sender_id': uuid.isUuid(kwargs['user']['id']),
+        'room_id': uuid.isUuid(request.json['room_id']),
     })
     return [], 200
 
+@token_required
 def add_room():
     user_id1 = request.form.get('user_id1')
     user_id2 = request.form.get('user_id2')
@@ -26,16 +30,20 @@ def add_room():
     chat_sql.insert_room(data)
     return [], 200
 
+@token_required
 def get_room():
     return chat_sql.get_room(uuid.isUuid(request.form.get('room_id')))
 
+@token_required
 def get_room_with_message():
     return chat_sql.get_room_with_message(uuid.isUuid(request.form.get('room_id')))
 
+@token_required
 def get_message():
     room = get_room_with_message()
     return room['messages'], 200
 
+@token_required
 def get_room_list_by_id():
     data = request.json
     return chat_sql.get_room_list_by_id(uuid.isUuid(data['id']))

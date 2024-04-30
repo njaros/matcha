@@ -71,7 +71,7 @@ const Geoloc = (props: {focus: boolean}) => {
                 alignItems="center"
                 justifyContent="flex-start">
             <Button height="10%" onClick={triggerMap}>set pos manually</Button>
-            <Box ref={mapRef} hidden={hideMap} height="50vh" width="67vw" />    
+            <Box ref={mapRef} hidden={hideMap} height="50vh" width="67vw" />
         </Box>
     )
    

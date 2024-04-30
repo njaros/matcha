@@ -4,7 +4,7 @@ export interface MessageData {
     content: string;
     room : {id : number} | Room
     sendAt: Date;
-};
+}
 
 export interface Room {
     id: string,
@@ -12,6 +12,19 @@ export interface Room {
     user_1_id: string,
     user_2_id: string,
     message: MessageData[]
+}
+
+export interface Room_info {
+    id: string,
+    name: string,
+    user1: {
+        user_id: string,
+        username: string
+    }
+    user2: {
+        user_id: string,
+        username: string
+    }
 }
 
 export interface Me {
