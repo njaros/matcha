@@ -40,8 +40,6 @@ def token_required(f):
             kwargs["user"] = get_user_by_id(data["user_id"])
         except jwt.exceptions.InvalidTokenError:
             raise BadRequestError("Invalid Authentication token")
-        except Exception:
-            raise InternalServerError("Unhandled error")
         return f(*args, **kwargs)
     return decorated
 

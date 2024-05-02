@@ -1,6 +1,7 @@
 import { Socket, io } from "socket.io-client";
 import { create } from "zustand";
 import { Room, Me, RoomList } from "./interface";
+import { LatLng } from "leaflet";
 
 
 interface IFocus {
@@ -10,7 +11,10 @@ interface IFocus {
 
 interface IstoreGps {
 	gps: GeolocationCoordinates | undefined;
-	updateGps: (newGps: GeolocationCoordinates | undefined) => void
+	fixed: boolean;
+	updateGps: (newGps: GeolocationCoordinates | undefined) => void,
+	updateGpsLatLng: (latLng: {latitude: number, longitude: number}) => void
+	updateGpsFixed: (val: boolean) => void
 }
 
 interface IstoreTimeout {
@@ -70,5 +74,18 @@ export const storeSocket = create<IstoreSocket>()((set) => ({
 
 export const storeGps = create<IstoreGps>()((set) => ({
 	gps: undefined,
-	updateGps: (newGps: GeolocationCoordinates | undefined) => set({gps: newGps})
+	fixed: false,
+	updateGps: (newGps: GeolocationCoordinates | undefined) => set({gps: newGps}),
+	updateGpsLatLng: (latLng: {latitude: number, longitude: number}) => set({
+		gps: {
+			accuracy: 0,
+			altitude: null,
+			altitudeAccuracy: null,
+			speed: null,
+			heading: null,
+			latitude: latLng.latitude,
+			longitude: latLng.longitude
+		}
+	}),
+	updateGpsFixed: (val: boolean) => set({fixed: val})
 }))

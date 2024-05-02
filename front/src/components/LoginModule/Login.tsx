@@ -16,7 +16,8 @@ const Login = (props:{
     const { register, handleSubmit } = useForm<ILoginInForm>();
 	const [wrong, setWrong] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
-    const gps = storeGps.getState().gps;
+    const { gps, updateGpsLatLng } = storeGps();
+    const { fixed, updateGpsFixed } = storeGps();
 
 	const loginSubmit = (data: ILoginInForm) => {
         setLoading(true);
@@ -30,7 +31,13 @@ const Login = (props:{
 				console.log(response);
 				if (response.status == 200)
 				{
+                    console.log(response.data);
 					cookieMan.addCookie('token', response.data.access_token);
+                    updateGpsLatLng({
+                        latitude: response.data.latitude,
+                        longitude: response.data.longitude
+                    });
+                    updateGpsFixed(response.data.gpsfixed);
                     props.handleAccess(response.data.access_token);
                     props.handleLog(true);
 					const from = (location.state as any)?.from || "/";

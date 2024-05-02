@@ -42,7 +42,7 @@ def isInt(foo: any, req: dict[str, any] = {}):
     """Check if the foo argument is an int class,
     throwing an NotIntException if not.
     req (requirements) is a dictionnary.
-    req options allows to control if the int to be correctly formatted.
+    req options allows to control if the int is correctly formatted.
     req options list:
     ["max"]:         int => if foo > max, raise IntMaxException.
     ["min"]:         int => if foo < min, raise IntMinException.
@@ -93,7 +93,7 @@ def isStrInt(foo: any, req: dict[str, any] = {}):
     composed by digit element, throwing NotStrException or NotStrIntException
     if not.
     req (requirements) is a dictionnary.
-    req options allows to control if the int to be correctly formatted.
+    req options allows to control if the int is correctly formatted.
     req options list:
     ["max"]:         int => if foo > max, raise IntMaxException.
     ["min"]:         int => if foo < min, raise IntMinException.
