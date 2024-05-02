@@ -290,7 +290,7 @@ def unlock_gps(**kwargs):
 
 
 def get_hobbies(**kwargs):
-    cur = conn.cursor()
+    cur = conn.cursor(row_factory=dict_row)
     cur.execute(
         """
         SELECT  name,
