@@ -14,6 +14,20 @@ const Geoloc = (props: {focus: boolean}) => {
     const { fixed, updateGpsFixed } = storeGps();
     var popup = L.popup();
     
+    function getGps() {
+        Axios.get("user/get_gps").then(
+            response => {
+                console.log(response);
+                updateGpsLatLng(response.data);
+            }
+        )
+        .catch(
+            err => {
+                console.log(err);
+            }
+        )
+    }
+
     function getCountryAndCity(lat: number, lon: number) {
         fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
         .then(response => response.json().then(
@@ -95,8 +109,9 @@ const Geoloc = (props: {focus: boolean}) => {
     }, [hideMap, props.focus])
 
     useEffect(() => {
+        if (gps == undefined)
+            getGps()
         return () => {
-            console.log("qwfqwf")
             mapCtx?.remove();
         }
     }, [])

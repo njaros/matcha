@@ -15,7 +15,9 @@ def get_user_by_id(user_id):
                 user_table.birthDate AS birthDate,
                 user_table.gender AS gender,
                 user_table.biography AS biography,
-                user_table.preference AS preference
+                user_table.preference AS preference,
+                user_table.latitude AS latitude,
+                user_table.longitude AS longitude
             FROM user_table
             WHERE user_table.id = %s;
             """

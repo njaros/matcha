@@ -31,8 +31,8 @@ const Login = (props:{
 				console.log(response);
 				if (response.status == 200)
 				{
-                    console.log(response.data);
 					cookieMan.addCookie('token', response.data.access_token);
+                    console.log(response.data);
                     updateGpsLatLng({
                         latitude: response.data.latitude,
                         longitude: response.data.longitude

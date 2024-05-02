@@ -40,7 +40,7 @@ def get_user_by_id(id):
                 user_table.birthDate AS birthDate,
                 user_table.gender AS gender,
                 user_table.biography AS biography,
-                user_table.preference  AS preference 
+                user_table.preference AS preference 
             FROM user_table
             WHERE user_table.id = %s;
             """
