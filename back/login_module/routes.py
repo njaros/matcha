@@ -53,7 +53,7 @@ def login(**kwargs):
             httponly=True,
             secure=True,
             samesite="none",
-        )   
+        )
         response.status = 200
         return response
     else:

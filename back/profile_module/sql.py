@@ -266,9 +266,7 @@ def lock_gps(**kwargs):
                 SET gpsfixed = true
                 WHERE id = %s;
         """,
-        (
-            kwargs["user"]["id"],
-        )
+        (kwargs["user"]["id"],),
     )
     conn.commit()
     cur.close()
@@ -282,9 +280,31 @@ def unlock_gps(**kwargs):
                 SET gpsfixed = false
                 WHERE id = %s;
         """,
-        (
-            kwargs["user"]["id"],
-        )
+        (kwargs["user"]["id"],),
     )
     conn.commit()
     cur.close()
+
+
+# --------------------- HOBBIES ---------------------
+
+
+def get_hobbies(**kwargs):
+    cur = conn.cursor()
+    cur.execute(
+        """
+        SELECT  name,
+        CASE
+                WHEN id IN (SELECT hobbie_id
+                            FROM user_hobbie
+                            WHERE user_id = %s)
+                THEN 'yes'
+                ELSE 'no'
+        END AS  belong
+        FROM    hobbie;
+        """,
+        (kwargs["user"]["id"],),
+    )
+    hobbies = cur.fetchone()
+    cur.close()
+    return hobbies

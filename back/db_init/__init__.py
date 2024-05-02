@@ -106,6 +106,24 @@ def set_up_db():
         """
         )
 
+        cur.execute(
+            """
+            INSERT INTO hobbie (name)
+            VALUES  ('coder matcha'),
+                    ('voiture'),
+                    ('musique'),
+                    ('le foute'),
+                    ('sport'),
+                    ('manger'),
+                    ('alcool'),
+                    ('film'),
+                    ('series'),
+                    ('les guns'),
+                    ('jeux videos'),
+                    ('poney');
+            """
+        )
+
         cur.close()
         db_conn.commit()
     return db_conn

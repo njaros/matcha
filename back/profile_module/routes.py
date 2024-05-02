@@ -9,6 +9,8 @@ from user_module.sql import get_user_by_username
 from tools import thingy
 
 
+# ------------------PHOTO-----------------
+
 @token_required
 @image_dto
 def upload(**kwargs):
@@ -86,6 +88,8 @@ def change_main_photo(**kwargs):
     return [], 200
 
 
+# -------------------------USER UPDATE-----------------
+
 @token_required
 @bio_dto
 def change_biography(**kwargs):
@@ -110,6 +114,8 @@ def update_user(**kwargs):
     return jsonify({"notice": notice, "updated_user": updated_user}), 200
 
 
+# ------------------------GPS--------------------
+
 @token_required
 @set_pos_dto
 def set_pos(**kwargs):
@@ -127,3 +133,5 @@ def lock_gps(**kwargs):
 def unlock_gps(**kwargs):
     sql.unlock_gps(**kwargs)
     return [], 200
+
+# ------------------------HOBBIES-------------------
