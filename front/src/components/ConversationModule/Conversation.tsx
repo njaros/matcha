@@ -17,7 +17,7 @@ function Conversation(){
         if (me){
             const fetchData = async () => {
                 try {
-                    const roomResponse = await Axios.post('/chat/get_room_list_by_id', { id: me?.id });
+                    const roomResponse = await Axios.get('/chat/get_room_list_by_id');
                     updateRoomList(roomResponse.data)
                 } catch (error) {
                     console.error(error);

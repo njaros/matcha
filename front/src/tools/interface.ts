@@ -3,7 +3,7 @@ export interface MessageData {
     author: {id: string, username: string};
     content: string;
     room : {id : number} | Room
-    sendAt: Date;
+    send_at: Date;
 }
 
 export interface Room {

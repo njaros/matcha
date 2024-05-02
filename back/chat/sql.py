@@ -86,15 +86,42 @@ def insert_message(data):
                 sender_id,
                 room_id
             )
-            VALUES (%s, %s, %s) RETURNING id;
+            VALUES (%s, %s, %s)
+            RETURNING id;
             """
     cur.execute(query, (
         data.get("content"),
         data.get("sender_id"),
-        data.get("room_id")
+        data.get("room_id"),
     ))
+    id = cur.fetchone()
     conn.commit()
+    query_sender =  """
+                    SELECT
+                        %s AS id,
+                        json_agg(
+                            json_build_object(
+                                'id', user_table.id,
+                                'username', user_table.username
+                            )
+                        ) AS author,
+                        %s AS room_id,
+                        %s AS content,
+                        (SELECT send_at FROM message WHERE id = %s) AS send_at
+                    FROM user_table
+                    WHERE user_table.id = %s  
+                    """
+    cur.execute(query_sender, (
+        id['id'],
+        data.get("room_id"),
+        data.get("content"),
+        id['id'],
+        data.get("sender_id")
+    ))
+    res = cur.fetchone()
     cur.close()
+    return res
+
 
 
 def get_room(room_id):

@@ -10,16 +10,14 @@ from jwt_policy.jwt_policy import token_required
 
 @token_required
 def add_message(**kwargs):
-    
-    chat_sql.insert_message(data = {
+    return chat_sql.insert_message(data = {
         'content': request.json['content'],
-        'sender_id': uuid.isUuid(kwargs['user']['id']),
+        'sender_id': kwargs['user']['id'],
         'room_id': uuid.isUuid(request.json['room_id']),
     })
-    return [], 200
 
 @token_required
-def add_room():
+def add_room(**kwargs):
     user_id1 = request.form.get('user_id1')
     user_id2 = request.form.get('user_id2')
 
@@ -31,22 +29,19 @@ def add_room():
     return [], 200
 
 @token_required
-def get_room():
+def get_room(**kwargs):
     return chat_sql.get_room(uuid.isUuid(request.form.get('room_id')))
 
 @token_required
-def get_room_with_message():
-    return chat_sql.get_room_with_message(uuid.isUuid(request.form.get('room_id')))
+def get_room_with_message(**kwargs):
+    return chat_sql.get_room_with_message(uuid.isUuid(request.json['room_id']))
 
 @token_required
-def get_message():
+def get_message(**kwargs):
     room = get_room_with_message()
     return room['messages'], 200
 
 @token_required
-def get_room_list_by_id():
-    data = request.json
-    return chat_sql.get_room_list_by_id(uuid.isUuid(data['id']))
-    # current_app.logger.info(request.data)
-    # return chat_sql.get_room_list_by_id(uuid.isUuid(request.form.get('id')))
+def get_room_list_by_id(**kwargs):
+    return chat_sql.get_room_list_by_id(kwargs['user']['id'])
 

@@ -9,8 +9,6 @@ function ChannelList(){
 
     const roomList = storeRoomList(state => state.roomList)
     const [room, setRoom] = useState<Room_info>()
-    console.log('from channel list', roomList)
-    console.log(roomList)
     
     if (!roomList)
         return <div>No conversation yet...</div>
@@ -27,7 +25,7 @@ function ChannelList(){
                     )
                 )}
             </UnorderedList>  
-            <Chatbox room={room}/>
+            {room && <Chatbox room={room}/>}
         </>
     )
 }
