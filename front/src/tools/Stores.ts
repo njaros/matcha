@@ -1,6 +1,6 @@
 import { Socket, io } from "socket.io-client";
 import { create } from "zustand";
-import { Room, Me, RoomList } from "./interface";
+import { Room, Me, RoomList, MessageData } from "./interface";
 import { LatLng } from "leaflet";
 
 
@@ -41,6 +41,16 @@ interface IstoreRoomList{
 	roomList: RoomList[] | undefined,
 	updateRoomList: (newRoomList: RoomList[]) => void
 }
+
+interface IstoreMessageList{
+	messageList: MessageData[] | undefined,
+	updateMessageList: (newMessageList: MessageData[]) => void
+}
+
+export const storeMessageList = create<IstoreMessageList>()((set) => ({
+	messageList: undefined,
+	updateMessageList: (newMessageList: MessageData[]) => set({messageList: newMessageList})
+}))
 
 export const storeGeoFocus = create<IFocus>()((set) => ({
 	focus: "",

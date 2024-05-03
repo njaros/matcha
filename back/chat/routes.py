@@ -45,3 +45,6 @@ def get_message(**kwargs):
 def get_room_list_by_id(**kwargs):
     return chat_sql.get_room_list_by_id(kwargs['user']['id'])
 
+@token_required
+def get_message_list_by_room_id(**kwargs):
+    return chat_sql.get_message_list_by_room_id((request.json['room_id']))

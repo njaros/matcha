@@ -41,11 +41,10 @@ def send_message(data):
         if error.args:
             app.logger.error(error.args[0])
 
-    app.logger.info('Bonjour a tous c est monsieur le v12')
-    if not all(isinstance(param, str) for param in [ username, content, send_at]):
-        app.logger.error('Wrong type of parameter')
+    # app.logger.info('Bonjour a tous c est monsieur le v12')
+    # if not all(isinstance(param, str) for param in [ username, content, send_at]):
+    #     app.logger.error('Wrong type of parameter')
     
-
     room = get_room_with_message(room_id)
     
     if room is None:

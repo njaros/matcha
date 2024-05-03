@@ -11,7 +11,7 @@ export interface Room {
     name: string,
     user_1_id: string,
     user_2_id: string,
-    message: MessageData[]
+    message: MessageData[] | undefined
 }
 
 export interface Room_info {
