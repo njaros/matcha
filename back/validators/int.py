@@ -1,4 +1,5 @@
 from error_status.error import BadRequestError
+from flask import current_app
 
 
 class NotStrException(BadRequestError):

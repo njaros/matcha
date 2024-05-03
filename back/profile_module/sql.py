@@ -289,22 +289,104 @@ def unlock_gps(**kwargs):
 # --------------------- HOBBIES ---------------------
 
 
-def get_hobbies(**kwargs):
+def get_user_hobbies_yn(**kwargs):
     cur = conn.cursor(row_factory=dict_row)
     cur.execute(
         """
-        SELECT  name,
+        SELECT  id, name,
         CASE
                 WHEN id IN (SELECT hobbie_id
                             FROM user_hobbie
                             WHERE user_id = %s)
-                THEN 'yes'
-                ELSE 'no'
+                THEN true
+                ELSE false
         END AS  belong
         FROM    hobbie;
+        """,
+        (kwargs["user"]["id"],),
+    )
+    hobbies = cur.fetchall()
+    cur.close()
+    return hobbies
+
+
+def get_user_hobbies(**kwargs):
+    cur = conn.cursor(row_factory=dict_row)
+    cur.execute(
+        """
+        SELECT  name
+        FROM    hobbie
+        WHERE   id IN (
+            SELECT  hobbie_id
+            FROM    user_hobbie
+            WHERE   user_id = %s
+        );
         """,
         (kwargs["user"]["id"],),
     )
     hobbies = cur.fetchone()
     cur.close()
     return hobbies
+
+
+def get_hobbies(**kwargs):
+    cur = conn.cursor(row_factory=dict_row)
+    cur.execute(
+        """
+        SELECT  name
+        FROM hobbie
+        """
+    )
+    hobbies = cur.fetchall()
+    cur.close()
+    return hobbies
+
+
+def add_user_hobbies(**kwargs):
+    cur = conn.cursor()
+    query = """
+            INSERT INTO user_hobbie (user_id, hobbie_id)
+            VALUES (%s, %s)
+            ON CONFLICT DO NOTHING;
+            """
+    cur.executemany(
+        query,
+        [
+            (kwargs["user"]["id"], hobbie_id)
+            for hobbie_id in kwargs["hobbie_ids"]
+        ],
+    )
+    conn.commit()
+    cur.close()
+
+
+def delete_user_hobbies(**kwargs):
+    cur = conn.cursor()
+    query = """
+            DELETE FROM user_hobbie
+            WHERE user_id = %s AND hobbie_id = %s;
+            """
+    cur.executemany(
+        query,
+        [
+            (kwargs["user"]["id"], hobbie_id)
+            for hobbie_id in kwargs["hobbie_ids"]
+        ],
+    )
+    conn.commit()
+    cur.close()
+
+
+def get_userid_with_hobbies_ids(**kwargs):
+    cur = conn.cursor(row_factory=dict_row)
+    cur.execute("""
+                SELECT  user_id
+                FROM    user_hobbie
+                WHERE   hobbie_id IN %s
+                GROUP BY user_id
+                HAVING COUNT(DISTINCT hobbie_id) = %s
+                """,
+                (kwargs["hobbie_ids"], len(kwargs["hobbie_ids"])))
+    user_ids = cur.fetchall()
+    cur.close()
+    return user_ids
