@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import Axios from "../../tools/Caller";
-import { Box, Tag, SimpleGrid, Circle, Button } from "@chakra-ui/react"
+import { Box, Tag, SimpleGrid, Button } from "@chakra-ui/react"
 import { inherits } from "util";
 
 const Hobbies = () => {
@@ -53,8 +53,7 @@ const Hobbies = () => {
     const Hobbies_Boxes = () => {
         return hobbies?.map((elt) => {
             return(
-                    <Button textColor={elt.belong? "blue": "black"}
-                            colorScheme={elt.belong? "teal": "gray"}
+                    <Button colorScheme={elt.belong? "matchaPink": "gray"}
                             boxShadow="base"
                             value={elt.id}
                             onClick={elt.belong? handleClickOff: handleClickOn}>
