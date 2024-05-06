@@ -51,6 +51,7 @@ from token_required_test_module import app as app3
 from profile_module import app as profile_module
 from relationship import app as relationship_module
 from user_module import app as user_module
+from swipe_module import app as swipe_module
 
 app.register_blueprint(login_module)
 app.register_blueprint(socket_app)
@@ -60,6 +61,7 @@ app.register_blueprint(app3)
 app.register_blueprint(profile_module)
 app.register_blueprint(relationship_module)
 app.register_blueprint(user_module)
+app.register_blueprint(swipe_module)
 
 # error management
 

@@ -76,6 +76,20 @@ def set_up_db():
 
         cur.execute(
             """
+            CREATE TABLE cancel (
+                id uuid PRIMARY KEY,
+                canceler_id uuid,
+                canceled_id uuid,
+                FOREIGN KEY (canceler_id) REFERENCES user_table(id) \
+                    ON DELETE CASCADE,
+                FOREIGN KEY (canceled_id) REFERENCES user_table(id) \
+                    ON DELETE CASCADE
+            );
+        """
+        )
+
+        cur.execute(
+            """
             CREATE TABLE photos (
                 id uuid PRIMARY KEY,
                 mime_type VARCHAR,
