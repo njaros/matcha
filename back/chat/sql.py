@@ -99,11 +99,9 @@ def insert_message(data):
     query_sender =  """
                     SELECT
                         %s AS id,
-                        json_agg(
-                            json_build_object(
-                                'id', user_table.id,
-                                'username', user_table.username
-                            )
+                        json_build_object(
+                            'id', user_table.id,
+                            'username', user_table.username
                         ) AS author,
                         %s AS room_id,
                         %s AS content,
@@ -119,6 +117,7 @@ def insert_message(data):
         data.get("sender_id")
     ))
     res = cur.fetchone()
+    app.logger.info('POUUUUET', res)
     cur.close()
     return res
 
@@ -126,23 +125,21 @@ def get_message_list_by_room_id(room_id):
     cur = conn.cursor(row_factory=dict_row)
     query = """
             SELECT
-                id,
-                (
-                    SELECT json_agg(
-                        json_build_object(
-                            'id', user_table.id,
-                            'username', user_table.username
-                        )
-                    )
-                    FROM user_table
-                    WHERE user_table.id = message.sender_id
+                message.id,
+                (SELECT json_build_object(
+                    'id', user_table.id,
+                    'username', user_table.username
+                )
+                FROM user_table
+                WHERE user_table.id = message.sender_id
                 ) AS author,
-                content,
+                message.content,
                 message.room_id AS room,
-                send_at
+                message.send_at
             FROM message
             WHERE message.room_id = %s;
-            """
+    """
+
     cur.execute(query, (room_id,))
     res = cur.fetchall()
     cur.close()

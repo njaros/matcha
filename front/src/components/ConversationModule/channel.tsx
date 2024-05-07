@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import { storeSocket, storeRoom, storeMe, storeRoomList, storeMessageList } from "../../tools/Stores";
 import Axios from "../../tools/Caller";
-import { Box, Button, ListItem, UnorderedList } from "@chakra-ui/react";
+import { Box, Button, ListItem, UnorderedList, Flex } from "@chakra-ui/react";
 import Chatbox from "./Chatbox";
 import { RoomList, Room_info } from "../../tools/interface";
 
@@ -27,8 +27,10 @@ function ChannelList(){
     if (!roomList)
         return <div>No conversation yet...</div>
     return (
-        <>
-            <h2>Messages</h2>
+        <Flex 
+        h={'100%'}
+
+        >
             <UnorderedList>
                 {roomList.map((conv, index) => (
                         <ListItem key={index}>
@@ -41,7 +43,8 @@ function ChannelList(){
                 )}
             </UnorderedList>  
             {room && <Chatbox room={room}/>}
-        </>
+
+        </Flex>
     )
 }
 

@@ -43,12 +43,12 @@ interface IstoreRoomList{
 }
 
 interface IstoreMessageList{
-	messageList: MessageData[] | undefined,
+	messageList: MessageData[],
 	updateMessageList: (newMessageList: MessageData[]) => void
 }
 
 export const storeMessageList = create<IstoreMessageList>()((set) => ({
-	messageList: undefined,
+	messageList: [],
 	updateMessageList: (newMessageList: MessageData[]) => set({messageList: newMessageList})
 }))
 

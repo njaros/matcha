@@ -29,7 +29,6 @@ function Conversation(){
 
     return (
     <>    
-        <h1>CONVERSATION PAGE</h1>
         <ChannelList />
     </>
     );

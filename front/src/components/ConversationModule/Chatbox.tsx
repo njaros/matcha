@@ -1,4 +1,4 @@
-import { Box, Button, Flex, FormControl, Input, ListItem, OrderedList, Text, WrapItem } from "@chakra-ui/react"
+import { Avatar, Box, Button, Flex, FormControl, Input, ListItem, OrderedList, Text, WrapItem } from "@chakra-ui/react"
 import React, { useEffect, useRef, useState } from "react"
 import { MessageData, Room_info } from "../../tools/interface"
 import { useForm } from "react-hook-form";
@@ -34,8 +34,9 @@ function Chatbox(props: {room: Room_info | undefined}){
     const scrollToBottomRef = useRef<HTMLDivElement>(null);
     const socket = storeSocket(state => state.socket)
     const me = storeMe(state => state.me)
-    const test = storeMessageList(state => state.messageList)
-    const [messageList, setMessageList] = useState<MessageData[] | undefined>([])
+    const msgList = storeMessageList(state => state.messageList)
+    const [rerender, setRerender] = useState<boolean>(false)
+    const [messageList, setMessageList] = useState<MessageData[]>([])
     const { 
         register, 
         handleSubmit, 
@@ -44,17 +45,15 @@ function Chatbox(props: {room: Room_info | undefined}){
     } = useForm();
     
     useEffect(() => {
-        setMessageList(test)
-    },[])
+        setMessageList(msgList)
+    },[msgList])
 
     const sendMessage = async (message: string) => {
         try{
-            console.log(props.room)
             const res = await Axios.post("/chat/add_message", {'content': message, 'room_id': props.room?.id})
-            console.log('from sendmessage',res.data)
-            const msg : MessageData = res.data
-            socket?.emit("send_message", msg)
-            setMessageList((list) => [...list!, msg])
+            const senderData : MessageData = res.data
+            socket?.emit("send_message", senderData)
+            setMessageList((list) => [...list, senderData])
         }
         catch(err){
             if (err)
@@ -64,10 +63,13 @@ function Chatbox(props: {room: Room_info | undefined}){
 
     useEffect(() => {
         socket?.on("receive_message", (data: MessageData) => {
-            console.log('from useeffect',data)
+            console.log('data.room.id', data.room.id)
+            console.log('room id', props.room?.id)
             if (data.room?.id === props.room?.id)
             {
-                setMessageList((list) => [...list!, data])
+                setRerender(!rerender)
+                console.log('data', data)
+                setMessageList((list) => [...list, data])
             }
         })
         return (() => {
@@ -80,44 +82,119 @@ function Chatbox(props: {room: Room_info | undefined}){
             sendMessage(data.message)
         setValue('message', '')
     }
-    console.log('msg list', messageList)
+
+    useEffect(() => {
+
+        if (scrollToBottomRef.current) {
+            scrollToBottomRef.current.scrollTop = scrollToBottomRef.current.scrollHeight;
+          }
+    }, [messageList])
+
     return (
-        <>  
-            <OrderedList>
-                {messageList?.map((message, index) => (
-                    <ListItem key={index}>
-                        <Text>{message.content}</Text>
-                    </ListItem>
-                ))}
-            </OrderedList>
-            <Flex h={'50%'}
-            flexDir={'column'}
+        <Flex h={'70%'}
+        flexDir={'column'}
+        width={'60%'}
+        bg='pink.300'
+        >
+            <Flex
             width={'100%'}
-            color='black'>
-                <Text>{props.room?.name}</Text>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                    <FormControl>
-                        <Input
-                            type='text'
-                            placeholder="type your message"
-                            {
-                                ...register("message")
-                            }
-                        />
-                        <Button
-                            fontWeight={'normal'}
-                            borderRadius={'0px'}
-                            textAlign={'center'}
-                            bg={'none'}
-                            textColor={'black'}
-                            type='submit' marginTop="15px"
+            h={'100%'}
+            flexDir={'column'}
+            overflowY={'auto'}
+            overflowX={'hidden'}
+            ref={scrollToBottomRef}
+            >
+
+                {messageList.map((messageContent, index) => {
+                    return (
+                        <Flex
+                        key={index}
+                        w={'100%'}
+                        bg='pink.300'
+                        textColor={'white'}
+                        padding={'10px'}
+                        wrap={'wrap'}
+                        justifyContent={messageContent.author.id === me?.id ? "right" : "left"}>
+                            <Flex
+                                maxWidth={'70%'}
+                                bg={'pink.200'}
+                                flexDir={'column'}
+                                wrap={'wrap'}
+                                padding={'10px'}
+                                wordBreak={'break-all'}
                             >
-                                send your message
-                        </Button>
+                                <Flex
+                                flexDir={'row'}
+                                marginBottom={'4px'}
+                                justifyContent={'space-evenly'}
+                                alignItems={'center'}
+                                >
+                                    <Avatar name={messageContent.author?.username} size={'sm'}></Avatar>
+                                    <Text padding={'10px'} >{decode(messageContent.content)}</Text>
+                                </Flex>
+                            </Flex>
+                            <WrapItem
+                            padding={'5px'}
+                            fontSize={'0.6em'}
+                            flexDir={'row'}
+                            justifyContent={messageContent?.author.id === me?.id ? "right" : "left"}
+                            width={'100%'}                            
+                            >
+                                <Text marginRight={'5px'}>{messageContent.author?.username}</Text>
+                                <Text>{timeOfDay(messageContent?.send_at)} </Text>
+                            </WrapItem>
+                        </Flex>
+                    )
+                })}
+            </Flex>
+            <Flex 
+            w={'100%'}
+            h={'5%'}
+            minH={'80px'}
+            flexDir={'row'}
+            justifyContent={'center'}
+            alignItems={'center'}
+            bg='pink.200'
+            >
+                <form onSubmit={handleSubmit(onSubmit)} style={
+                    {
+                        width : '100%',
+                        height : '100%',
+                        display: 'flex',
+                        flexDirection : 'row',
+                        justifyContent : 'space-evenly',
+                        alignItems : 'center'
+                    }
+                }>
+                    <FormControl isRequired
+                    w={'80%'}
+                    h={'60px'}>
+                        <Input
+                            h={'60px'}
+                            border={'none'}
+                            focusBorderColor="none"
+                            borderRadius={'0px'}
+                            type='text'
+                            color='white'
+                            placeholder="type your message..."
+                            autoComplete="off"
+                            {...register("message", {
+                                required: "enter message",
+                            })}
+                        />
                     </FormControl>
+
+                    <Button 
+                    type='submit'
+                    borderRadius={'0px'}
+                    bg={'none'}
+                    _hover={{background : 'none', transform: 'scale(1.4)'}}
+                    >
+                        <ArrowRightIcon boxSize={4} color={'white'}/>
+                    </Button>
                 </form>
             </Flex>
-        </>
+        </Flex>
     )
 }
 

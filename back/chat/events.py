@@ -22,7 +22,7 @@ def join_room(data):
 
 @socketio.on('send_message')
 def send_message(data):
-    author = data.get('author', [])[0]
+    author = data.get('author')
     user_id = author.get('id')
     username = author.get('username')
     content = data.get('content')
@@ -41,7 +41,6 @@ def send_message(data):
         if error.args:
             app.logger.error(error.args[0])
 
-    # app.logger.info('Bonjour a tous c est monsieur le v12')
     # if not all(isinstance(param, str) for param in [ username, content, send_at]):
     #     app.logger.error('Wrong type of parameter')
     
@@ -50,7 +49,6 @@ def send_message(data):
     if room is None:
         app.logger.info(f'Room {room_id} not found in database.')
 
-    app.logger.info(data.get('content'))
     emit('receive_message', {
         'author': {'user_id': user_id, 'username': username},
         'content': content,

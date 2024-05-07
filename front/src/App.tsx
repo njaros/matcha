@@ -41,7 +41,7 @@ function App() {
 			}
 		}
 		fetchMe()
-	}, [])
+	}, [logged])
 	
 	useEffect(() => {
 
