@@ -2,7 +2,7 @@ from flask import request, current_app
 from functools import wraps
 from .sql import count_photos_by_user_id as count
 from error_status.error import BadRequestError
-from validators import str, date
+from validators import str, date, int
 from tools import GPS_tools
 
 
@@ -111,4 +111,29 @@ def set_pos_dto(f):
         kwargs["gps"] = GPS_tools.Gps(latitude, longitude)
         current_app.logger.info(kwargs["gps"])
         return f(*args, **kwargs)
+
+    return decorated
+
+
+def add_hobby_dto(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        current_app.logger.info(request.json)
+        kwargs["hobbie_ids"] = (
+            int.isStrInt(request.json["id"], {"min": 0}),
+        )
+        current_app.logger.info(kwargs)
+        return f(*args, **kwargs)
+
+    return decorated
+
+
+def del_hobby_dto(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        kwargs["hobbie_ids"] = (
+            int.isStrInt(request.json["id"], {"min": 0}),
+        )
+        return f(*args, **kwargs)
+
     return decorated

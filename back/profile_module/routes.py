@@ -2,11 +2,21 @@ from jwt_policy.jwt_policy import token_required
 import base64
 from cryptography.fernet import Fernet
 from flask import jsonify, request, current_app as app
-from .dto import image_dto, bio_dto, update_user_dto, set_pos_dto
+from .dto import (
+    image_dto,
+    bio_dto,
+    update_user_dto,
+    set_pos_dto,
+    add_hobby_dto,
+    del_hobby_dto
+)
 from error_status.error import BadRequestError
 from . import sql
 from user_module.sql import get_user_by_username
 from tools import thingy
+
+
+# ------------------PHOTO-----------------
 
 
 @token_required
@@ -86,6 +96,9 @@ def change_main_photo(**kwargs):
     return [], 200
 
 
+# -------------------------USER UPDATE-----------------
+
+
 @token_required
 @bio_dto
 def change_biography(**kwargs):
@@ -110,6 +123,9 @@ def update_user(**kwargs):
     return jsonify({"notice": notice, "updated_user": updated_user}), 200
 
 
+# ------------------------GPS--------------------
+
+
 @token_required
 @set_pos_dto
 def set_pos(**kwargs):
@@ -127,3 +143,28 @@ def lock_gps(**kwargs):
 def unlock_gps(**kwargs):
     sql.unlock_gps(**kwargs)
     return [], 200
+
+
+# ------------------------HOBBIES-------------------
+
+
+@token_required
+def get_self_hobbies(**kwargs):
+    hobbies = sql.get_user_hobbies_yn(**kwargs)
+    app.logger.info(hobbies)
+    return jsonify(hobbies)
+
+
+@token_required
+@add_hobby_dto
+def add_hobby(**kwargs):
+    app.logger.info(kwargs)
+    sql.add_user_hobbies(**kwargs)
+    return "ok", 200
+
+
+@token_required
+@del_hobby_dto
+def del_hobby(**kwargs):
+    sql.delete_user_hobbies(**kwargs)
+    return "ok", 200

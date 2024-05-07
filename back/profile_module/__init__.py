@@ -8,7 +8,10 @@ from .routes import (
     update_user,
     set_pos,
     lock_gps,
-    unlock_gps
+    unlock_gps,
+    get_self_hobbies,
+    add_hobby,
+    del_hobby
 )
 from flask_cors import CORS
 
@@ -39,12 +42,20 @@ app.add_url_rule(
 app.add_url_rule(
     "/profile/update_user", "update_user", update_user, methods=["POST"]
 )
-app.add_url_rule(
-    "/profile/set_pos", "set_pos", set_pos, methods=["POST"]
-)
-app.add_url_rule(
-    "/profile/lock_gps", "lock_gps", lock_gps, methods=["GET"]
-)
+app.add_url_rule("/profile/set_pos", "set_pos", set_pos, methods=["POST"])
+app.add_url_rule("/profile/lock_gps", "lock_gps", lock_gps, methods=["GET"])
 app.add_url_rule(
     "/profile/unlock_gps", "unlock_gps", unlock_gps, methods=["GET"]
+)
+app.add_url_rule(
+    "/profile/get_self_hobbies",
+    "get_self_hobbies",
+    get_self_hobbies,
+    methods=["GET"],
+)
+app.add_url_rule(
+    "/profile/add_hobby", "add_hobby", add_hobby, methods=["POST"]
+)
+app.add_url_rule(
+    "/profile/del_hobby", "del_hobby", del_hobby, methods=["POST"]
 )

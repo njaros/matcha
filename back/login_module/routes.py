@@ -25,16 +25,18 @@ def login(**kwargs):
         kwargs["password"].encode("utf-8")
     ).hexdigest()
     login_ctx.login_user_in_database(kwargs)
+    current_app.logger.info(kwargs)
     if kwargs["user"] is not None:
+        current_app.logger.info(kwargs)
         if (kwargs["latitude"] is None) and (
-            kwargs["user"]["gpsfixed"] is True
+            kwargs["user"]["gpsfixed"] is False
         ):
             ip_loc = GPS_tools.get_gps_from_ip(request.remote_addr)
             current_app.logger.info(ip_loc)
             if ip_loc is not None:
-                kwargs["latitude"] = ip_loc.latitude
-                kwargs["longitude"] = ip_loc.longitude
-                login_ctx.update_gps_loc_by_id(kwargs)
+                kwargs["user"]["latitude"] = ip_loc.latitude
+                kwargs["user"]["longitude"] = ip_loc.longitude
+                login_ctx.update_gps_loc_by_id(**kwargs)
         response = make_response(
             {
                 "access_token": jwt_policy.create_access_token(
