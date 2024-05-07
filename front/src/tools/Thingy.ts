@@ -24,10 +24,9 @@ export function lngModulo(lng: number): number
     if (lng > 180)
     {
         if (sign)
-            lng -= 180;
+            return 360 - lng;
         else
-            lng = 360 - lng;
-        sign = !sign;
+            return lng - 360
     }
     if (sign)
         lng *= -1;

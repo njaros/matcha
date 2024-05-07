@@ -1,6 +1,7 @@
 import os
 import psycopg
 from psycopg.rows import dict_row
+from .db_filler import insert_users_in_database
 
 
 def set_up_db():
@@ -138,6 +139,7 @@ def set_up_db():
             """
         )
 
+        insert_users_in_database(cur, 50, 20, 20)
         cur.close()
         db_conn.commit()
     return db_conn

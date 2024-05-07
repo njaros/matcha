@@ -1,5 +1,6 @@
 import datetime
 
+
 def years_old(date):
     """Return an int which is the age old of a date.
     The date must be a string validated by validators.isDate().
