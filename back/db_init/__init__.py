@@ -43,8 +43,10 @@ def set_up_db():
                 id uuid PRIMARY KEY,
                 user_1 uuid,
                 user_2 uuid,
-                FOREIGN KEY (user_1) REFERENCES user_table(id),
-                FOREIGN KEY (user_2) REFERENCES user_table(id)
+                FOREIGN KEY (user_1) REFERENCES user_table(id) \
+                    ON DELETE CASCADE,
+                FOREIGN KEY (user_2) REFERENCES user_table(id) \
+                    ON DELETE CASCADE
             )
         """
         )
@@ -57,8 +59,10 @@ def set_up_db():
                 sender_id uuid,
                 send_at TIMESTAMP DEFAULT NOW(),
                 room_id uuid,
-                FOREIGN KEY (sender_id) REFERENCES user_table(id),
-                FOREIGN KEY (room_id) REFERENCES room(id)
+                FOREIGN KEY (sender_id) REFERENCES user_table(id) \
+                    ON DELETE CASCADE,
+                FOREIGN KEY (room_id) REFERENCES room(id) \
+                    ON DELETE CASCADE
             )
         """
         )

@@ -21,4 +21,14 @@ def get_ten_randoms(**kwargs):
 @token_required
 @like_dislike_dto
 def like_user(**kwargs):
-    return sql.like_user(**kwargs)
+    new_room = sql.like_user(**kwargs)
+    if new_room is not None:
+        return new_room
+    return [], 200
+
+
+@token_required
+@like_dislike_dto
+def dislike_user(**kwargs):
+    sql.dislike_user(**kwargs)
+    return [], 200

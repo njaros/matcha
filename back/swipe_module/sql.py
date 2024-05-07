@@ -39,7 +39,9 @@ def get_random_list_ten(**kwargs):
 
 
 def like_user(**kwargs):
-    cur = conn.cursor()
+    cur = conn.cursor(row_factory=dict_row)
+    user = kwargs["user"]["id"]
+    target = kwargs["target_id"]
     new_room = None
     cur.execute(
         """
@@ -47,7 +49,24 @@ def like_user(**kwargs):
         FROM relationship
         WHERE liker_id = %s AND liked_id = %s;
         """,
-        (kwargs["user"]["id"], kwargs["target_id"]),
+        (user, target),
+    )
+    if cur.fetchone() is not None:
+        cur.close()
+        return
+    cur.execute(
+        """
+        SELECT id
+        FROM cancel
+        WHERE   canceler_id = %s AND canceled_id = %s
+                OR canceler_id = %s AND canceled_id = %s;
+        """,
+        (
+            user,
+            target,
+            target,
+            user,
+        ),
     )
     if cur.fetchone() is not None:
         cur.close()
@@ -57,23 +76,58 @@ def like_user(**kwargs):
         INSERT INTO relationship (id, liker_id, liked_id)
         VALUES (%s, %s, %s);
         """,
-        (uuid.uuid1(), kwargs["user"]["id"], kwargs["target_id"]),
+        (uuid.uuid1(), user, target),
     )
     cur.execute(
         """
         SELECT id
         FROM relationship
-        WHERE liker_id = %s AND liked_is = %s;
+        WHERE liker_id = %s AND liked_id = %s;
         """,
-        (kwargs["target_id"], kwargs["user"]["id"]),
+        (target, user),
     )
     if cur.fetchone() is not None:
         new_room = chat_sql.insert_room(
             {
-                "user_id1": kwargs["user"]["id"],
-                "user_id2": kwargs["target_id"],
+                "user_id1": user,
+                "user_id2": target,
             }
         )
     conn.commit()
     cur.close()
     return new_room
+
+
+def dislike_user(**kwargs):
+    cur = conn.cursor()
+    user = kwargs["user"]["id"]
+    target = kwargs["target_id"]
+    cur.execute(
+        """
+        SELECT id
+        FROM cancel
+        WHERE   canceler_id = %s AND canceled_id = %s
+                OR canceler_id = %s AND canceled_id = %s;
+        """,
+        (user, target, target, user)
+    )
+    if cur.fetchone() is not None:
+        cur.close()
+        return
+    cur.execute(
+        """
+        INSERT INTO cancel (id, canceler_id, canceled_id)
+        VALUES (%s, %s, %s);
+        """,
+        (uuid.uuid1(), user, target)
+    )
+    cur.execute(
+        """
+        DELETE FROM room
+        WHERE   user_1 = %s AND user_2 = %s OR
+                user_1 = %s AND user_2 = %s
+        """,
+        (user, target, target, user)
+    )
+    cur.close()
+    conn.commit()
