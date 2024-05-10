@@ -47,8 +47,6 @@ def create_room_when_user_are_matched():
     if is_matched() == 'success':
         return insert_room(
             {
-                'user_id1': request.form['liker_id'], 
+                'user_id1': request.form['liker_id'],
                 'user_id2': request.form['liked_id']
             })
-        
-     

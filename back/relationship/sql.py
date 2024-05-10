@@ -5,6 +5,7 @@ from error_status.error import NotFoundError
 from chat.sql import insert_room
 from psycopg.rows import dict_row
 
+
 def insert_liker_and_liked(data):
     cur = conn.cursor()
     query = """
@@ -85,6 +86,6 @@ def is_matched(data):
     cur.execute(query, (data['liker_id'], data['liked_id']))
     res = cur.fetchone()
     if res is None:
-        raise(NotFoundError('Users are not matched'))
+        raise (NotFoundError('Users are not matched'))
     cur.close()
     return res

@@ -33,3 +33,12 @@ export interface IUser
 	biography: string,
 	preference: string
 }
+
+export interface ISwipeUser
+{
+	id: string,
+	username: string,
+	birthdate: string,
+	gender: string,
+	photo: string
+}

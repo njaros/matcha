@@ -1,6 +1,7 @@
 import os
 import psycopg
 from psycopg.rows import dict_row
+from .db_filler import insert_users_in_database
 
 
 def set_up_db():
@@ -42,8 +43,10 @@ def set_up_db():
                 id uuid PRIMARY KEY,
                 user_1 uuid,
                 user_2 uuid,
-                FOREIGN KEY (user_1) REFERENCES user_table(id),
-                FOREIGN KEY (user_2) REFERENCES user_table(id)
+                FOREIGN KEY (user_1) REFERENCES user_table(id) \
+                    ON DELETE CASCADE,
+                FOREIGN KEY (user_2) REFERENCES user_table(id) \
+                    ON DELETE CASCADE
             )
         """
         )
@@ -56,8 +59,10 @@ def set_up_db():
                 sender_id uuid,
                 send_at TIMESTAMP DEFAULT NOW(),
                 room_id uuid,
-                FOREIGN KEY (sender_id) REFERENCES user_table(id),
-                FOREIGN KEY (room_id) REFERENCES room(id)
+                FOREIGN KEY (sender_id) REFERENCES user_table(id) \
+                    ON DELETE CASCADE,
+                FOREIGN KEY (room_id) REFERENCES room(id) \
+                    ON DELETE CASCADE
             )
         """
         )
@@ -71,6 +76,20 @@ def set_up_db():
                 FOREIGN KEY (liker_id) REFERENCES user_table(id),
                 FOREIGN KEY (liked_id) REFERENCES user_table(id)
             )
+        """
+        )
+
+        cur.execute(
+            """
+            CREATE TABLE cancel (
+                id uuid PRIMARY KEY,
+                canceler_id uuid,
+                canceled_id uuid,
+                FOREIGN KEY (canceler_id) REFERENCES user_table(id) \
+                    ON DELETE CASCADE,
+                FOREIGN KEY (canceled_id) REFERENCES user_table(id) \
+                    ON DELETE CASCADE
+            );
         """
         )
 
@@ -124,6 +143,7 @@ def set_up_db():
             """
         )
 
+        insert_users_in_database(cur, 50, 20, 20)
         cur.close()
         db_conn.commit()
     return db_conn
