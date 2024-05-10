@@ -4,7 +4,7 @@ import { Box, Tag, SimpleGrid, Button } from "@chakra-ui/react"
 import { inherits } from "util";
 
 const Hobbies = () => {
-    const [ hobbies, setHobbies ] = useState<{id: number, name: string, belong: boolean}[] | null>(null);
+    const [ hobbies, setHobbies ] = useState<{id: number, name: string, belong: boolean}[]>([]);
     const [ rerenderPls, setRerenderPls ] = useState<boolean>(false);
 
     function get_hobbies() {
@@ -51,9 +51,10 @@ const Hobbies = () => {
     }
 
     const Hobbies_Boxes = () => {
-        return hobbies?.map((elt) => {
+        return hobbies.map((elt) => {
             return(
-                    <Button colorScheme={elt.belong? "matchaPink": "gray"}
+                    <Button key={elt.id}
+                            colorScheme={elt.belong? "matchaPink": "gray"}
                             boxShadow="base"
                             value={elt.id}
                             onClick={elt.belong? handleClickOff: handleClickOn}>
@@ -73,7 +74,7 @@ const Hobbies = () => {
             <Box alignSelf="center" marginBottom = "15%" fontFamily="fantasy" fontSize="lg">
                 Select your Hobbies !
             </Box>
-            {hobbies && <SimpleGrid minChildWidth="100px" spacing={10}>
+            {hobbies.length != 0 && <SimpleGrid minChildWidth="100px" spacing={10}>
                 <Hobbies_Boxes />
             </SimpleGrid>}
         </Box>

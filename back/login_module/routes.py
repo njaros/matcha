@@ -25,7 +25,6 @@ def login(**kwargs):
         kwargs["password"].encode("utf-8")
     ).hexdigest()
     login_ctx.login_user_in_database(kwargs)
-    current_app.logger.info(kwargs)
     if kwargs["user"] is not None:
         current_app.logger.info(kwargs)
         if (kwargs["latitude"] is None) and (

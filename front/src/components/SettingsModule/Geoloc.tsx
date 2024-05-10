@@ -32,15 +32,12 @@ const Geoloc = (props: {focus: boolean}) => {
         fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
         .then(response => response.json().then(
             data => {
-                console.log(data);
                 setPosInfo({
                     country: data.address.country,
                     city:   data.address.city != undefined ?
                             data.address.city :
                             data.address.village != undefined ?
                             data.address.village :
-                            data.address.city != undefined ?
-                            data.address.city :
                             data.address.town != undefined ?
                             data.address.town :
                             data.address.county != undefined ?

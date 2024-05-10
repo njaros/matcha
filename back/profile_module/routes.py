@@ -151,14 +151,12 @@ def unlock_gps(**kwargs):
 @token_required
 def get_self_hobbies(**kwargs):
     hobbies = sql.get_user_hobbies_yn(**kwargs)
-    app.logger.info(hobbies)
     return jsonify(hobbies)
 
 
 @token_required
 @add_hobby_dto
 def add_hobby(**kwargs):
-    app.logger.info(kwargs)
     sql.add_user_hobbies(**kwargs)
     return "ok", 200
 
