@@ -29,6 +29,7 @@ const Swipe = () => {
         ).catch(
             error => {
                 console.log(error);
+                setSwipeList([]);
             }
         ).finally(() =>
             setIndex(0)
