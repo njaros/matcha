@@ -55,6 +55,7 @@ names = (
     "Connard",
     "Connasse",
     "Prout",
+    "leJ",
     "Proutte",
     "Magichien",
     "Magichienne",
@@ -72,6 +73,7 @@ adjectives = (
     "Charmeur",
     "Moche",
     "Vilain",
+    "LeS",
     "Boiteux",
     "Insensible",
     "Sensible",
@@ -160,16 +162,17 @@ def do_name(t1, t2):
 def do_random_date():
     """yyyy-mm-dd"""
     data = (
-        {"weight": (0, 4), "range": (1920, 1954)},
-        {"weight": (5, 14), "range": (1954, 1964)},
-        {"weight": (15, 24), "range": (1964, 1974)},
-        {"weight": (25, 49), "range": (1974, 1988)},
-        {"weight": (50, 99), "range": (1988, 2005)},
+        {"weight": 5, "range": (1920, 1954)},
+        {"weight": 10, "range": (1954, 1964)},
+        {"weight": 10, "range": (1964, 1974)},
+        {"weight": 25, "range": (1974, 1988)},
+        {"weight": 50, "range": (1988, 2005)},
     )
     dice = random.randint(0, 99)
     weight_range = (0, 1)
     for elt in data:
-        if dice in range(elt["weight"][0], elt["weight"][1] + 1):
+        dice -= elt["weight"]
+        if dice < 0:
             weight_range = elt["range"]
             break
     yyyy = random.randrange(weight_range[0], weight_range[1])
