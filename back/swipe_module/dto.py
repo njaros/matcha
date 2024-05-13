@@ -23,7 +23,7 @@ def filter_swipe_dto(f):
             request.json["distance_max", {"min": 0}]
         )
         kwargs["hobby_ids"] = [
-            uuid.isUuid(elt) for elt in request.json["hobby_ids"]
+            int.isInt(elt, {"min": 0}) for elt in request.json["hobby_ids"]
         ]
         kwargs["ranking_gap"] = int.isInt(
             request.json["ranking_gap"], {"min": 0, "max": 10}

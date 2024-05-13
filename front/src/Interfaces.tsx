@@ -42,3 +42,12 @@ export interface ISwipeUser
 	gender: string,
 	photo: string
 }
+
+export interface ISwipeFilter
+{
+	date_min: string,
+	date_max: string,
+	distance_max: number,
+	hobby_ids: number[],
+	ranking_gap: number
+}

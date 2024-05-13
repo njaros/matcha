@@ -1,11 +1,21 @@
 import { useEffect, useRef, useState } from "react";
-import { ISwipeUser } from "../../Interfaces";
+import { ISwipeUser, ISwipeFilter } from "../../Interfaces";
 import Axios from "../../tools/Caller";
-import { Box, Button, Image } from "@chakra-ui/react";
+import { Box, Button, Image, Slider, SliderMark, Text } from "@chakra-ui/react";
+import { DistanceSlide } from "./DistanceSlide";
+import { DateTools } from "../../tools/DateTools";
+import { AgeRangeSlider } from "./AgeRangeSlider";
 
 const Swipe = () => {
     const [ swipeList, setSwipeList ] = useState<ISwipeUser[]>([]);
     const [ index, setIndex ] = useState<number>(0);
+    const [ filter, setFilter ] = useState<ISwipeFilter>({
+        date_min: DateTools.dateFromAge(18),
+        date_max: DateTools.dateFromAge(150),
+        distance_max: 20,
+        hobby_ids: [],
+        ranking_gap: 2
+    })
 
     function get_ten_randoms() {
         Axios.get("swipe/get_ten_randoms").then(
@@ -80,8 +90,30 @@ const Swipe = () => {
         }
     }
 
+    //FILTER HANDLERS
+
+    function handleDistanceMax(val: number) {
+        let newFilter = filter;
+        filter.distance_max = val;
+        setFilter(newFilter);
+    }
+
+    function handlerAgeMinMax(val: [number, number]) {
+        let newFilter = filter;
+        filter.date_min = DateTools.dateFromAge(val[0]);
+        filter.date_max = DateTools.dateFromAge(val[1]);
+        setFilter(newFilter);
+    }
+
     return (
-    <Box>
+    <Box display="flex" flexDirection="column" justifyContent="center">
+        <Box display="flex" flexDirection="column">
+            <Text marginBottom="3%">Set your filters</Text>
+            <Box display="flex" flexDirection="row" justifyContent="space-around">
+                <DistanceSlide setDistanceMax={handleDistanceMax} defaultValue={20}/>
+                <AgeRangeSlider setAgeRange={handlerAgeMinMax} defaultValue={[20, 40]}/>
+            </Box>
+        </Box>
         {swipeList.length > 0 &&
         <Box display="flex" justifyContent="center" flexDirection="column">
             <Box marginBottom="1%" alignSelf="center" fontSize="x-large">{swipeList[index].username}: {swipeList[index].gender}</Box>
