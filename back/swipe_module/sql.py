@@ -38,6 +38,56 @@ def get_random_list_ten(**kwargs):
     return swipe_list
 
 
+def get_ten_with_filter(**kwargs):
+    """
+    Front must give:
+        - a date min and a date max
+        - a distance max in kilometer
+        - a fame rating gap
+        - a list of hobbies (can be empty)
+    This must provide:
+        - a list of 10 users
+        - sorted by age, distance, fame rating, number of common tags
+    """
+    cur = conn.cursor(row_factory=dict_row)
+    cur.execute(
+        """
+        SELECT  user_table.id,\
+                username,\
+                birthDate,\
+                gender,\
+                photos.binaries,\
+                photos.mime_type
+        FROM    user_table
+        LEFT OUTER JOIN photos ON user_table.id = photos.user_id\
+                AND photos.main = true
+        WHERE   preference IN ("all", %(gender)s)
+                AND %(preference)s IN ("all", gender)
+                AND user_table.id NOT IN (
+                    SELECT canceler_id
+                    FROM cancel
+                    WHERE canceled_id = %(user)s
+                ) AND user_table.id NOT IN (
+                    SELECT canceled_id
+                    FROM cancel
+                    WHERE canceler_id = %(user)s
+                ) AND user_table.id NOT IN (
+                    SELECT liked_id
+                    FROM relationship
+                    WHERE liker_id = %(user)s
+                ) AND user_table.id NOT IN ( %(user)s )
+                AND user_table.birthDate BETWEEN %(date_min)s AND %(date_max)s
+                AND acos(
+                    sind(%(self_latitude)s) * sind(latitude)
+                    + cosd(%(self_latitude)s)
+                    * cosd(latitude)
+                    * cosd(longitude - %(self_longitude)s)
+                ) * 6371
+                LIMIT 10
+        """
+    )
+
+
 def like_user(**kwargs):
     cur = conn.cursor(row_factory=dict_row)
     user = kwargs["user"]["id"]
