@@ -18,7 +18,22 @@ function Conversation(){
             const fetchData = async () => {
                 try {
                     const roomResponse = await Axios.get('/chat/get_room_list_by_id');
-                    updateRoomList(roomResponse.data)
+                    console.log(roomResponse.data)
+                    const updatedRoomList = roomResponse.data.map((room: any) => {
+                        return {
+                            ...room,
+                            user_1: {
+                                ...room.user_1,
+                                photo: "data:".concat(room.user_1.photo?.mime_type).concat(";base64,").concat(room.user_2.photo?.binaries),
+                            },
+                            user_2: {
+                                ...room.user_2,
+                                photo: "data:".concat(room.user_2.photo?.mime_type).concat(";base64,").concat(room.user_2.photo.binaries),
+                            }
+                        }
+                    })
+                    console.log('udpated', updatedRoomList)
+                    updateRoomList(updatedRoomList)
                 } catch (error) {
                     console.error(error);
                 }

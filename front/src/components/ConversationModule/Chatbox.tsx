@@ -35,7 +35,7 @@ function Chatbox(props: {room: Room_info | undefined}){
     const socket = storeSocket(state => state.socket)
     const me = storeMe(state => state.me)
     const msgList = storeMessageList(state => state.messageList)
-    const [rerender, setRerender] = useState<boolean>(false)
+    // const [rerender, setRerender] = useState<boolean>(false)
     const [messageList, setMessageList] = useState<MessageData[]>([])
     const { 
         register, 
@@ -62,12 +62,13 @@ function Chatbox(props: {room: Room_info | undefined}){
     }
 
     useEffect(() => {
-        socket?.on("receive_message", (data: MessageData) => {
-            console.log('data.room.id', data.room.id)
-            console.log('room id', props.room?.id)
-            if (data.room?.id === props.room?.id)
+        socket?.on("receive_message", (data: any) => {
+            console.log('petit zizi le kiks')
+            console.log('data room id', data.room)
+            console.log('props room id', props.room?.id)
+            if (data.room === props.room?.id)
             {
-                setRerender(!rerender)
+                // setRerender(!rerender)
                 console.log('data', data)
                 setMessageList((list) => [...list, data])
             }
@@ -90,6 +91,7 @@ function Chatbox(props: {room: Room_info | undefined}){
           }
     }, [messageList])
 
+    console.log('room props: ', props.room)
     return (
         <Flex h={'70%'}
         flexDir={'column'}
@@ -129,7 +131,7 @@ function Chatbox(props: {room: Room_info | undefined}){
                                 justifyContent={'space-evenly'}
                                 alignItems={'center'}
                                 >
-                                    <Avatar name={messageContent.author?.username} size={'sm'}></Avatar>
+                                    <Avatar src={props.room?.user1 === me?.id ?  props.room?.user_1?.photo : props.room?.user_2?.photo} name={messageContent.author?.username} size={'sm'}></Avatar>
                                     <Text padding={'10px'} >{decode(messageContent.content)}</Text>
                                 </Flex>
                             </Flex>

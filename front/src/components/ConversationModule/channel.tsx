@@ -8,20 +8,23 @@ import { RoomList, Room_info } from "../../tools/interface";
 function ChannelList(){
 
     const roomList = storeRoomList(state => state.roomList)
+    const socket = storeSocket(state => state.socket)
     const [room, setRoom] = useState<Room_info>()
     const [msgList, setMsgList] = storeMessageList(state => [state.messageList, state.updateMessageList])
 
     const setMessageList = async (conv: Room_info) => {
         try{
-            console.log('room_id', conv.id)
             const res = await Axios.post('/chat/get_message_list_by_room_id', {'room_id': conv?.id})
-            console.log('from setMessageList ',res.data)
             setMsgList(res.data)
         }
         catch(err){
             if (err)
                 console.error(err)
         }
+    }
+
+    const join_room = (id: string) => {
+        socket?.emit('join_chat_room', id)
     }
     
     if (!roomList)
@@ -35,6 +38,7 @@ function ChannelList(){
                 {roomList.map((conv, index) => (
                         <ListItem key={index}>
                             <Button onClick={() => {
+                                join_room(conv.id)
                                 setRoom(conv)
                                 setMessageList(conv)
                             }} >{conv.name}</Button>

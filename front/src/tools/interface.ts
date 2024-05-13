@@ -11,7 +11,7 @@ export interface Room {
     name: string,
     user_1_id: string,
     user_2_id: string,
-    message: MessageData[] | undefined
+    message?: MessageData[]
 }
 
 export interface Room_info {
@@ -19,11 +19,13 @@ export interface Room_info {
     name: string,
     user1: {
         user_id: string,
-        username: string
+        username: string,
+        photo?: string
     }
     user2: {
         user_id: string,
-        username: string
+        username: string,
+        photo?: string
     }
 }
 
@@ -43,10 +45,12 @@ export interface RoomList {
     name: string,
     user1: {
         user_id: string,
-        username: string
+        username: string,
+        photo?: string
     }
     user2: {
         user_id: string,
-        username: string
+        username: string,
+        photo?: string
     }
 }[]

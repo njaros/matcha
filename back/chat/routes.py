@@ -18,8 +18,8 @@ def add_message(**kwargs):
 
 @token_required
 def add_room(**kwargs):
-    user_id1 = request.form.get('user_id1')
-    user_id2 = request.form.get('user_id2')
+    user_id1 = uuid.isUuid(request.form.get('user_id1'))
+    user_id2 = uuid.isUuid(request.form.get('user_id2'))
 
     data = {
         'user_id1': user_id1,
@@ -47,4 +47,4 @@ def get_room_list_by_id(**kwargs):
 
 @token_required
 def get_message_list_by_room_id(**kwargs):
-    return chat_sql.get_message_list_by_room_id((request.json['room_id']))
+    return chat_sql.get_message_list_by_room_id((uuid.isUuid(request.json['room_id'])))

@@ -1,5 +1,6 @@
 from db_init import db_conn as conn
 from cryptography.fernet import Fernet
+import base64
 import uuid
 from flask import current_app as app
 from psycopg.rows import dict_row
@@ -75,10 +76,29 @@ def get_photos_by_user_id(user_id):
     )
     photos = cur.fetchall()
     if photos is None:
+        cur.close()
         return None
     cur.close()
     return photos
 
+def get_main_photo_by_user_id(user_id):
+    cur = conn.cursor(row_factory=dict_row)
+    query = """
+            SELECT
+                id,
+                binaries,
+                mime_type
+            FROM photos
+            WHERE photos.user_id = %s AND main = true
+            """
+    cur.execute(query, (user_id,))
+    res = cur.fetchone()
+    if res is None:
+        return None
+    hasher = Fernet(app.config["SECRET_PHOTO"])
+    res['binaries'] = base64.b64encode(hasher.decrypt(res['binaries'])).decode("utf-8")
+    cur.close()
+    return res
 
 def delete_photo_by_id(photo_id):
     cur = conn.cursor()
