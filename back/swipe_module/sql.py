@@ -38,13 +38,13 @@ def get_random_list_ten(**kwargs):
     return swipe_list
 
 
-def get_ten_with_filter(**kwargs):
+def get_ten_with_filters(**kwargs):
     """
     Front must give:
         - a date min and a date max
         - a distance max in kilometer
         - a fame rating gap
-        - a list of hobbies (can be empty)
+        - a list of hobby_ids (can be empty)
     This must provide:
         - a list of 10 users
         - sorted by age, distance, fame rating, number of common tags
@@ -57,7 +57,13 @@ def get_ten_with_filter(**kwargs):
                 birthDate,\
                 gender,\
                 photos.binaries,\
-                photos.mime_type
+                photos.mime_type,\
+                ACOS(
+                    SIND(%(self_latitude)s) * SIND(latitude)
+                    + COSD(%(self_latitude)s)
+                    * COSD(latitude)
+                    * COSD(longitude - %(self_longitude)s)
+                ) * 6371 AS distance
         FROM    user_table
         LEFT OUTER JOIN photos ON user_table.id = photos.user_id\
                 AND photos.main = true
@@ -77,15 +83,45 @@ def get_ten_with_filter(**kwargs):
                     WHERE liker_id = %(user)s
                 ) AND user_table.id NOT IN ( %(user)s )
                 AND user_table.birthDate BETWEEN %(date_min)s AND %(date_max)s
-                AND acos(
-                    sind(%(self_latitude)s) * sind(latitude)
-                    + cosd(%(self_latitude)s)
-                    * cosd(latitude)
-                    * cosd(longitude - %(self_longitude)s)
-                ) * 6371
-                LIMIT 10
-        """
+                AND distance < %(distance_max)s
+                AND ABS(rank - %(user_rank)s) < %(ranking_gap)s
+                AND %(hobby_ids_len)s = 0 OR COUNT(
+                    SELECT * FROM user_hobbie
+                    WHERE   user_hobbie.user_id = user_table.id
+                            AND user_hobbie.hobbie_id IN %(hobby_ids)s
+                ) = %(hobby_ids_len)s
+        GROUP BY user_table.id
+        ORDER BY    birthDate,
+                    distance,
+                    rank DESC,
+                    COUNT(
+                        SELECT * FROM user_hobbie
+                        WHERE   user_hobbie.user_id = user_table.id
+                                AND user_hobbie.hobbie_id IN (
+                                    SELECT user_hobbie.hobbie_id
+                                    WHERE user_hobbie.user_id = %(user)s
+                                )
+                    ) DESC
+        LIMIT 10
+        """,
+        {
+            "user": kwargs["user"]["id"],
+            "self_latitude": kwargs["user"]["latitude"],
+            "self_longitude": kwargs["user"]["longitude"],
+            "gender": kwargs["user"]["gender"],
+            "preference": kwargs["user"]["preference"],
+            "date_min": kwargs["date_min"],
+            "date_max": kwargs["date_max"],
+            "distance_max": kwargs["distance_max"],
+            "user_rank": kwargs["user"]["rank"],
+            "ranking_gap": kwargs["ranking_gap"],
+            "hobby_ids": kwargs["hobby_ids"],
+            "hobby_ids_len": kwargs["hobby_ids_len"]
+        }
     )
+    swipe_list = cur.fetchall()
+    cur.close()
+    return swipe_list
 
 
 def like_user(**kwargs):
