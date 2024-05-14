@@ -24,11 +24,11 @@ function Conversation(){
                             ...room,
                             user_1: {
                                 ...room.user_1,
-                                photo: "data:".concat(room.user_1.photo?.mime_type).concat(";base64,").concat(room.user_2.photo?.binaries),
+                                photo: "data:".concat(room.user_1.photo?.mime_type).concat(";base64,").concat(room.user_1.photo?.binaries),
                             },
                             user_2: {
                                 ...room.user_2,
-                                photo: "data:".concat(room.user_2.photo?.mime_type).concat(";base64,").concat(room.user_2.photo.binaries),
+                                photo: "data:".concat(room.user_2.photo?.mime_type).concat(";base64,").concat(room.user_2.photo?.binaries),
                             }
                         }
                     })

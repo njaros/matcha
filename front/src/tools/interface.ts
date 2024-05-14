@@ -17,12 +17,12 @@ export interface Room {
 export interface Room_info {
     id: string,
     name: string,
-    user1: {
+    user_1: {
         user_id: string,
         username: string,
         photo?: string
     }
-    user2: {
+    user_2: {
         user_id: string,
         username: string,
         photo?: string
@@ -43,12 +43,12 @@ export interface Me {
 export interface RoomList {
     id: string,
     name: string,
-    user1: {
+    user_1: {
         user_id: string,
         username: string,
         photo?: string
     }
-    user2: {
+    user_2: {
         user_id: string,
         username: string,
         photo?: string
