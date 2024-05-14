@@ -10,6 +10,8 @@ export function AgeRangeSlider(props: {
 
     return (
         <RangeSlider
+            display="flex"
+            minHeight="20%"
             id="distanceMaxSlideFilter"
             min={18}
             max={150}
@@ -25,15 +27,15 @@ export function AgeRangeSlider(props: {
             <RangeSliderMark value={80}>80</RangeSliderMark>
             <RangeSliderMark
                 value={sliderValue[0]}
-                mt="-10"
-                ml="-5"
+                mt="-5"
+                ml="-3"
             >
                 {sliderValue[0]}
             </RangeSliderMark>
             <RangeSliderMark
                 value={sliderValue[1]}
-                mt="-10"
-                ml="-5"
+                mt="-5"
+                ml="-3"
             >
                 {sliderValue[1]}
             </RangeSliderMark>

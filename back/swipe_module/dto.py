@@ -20,7 +20,7 @@ def filter_swipe_dto(f):
             request.json["date_max"], {"min": kwargs["date_min"]}
         )
         kwargs["distance_max"] = int.isInt(
-            request.json["distance_max", {"min": 0}]
+            request.json["distance_max"], {"min": 0}
         )
         kwargs["hobby_ids"] = [
             int.isInt(elt, {"min": 0}) for elt in request.json["hobby_ids"]

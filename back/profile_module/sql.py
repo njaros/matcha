@@ -329,11 +329,11 @@ def get_user_hobbies(**kwargs):
     return hobbies
 
 
-def get_hobbies(**kwargs):
+def get_hobbies():
     cur = conn.cursor(row_factory=dict_row)
     cur.execute(
         """
-        SELECT  name
+        SELECT *
         FROM hobbie
         """
     )

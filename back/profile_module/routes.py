@@ -149,6 +149,11 @@ def unlock_gps(**kwargs):
 
 
 @token_required
+def get_hobbies(**kwargs):
+    return sql.get_hobbies()
+
+
+@token_required
 def get_self_hobbies(**kwargs):
     hobbies = sql.get_user_hobbies_yn(**kwargs)
     return jsonify(hobbies)

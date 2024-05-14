@@ -5,6 +5,8 @@ import { Box, Button, Image, Slider, SliderMark, Text } from "@chakra-ui/react";
 import { DistanceSlide } from "./DistanceSlide";
 import { DateTools } from "../../tools/DateTools";
 import { AgeRangeSlider } from "./AgeRangeSlider";
+import TagsSelector from "./TagsSelector";
+import { FameGapSlide } from "./FameGapSlide";
 
 const Swipe = () => {
     const [ swipeList, setSwipeList ] = useState<ISwipeUser[]>([]);
@@ -98,26 +100,54 @@ const Swipe = () => {
         setFilter(newFilter);
     }
 
-    function handlerAgeMinMax(val: [number, number]) {
+    function handleGapMax(val: number) {
         let newFilter = filter;
-        filter.date_min = DateTools.dateFromAge(val[0]);
-        filter.date_max = DateTools.dateFromAge(val[1]);
+        filter.ranking_gap = val;
         setFilter(newFilter);
     }
 
+    function handlerAgeMinMax(val: [number, number]) {
+        let newFilter = filter;
+        filter.date_max = DateTools.dateFromAge(val[0]);
+        filter.date_min = DateTools.dateFromAge(val[1]);
+        setFilter(newFilter);
+    }
+
+    function handlerTags(tags: number[]) {
+        let newFilter = filter;
+        filter.hobby_ids = tags;
+        setFilter(newFilter);
+    }
+
+    function handleSubmit() {
+        console.log(filter);
+        Axios.post("/swipe/get_ten_with_filters", filter).then(
+            response => {
+                console.log(response.data);
+            }
+        ).catch(
+            err => {
+                console.log(err);
+            }
+        )
+    }
+
     return (
-    <Box display="flex" flexDirection="column" justifyContent="center">
-        <Box display="flex" flexDirection="column">
-            <Text marginBottom="3%">Set your filters</Text>
-            <Box display="flex" flexDirection="row" justifyContent="space-around">
+    <Box className="Swipe" height="100%" display="flex" flexDirection="column" justifyContent="space-between">
+        <Box height="100%" display="flex" flexDirection="column">
+            <Text>Set your filters</Text>
+            <Box className="Sliders" height="100%" display="flex" flexDirection="column" justifyContent="space-evenly">
                 <DistanceSlide setDistanceMax={handleDistanceMax} defaultValue={20}/>
                 <AgeRangeSlider setAgeRange={handlerAgeMinMax} defaultValue={[20, 40]}/>
+                <FameGapSlide setGapMax={handleGapMax} defaultValue={2} />
+                <TagsSelector setTags={handlerTags} />
+                <Button onClick={handleSubmit}>Apply filter</Button>
             </Box>
         </Box>
         {swipeList.length > 0 &&
-        <Box display="flex" justifyContent="center" flexDirection="column">
+        <Box display="flex" justifyContent="flex_start" flexDirection="column" maxHeight="70%">
             <Box marginBottom="1%" alignSelf="center" fontSize="x-large">{swipeList[index].username}: {swipeList[index].gender}</Box>
-            <Image display="self" alignSelf="center" marginBottom="2%" src={swipeList[index].photo} height="40%" width="40%" alt="pouet"/>
+            <Image minBlockSize="150px" maxBlockSize="1000px" borderRadius="full" display="self" alignSelf="center" marginBottom="2%" src={swipeList[index].photo} alt="pouet"/>
             <Box display="flex" justifyContent="space-evenly" flexDirection="row">
                 <Button value={swipeList[index].id} onClick={likeHandler}>YES</Button>
                 <Button value={swipeList[index].id} onClick={dislikeHandler}>NO</Button>
