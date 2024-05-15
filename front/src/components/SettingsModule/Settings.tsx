@@ -4,12 +4,13 @@ import Photo from "./Photo";
 import Geoloc from "./Geoloc";
 import { useState } from "react";
 import Hobbies from "./Hobbies";
+import Filter from "./FilterModule/Filter";
 
 const Settings = () => {
     const [ geoLocFocus, setGeoLocFocus ] = useState<boolean>(false);
 
     const handleChange = (index: number) => {
-        if (index == 3)
+        if (index == 4)
             setGeoLocFocus(true);
         else
             setGeoLocFocus(false);
@@ -21,6 +22,7 @@ const Settings = () => {
                 <Tab>Profile</Tab>
                 <Tab>Photos</Tab>
                 <Tab>Hobbies</Tab>
+                <Tab>Filters</Tab>
                 <Tab>Geoloc</Tab>
             </TabList>
             <TabPanels>
@@ -32,6 +34,9 @@ const Settings = () => {
                 </TabPanel>
                 <TabPanel>
                     <Hobbies />
+                </TabPanel>
+                <TabPanel>
+                    <Filter />
                 </TabPanel>
                 <TabPanel>
                     <Geoloc focus={geoLocFocus}/>

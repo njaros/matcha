@@ -49,7 +49,6 @@ def get_ten_with_filters(**kwargs):
         - a list of 10 users
         - sorted by age, distance, fame rating, number of common tags
     """
-    current_app.logger.info(kwargs)
     cur = conn.cursor(row_factory=dict_row)
     cur.execute(
         """
@@ -120,7 +119,7 @@ GROUP BY
     subquery.distance,
     subquery.rank
 ORDER BY
-    subquery.birthDate,
+    subquery.birthDate DESC,
     subquery.distance,
     subquery.rank DESC,
     (

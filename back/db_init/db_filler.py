@@ -118,6 +118,8 @@ adjectives = (
 
 genders = ("man", "woman")
 
+preference = ("man", "woman", "all")
+
 
 def latitudeModulo(lat):
     sign = False
@@ -199,14 +201,15 @@ def do_user_near_point(latitude, longitude):
         random.choice(genders),
         random.choice(genders),
         "",
-        0,
+        random.randint(0, 10),
         gps["latitude"],
         gps["longitude"],
         True,
     )
 
 
-def insert_users_in_database(cur, n, lat, lng):
+def insert_users_in_database(conn, n, lat, lng):
+    cur = conn.cursor()
     users = [do_user_near_point(lat, lng) for i in range(0, n)]
     query = """
             INSERT INTO user_table \
@@ -216,3 +219,5 @@ def insert_users_in_database(cur, n, lat, lng):
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
     cur.executemany(query, users)
+    cur.close()
+    conn.commit()
