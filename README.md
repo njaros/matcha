@@ -8,9 +8,14 @@ dating web site 42 project
 
 # BUGS
 
-- reparer les routes react (ne devrait pas pouvoir aller sur login si user connecté avec un retour arrière + ne devrait pas planté si le user refresh puis logout) => il va surement devoir supprimer le protected route et trouver une autre methode de gestion de tokens
+- 
 
-# PHOTOS
+# TODOS-PROFILE
 
-- hasher les photos dans la db
-- definir la photo principale
+- section showing who viewed the user's profile
+- section showing who liked the user
+
+# TODOS-SWIPE
+
+- display age, hobbies
+- button to display the complete user profile (all photos, fame rating, location, ...) except email and password

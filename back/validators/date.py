@@ -35,6 +35,20 @@ class TooOldException(BadRequestError):
         )
 
 
+class DateTooShortException(BadRequestError):
+    def __init__(self, entry, min):
+        self.message = (
+            f"minimum date allowed is {min}, yours is {entry}"
+        )
+
+
+class DateTooHighException(BadRequestError):
+    def __init__(self, entry, max):
+        self.message = (
+            f"maximum date allowed is {max}, yours is {entry}"
+        )
+
+
 def isDate(foo: any, req: dict[str, any] = {}):
     """Check if the foo argument is a date string
     formated like this: foo = "yyyy-mm-dd".
@@ -49,12 +63,12 @@ def isDate(foo: any, req: dict[str, any] = {}):
     ["yearMax"]: int => if the number of years between today and
                  the date is greater than yearMax, it raises a
                  TooOldException.
-    ["min"]: int => if the number of day between today and the date
-                 is less than min, it raises a DateTooShortException.
-                 !!NOT IMPLEMENTED!!
-    ["max"]: int => if the number of day between today and the date
-                 is greater than max, it raises a DateTooLongException.
-                 !!NOT IMPLEMENTED!!
+    ["min"]:     date as string => if the date is less than min,
+                 it raises a DateTooShortException.
+                 exemple: {"min": "1989-06-26"}
+    ["max"]:     date as string => if the date is more than max,
+                 it raises a DateTooHighException.
+                 exemple: {"max": "1989-06-26"}
     foo is returned at end of function.
     """
     if req.get("optionnal"):
@@ -79,6 +93,8 @@ def isDate(foo: any, req: dict[str, any] = {}):
 
     yearMin = req.get("yearMin")
     yearMax = req.get("yearMax")
+    max = req.get("max")
+    min = req.get("min")
     age = None
     if yearMin is not None:
         age = date_tools.years_old(foo)
@@ -89,4 +105,10 @@ def isDate(foo: any, req: dict[str, any] = {}):
             age = date_tools.years_old(foo)
         if age > yearMax:
             raise TooOldException(age, yearMax)
+    if max is not None:
+        if foo > max:
+            raise DateTooHighException(max, foo)
+    if min is not None:
+        if foo < min:
+            raise DateTooShortException(min, foo)
     return foo

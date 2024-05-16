@@ -9,6 +9,7 @@ from .routes import (
     set_pos,
     lock_gps,
     unlock_gps,
+    get_hobbies,
     get_self_hobbies,
     add_hobby,
     del_hobby
@@ -58,4 +59,7 @@ app.add_url_rule(
 )
 app.add_url_rule(
     "/profile/del_hobby", "del_hobby", del_hobby, methods=["POST"]
+)
+app.add_url_rule(
+    "/profile/get_hobbies", "get_hobbies", get_hobbies, methods=["GET"]
 )

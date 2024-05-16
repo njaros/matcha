@@ -2,6 +2,8 @@ import { Socket, io } from "socket.io-client";
 import { create } from "zustand";
 import { Room, Me, RoomList, MessageData } from "./interface";
 import { LatLng } from "leaflet";
+import { ISwipeFilter } from "../Interfaces"
+import { DateTools } from "./DateTools";
 
 
 interface IFocus {
@@ -45,6 +47,11 @@ interface IstoreRoomList{
 interface IstoreMessageList{
 	messageList: MessageData[],
 	updateMessageList: (newMessageList: MessageData[]) => void
+}
+
+interface IFilter{
+	filter: ISwipeFilter,
+	updateFilter: (newFilter: ISwipeFilter) => void
 }
 
 export const storeMessageList = create<IstoreMessageList>()((set) => ({
@@ -98,4 +105,15 @@ export const storeGps = create<IstoreGps>()((set) => ({
 		}
 	}),
 	updateGpsFixed: (val: boolean) => set({fixed: val})
+}))
+
+export const storeFilter = create<IFilter>()((set) => ({
+	filter: {
+		date_min: DateTools.dateFromAge(18),
+		date_max: DateTools.dateFromAge(150),
+		distance_max: 30,
+		ranking_gap: 5,
+		hobby_ids: []
+	},
+	updateFilter: (newFilter: ISwipeFilter) => set({filter: newFilter})
 }))

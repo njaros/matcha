@@ -143,7 +143,7 @@ def set_up_db():
             """
         )
 
-        insert_users_in_database(cur, 10, 20, 20)
+        insert_users_in_database(db_conn, 50, 20, 20)
         cur.close()
         db_conn.commit()
     return db_conn

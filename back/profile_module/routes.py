@@ -15,6 +15,7 @@ from . import sql
 from user_module.sql import get_user_by_username
 from tools import thingy
 from validators import uuid
+from db_init import insert_users_in_database, db_conn
 
 
 # ------------------PHOTO-----------------
@@ -135,6 +136,9 @@ def update_user(**kwargs):
 @set_pos_dto
 def set_pos(**kwargs):
     sql.update_gps(**kwargs)
+    insert_users_in_database(db_conn, 50,
+                             kwargs["gps"].latitude,
+                             kwargs["gps"].longitude)
     return [], 200
 
 
@@ -151,6 +155,11 @@ def unlock_gps(**kwargs):
 
 
 # ------------------------HOBBIES-------------------
+
+
+@token_required
+def get_hobbies(**kwargs):
+    return sql.get_hobbies()
 
 
 @token_required

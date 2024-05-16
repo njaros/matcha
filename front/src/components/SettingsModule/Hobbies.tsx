@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import Axios from "../../tools/Caller";
 import { Box, Tag, SimpleGrid, Button } from "@chakra-ui/react"
-import { inherits } from "util";
 
 const Hobbies = () => {
     const [ hobbies, setHobbies ] = useState<{id: number, name: string, belong: boolean}[]>([]);

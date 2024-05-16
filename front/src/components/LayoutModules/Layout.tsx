@@ -11,7 +11,7 @@ const Layout = (props: {
     return (
         <Box    display="flex"
                 flexDirection="column"
-                justifyContent="space-evenly"
+                justifyContent="space-between"
                 height="100%">
             <Header logged={props.logged} handleLog={props.handleLog} handleAccess={props.handleAccess} />
             <Outlet />
