@@ -1,7 +1,7 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { storeGps, storeTimeout } from "../../tools/Stores";
 import { cookieMan } from "../../tools/CookieMan";
-import { Box, Icon } from "@chakra-ui/react"
+import { Box, Icon, Text } from "@chakra-ui/react"
 import { MdFavorite } from "react-icons/md"
 import { ImExit } from "react-icons/im"
 import { FaBinoculars } from "react-icons/fa"
@@ -74,13 +74,12 @@ const Header = (props: {
     <Box    display="flex"
             flexDirection="column"
             width="100%"
-            marginBottom="3%"
-            borderRadius="lg">
+            marginBottom="3%">
         <Box    display="flex"
                 justifyContent="center"
                 margin="10%"
                 fontSize="xxx-large">
-            <h1><NavLink to="/">MATCHOOOO</NavLink></h1>
+            <Text fontSize={{ base: '24px', sm: '28px', md: '32px', lg: '40px', xl: '48px' }}><NavLink to="/">MATCHOOOOO</NavLink></Text>
         </Box>
             { props.logged ?
             <Box display="flex" flexDirection="row" justifyContent="space-evenly">

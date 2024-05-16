@@ -33,7 +33,8 @@ const Geoloc = (props: {focus: boolean}) => {
         .then(response => response.json().then(
             data => {
                 setPosInfo({
-                    country: data.address.country,
+                    country:    data.address.country != undefined ?
+                                data.address.country : "Where did you clicked ?",
                     city:   data.address.city != undefined ?
                             data.address.city :
                             data.address.village != undefined ?
@@ -42,7 +43,8 @@ const Geoloc = (props: {focus: boolean}) => {
                             data.address.town :
                             data.address.county != undefined ?
                             data.address.county :
-                            data.address.state
+                            data.address.state != undefined ?
+                            data.address.state : ""
                 })
             }
         ))

@@ -9,10 +9,14 @@ const Layout = (props: {
     handleAccess: (newAccess: string) => void}) =>
 {
     return (
-        <Box    display="flex"
+        <Box
+                display="flex"
                 flexDirection="column"
-                justifyContent="space-between"
-                height="100%">
+                alignItems="center"
+                height="100%"
+                width="100%"
+                overflowY="auto"
+                >
             <Header logged={props.logged} handleLog={props.handleLog} handleAccess={props.handleAccess} />
             <Outlet />
             <Footer />

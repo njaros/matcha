@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import DatePicker from "react-datepicker"
 import { useNavigate } from "react-router-dom";
 import { ISignUpForm } from "../../Interfaces";
-import { Select } from "@chakra-ui/react"
+import { Box, Select } from "@chakra-ui/react"
 import Axios from "../../tools/Caller";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -51,7 +51,7 @@ const Signup: React.FC = () => {
 	}
 
 	return (
-		<div>
+		<Box flexGrow={1}>
 			<h1>SIGN UP PAGE</h1>
 			<form className="signup_form" onSubmit={handleSubmit(signupSubmit)}>
 				<input className="username_input"
@@ -90,7 +90,7 @@ const Signup: React.FC = () => {
                 <button className="submit_button" type="submit">SUBMIT</button>
 			</form>
 			{ errorMsg != "" && <p> {errorMsg} </p> }
-		</div>)
+		</Box>)
 }
 
 export default Signup;

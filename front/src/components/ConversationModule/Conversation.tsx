@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { storeSocket, storeRoom, storeMe, storeRoomList } from "../../tools/Stores";
-import { Button, FormControl, Input } from "@chakra-ui/react";
+import { Box, Button, FormControl, Input } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import Axios from "../../tools/Caller";
 import ChannelList from "./channel";
@@ -28,9 +28,9 @@ function Conversation(){
     }, [me]);
 
     return (
-    <>    
+    <Box flexGrow={1}>    
         <ChannelList />
-    </>
+    </Box>
     );
 }
 

@@ -1,6 +1,11 @@
-import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Button, SimpleGrid } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Box, Button, Icon, SimpleGrid } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import Axios from "../../../tools/Caller";
+import { FaArrowDown } from "react-icons/fa";
+
+const spacingBoxes = {base: 1, sm: 2, md: 2, lg: 3, xl: 4}
+const TagsFontSize = { base: '14px', sm: '16px', md: '18px', lg: '22px', xl: '25px' };
+const marginSize = { base: '8px', sm: '11px', md: '14px', lg: '17px', xl: '21px' };
 
 export default function TagsSelector(props:
     {
@@ -66,6 +71,7 @@ export default function TagsSelector(props:
         return hobbies.map((elt) => {
             return(
                     <Button key={elt.id}
+                            fontSize={TagsFontSize}
                             colorScheme={elt.selected? "matchaPink": "gray"}
                             boxShadow="base"
                             value={elt.id}
@@ -77,12 +83,18 @@ export default function TagsSelector(props:
     }
 
     return (
-        <Accordion allowMultiple overflowY="auto" maxHeight="70%">
+        <Accordion allowMultiple maxHeight="70%">
             <AccordionItem>
-                <AccordionButton>
+                <AccordionButton textAlign="center">
+                    <Box color="pink.200" display="flex" flexDirection="row" justifyContent="space-between">
+                        <Box>
+                            Select mandatory hobbies
+                        </Box>
+                        <Icon as={FaArrowDown}/>
+                    </Box>
                 </AccordionButton>
                 <AccordionPanel>
-                    {hobbies.length != 0 && <SimpleGrid minChildWidth="100px" spacing={3}>
+                    {hobbies.length != 0 && <SimpleGrid minChildWidth="100px" spacing={spacingBoxes}>
                         <Hobbies_Boxes />
                     </SimpleGrid>}
                 </AccordionPanel>
