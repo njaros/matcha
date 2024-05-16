@@ -2,9 +2,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css"
 import L, { Map as LeafLetMap } from "leaflet";
 import { Box, Button, FormControl, FormLabel, Switch } from "@chakra-ui/react";
-import Axios from "../../tools/Caller";
-import { storeGps } from "../../tools/Stores";
-import { lngModulo } from "../../tools/Thingy";
+import Axios from "../../../tools/Caller";
+import { storeGps } from "../../../tools/Stores";
+import { lngModulo } from "../../../tools/Thingy";
 
 const Geoloc = (props: {focus: boolean}) => {
     const [ mapCtx, setMap ] = useState<LeafLetMap | null>(null);
