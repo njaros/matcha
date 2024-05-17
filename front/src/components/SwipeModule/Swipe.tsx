@@ -73,7 +73,7 @@ const Swipe = () => {
         )
         if (index == swipeList.length - 1)
         {
-            get_ten_randoms();
+            get_ten();
         }
         else
         {
@@ -93,7 +93,7 @@ const Swipe = () => {
         )
         if (index == swipeList.length - 1)
         {
-            get_ten_randoms();
+            get_ten();
         }
         else
         {
@@ -101,15 +101,20 @@ const Swipe = () => {
         }
     }
 
+    function sortHandler()
+
     return (
     <Box flexGrow={1} className="Swipe" height="100%" display="flex" flexDirection="column" justifyContent="space-between">
         {swipeList.length > 0 &&
-        <Box display="flex" justifyContent="flex_start" flexDirection="column" maxHeight="70%">
-            <Box marginBottom="1%" alignSelf="center" fontSize="x-large">{swipeList[index].username}: {swipeList[index].gender}</Box>
-            <Image minBlockSize="150px" maxBlockSize="1000px" borderRadius="full" display="self" alignSelf="center" marginBottom="2%" src={swipeList[index].photo} alt="pouet"/>
-            <Box display="flex" justifyContent="space-evenly" flexDirection="row">
-                <Button value={swipeList[index].id} onClick={likeHandler}>YES</Button>
-                <Button value={swipeList[index].id} onClick={dislikeHandler}>NO</Button>
+        <Box>
+            <Sort />
+            <Box display="flex" justifyContent="flex_start" flexDirection="column" maxHeight="70%">
+                <Box marginBottom="1%" alignSelf="center" fontSize="x-large">{swipeList[index].username}: {swipeList[index].gender}</Box>
+                <Image minBlockSize="150px" maxBlockSize="1000px" borderRadius="full" display="self" alignSelf="center" marginBottom="2%" src={swipeList[index].photo} alt="pouet"/>
+                <Box display="flex" justifyContent="space-evenly" flexDirection="row">
+                    <Button value={swipeList[index].id} onClick={likeHandler}>YES</Button>
+                    <Button value={swipeList[index].id} onClick={dislikeHandler}>NO</Button>
+                </Box>
             </Box>
         </Box>}
     </Box>);
