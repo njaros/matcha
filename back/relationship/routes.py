@@ -33,8 +33,8 @@ def get_relationship_by_liked_id(**kwargs):
 @token_required
 def is_matched(**kwargs):
     data = {
-        "liker_id": request.form['liker_id'],
-        "liked_id": request.form['liked_id']
+        "liker_id": uuid.isUuid(request.form['liker_id']),
+        "liked_id": uuid.isUuid(request.form['liked_id'])
     }
     is_matched = relationship_sql.is_matched(data)
     if str(is_matched['liker_id']) == kwargs['user']['id'] or str(is_matched['liked_id']) == kwargs['user']['id']:
@@ -47,6 +47,6 @@ def create_room_when_user_are_matched():
     if is_matched() == 'success':
         return insert_room(
             {
-                'user_id1': request.form['liker_id'],
-                'user_id2': request.form['liked_id']
+                'user_id1': uuid.isUuid(request.form['liker_id']),
+                'user_id2': uuid.isUuid(request.form['liked_id'])
             })

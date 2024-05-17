@@ -14,6 +14,7 @@ from error_status.error import BadRequestError
 from . import sql
 from user_module.sql import get_user_by_username
 from tools import thingy
+from validators import uuid
 from db_init import insert_users_in_database, db_conn
 
 
@@ -57,6 +58,10 @@ def get_photos(**kwargs):
         200,
     )
 
+@token_required
+def get_main_photo(**kwaargs):
+    main_photo = sql.get_main_photo_by_user_id(uuid.isUuid(request.json['user_id']))
+    return main_photo
 
 @token_required
 def delete_photo(**kwargs):

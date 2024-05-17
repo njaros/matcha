@@ -4,8 +4,8 @@ import { cookieMan } from "../../tools/CookieMan";
 import { Box, Icon, Text } from "@chakra-ui/react"
 import { MdFavorite } from "react-icons/md"
 import { ImExit } from "react-icons/im"
-import { FaBinoculars } from "react-icons/fa"
-import { SettingsIcon } from "@chakra-ui/icons"
+import { MdChat } from "react-icons/md";
+import { ChatIcon, SettingsIcon } from "@chakra-ui/icons"
 import { useEffect, useState } from "react";
 
 const headerTextSize = {base: "14px", sm: "16px", md: "19px", lg: "22px", xl: "25px"}
@@ -92,8 +92,8 @@ const Header = (props: {
                 color="pink.400"
                 flexDirection="row"
                 justifyContent="space-evenly">
-                <NavLink to="/swipe"><Icon as={FaBinoculars} boxSize={headerIconSize}/></NavLink>
-                <NavLink to="/conversation"><Icon as={MdFavorite} boxSize={headerIconSize}/></NavLink>
+                <NavLink to="/swipe"><Icon as={MdFavorite} boxSize={headerIconSize}/></NavLink>
+                <NavLink to="/conversation"><Icon as={MdChat} boxSize={headerIconSize}/></NavLink>
                 <NavLink to="/settings"><SettingsIcon boxSize={headerIconSize}/></NavLink>
                 <button onClick={logout}><Icon as={ImExit} boxSize={headerIconSize}/></button>
             </Box>
