@@ -43,7 +43,7 @@ function Conversation(){
     }, [me]);
 
     return (
-    <Box flexGrow={1}>    
+    <Box flexGrow={1} w={'100%'} h={'100%'}>    
         <ChannelList />
     </Box>
     );

@@ -40,11 +40,10 @@ function ChannelList(){
         return <div>No conversation yet...</div>
     return (
         <Flex 
-            h={'70%'}
+            h={'100%'}
             w={'100%'}
             bg={'pink'}
             flexDirection="column"
-            borderRadius={'10px'}
         >
             <Flex
                 h={'100%'}
@@ -81,7 +80,10 @@ function ChannelList(){
                                         join_room(conv.id)
                                         setRoom(conv)
                                         setMessageList(conv)
-                                    }} >{conv.name}</Box>
+                                    }}
+                                    marginLeft={'10px'}
+                                    
+                                    >{conv.name}</Box>
                                 </Flex>
                             )
                         })}

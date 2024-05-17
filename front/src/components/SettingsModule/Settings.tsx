@@ -20,7 +20,8 @@ const Settings = () => {
 
     return (
         <Tabs
-            flexGrow={1}
+            overflow="auto"
+            h="100%"
             display="flex"
             flexDirection="column"
             width={{base: "90%", sm: "90%", md: "90%", lg: "80%", xl: "80%"}}

@@ -166,7 +166,9 @@ function App() {
 			bg="pink.300"
 			flexDirection="column"
 			height="100%"
-			width="100%">
+			width="100%"
+			fontFamily="roboto"
+			>
 					<BrowserRouter>
 						<Routes>
 							<Route element={ <Layout logged={logged} handleLog={handleLog} handleAccess={handleAccess} /> }>
