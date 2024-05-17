@@ -16,9 +16,10 @@ const Layout = (props: {
                 height="100%"
                 width="100%"
                 overflowY="auto"
+                gap={'10px'}
                 >
-            <Header logged={props.logged} handleLog={props.handleLog} handleAccess={props.handleAccess} />
             <Outlet />
+            <Header logged={props.logged} handleLog={props.handleLog} handleAccess={props.handleAccess} />
             <Footer />
         </Box>
     )

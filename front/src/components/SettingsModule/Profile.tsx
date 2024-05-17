@@ -112,7 +112,6 @@ const Profile = () => {
 
     return (
         <Box    display="flex" flexDirection="column">
-            <Center fontSize="xxx-large">PROFILE PAGE</Center>
             {user?
             <form onSubmit={handleSubmit(profileSubmit)}>
                 <FormControl    display="flex" flexDirection="column">
