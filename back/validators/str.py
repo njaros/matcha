@@ -1,4 +1,4 @@
-from error_status.error import BadRequestError
+from error_status.error import BadRequestError, RequestTooLargeError
 import re
 
 
@@ -7,7 +7,7 @@ class NotStrException(BadRequestError):
         self.message = "This argument isn't a string"
 
 
-class StrMaxlenException(BadRequestError):
+class StrMaxlenException(RequestTooLargeError):
     def __init__(self, maxlen):
         self.message = f"This string is too long, max len is {maxlen}"
 

@@ -109,8 +109,8 @@ export const storeGps = create<IstoreGps>()((set) => ({
 
 export const storeFilter = create<IFilter>()((set) => ({
 	filter: {
-		date_min: DateTools.dateFromAge(18),
-		date_max: DateTools.dateFromAge(150),
+		date_min: DateTools.dateFromAge(150),
+		date_max: DateTools.dateFromAge(18),
 		distance_max: 30,
 		ranking_gap: 5,
 		hobby_ids: []

@@ -9,9 +9,9 @@ const Layout = (props: {
     handleAccess: (newAccess: string) => void}) =>
 {
     return (
-        <Box    display="flex"
+        <Box    display="flex-start"
                 flexDirection="column"
-                justifyContent="space-between"
+                justifyContent="space-around"
                 height="100%">
             <Header logged={props.logged} handleLog={props.handleLog} handleAccess={props.handleAccess} />
             <Outlet />

@@ -20,6 +20,16 @@ class ForbiddenError(Exception):
     def __init__(self, message):
         self.message = message
 
+class RequestTooLargeError(Exception):
+    def __init__(self, message):
+        self.message = message
+
+
+def handle_request_too_large_error(error):
+    response = jsonify({"message": error.message})
+    response.status_code = 413
+    return response
+
 
 def handle_bad_request_error(error):
     response = jsonify({"message": error.message})

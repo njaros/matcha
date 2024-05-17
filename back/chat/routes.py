@@ -5,9 +5,11 @@ from chat import sql as chat_sql
 from user_module import sql as user_sql
 from validators import uuid
 from jwt_policy.jwt_policy import token_required
+from .dto import message_dto
 
 #verifier si la personne qui ajoute le message est dans la room
 
+@message_dto
 @token_required
 def add_message(**kwargs):
     return chat_sql.insert_message(data = {
