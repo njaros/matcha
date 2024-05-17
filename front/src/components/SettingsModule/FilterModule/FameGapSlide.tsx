@@ -27,7 +27,6 @@ export function FameGapSlide(props: {setGapMax: (newVal: number) => void, defaul
                 </Box>
             </Box>
             <Slider
-                colorScheme="matchaPink"
                 display="flex"
                 id="distanceMaxSlideFilter"
                 min={0}
@@ -38,10 +37,10 @@ export function FameGapSlide(props: {setGapMax: (newVal: number) => void, defaul
                     props.setGapMax(val);
                 }}
                 >
-                <SliderTrack>
-                    <SliderFilledTrack />
+                <SliderTrack backgroundColor="pink.400">
+                    <SliderFilledTrack backgroundColor="white"/>
                 </SliderTrack>
-                <SliderThumb />
+                <SliderThumb boxSize="14px" outline="solid 2px #F687B3" />
             </Slider>
         </Box>
     )

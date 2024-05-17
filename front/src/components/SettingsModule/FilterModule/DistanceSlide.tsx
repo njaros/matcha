@@ -38,10 +38,10 @@ export function DistanceSlide(props: {setDistanceMax: (newVal: number) => void, 
                     props.setDistanceMax(val);
                 }}
                 >
-                <SliderTrack>
-                    <SliderFilledTrack />
+                <SliderTrack backgroundColor="pink.400">
+                    <SliderFilledTrack backgroundColor="white"/>
                 </SliderTrack>
-                <SliderThumb />
+                <SliderThumb boxSize="14px" outline="solid 2px #F687B3" />
             </Slider>
         </Box>
     )
