@@ -3,6 +3,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import { Box } from "@chakra-ui/react"
 //Ici qu'il faudra mettre les modules du genre pop-ups qui doivent pop de n importe ou
+
 const Layout = (props: {
     logged: boolean,
     handleLog: (newState: boolean) => void,
