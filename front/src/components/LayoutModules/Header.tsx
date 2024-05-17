@@ -106,7 +106,7 @@ const Header = (props: {
         justifyContent="space-evenly"
         alignItems={'center'}
         marginBottom={'10px'}
-        padding={'0 5px '}
+        padding={'0 10px '}
         >
         { props.logged ?
         <>
