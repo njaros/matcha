@@ -5,9 +5,11 @@ from chat import sql as chat_sql
 from user_module import sql as user_sql
 from validators import uuid
 from jwt_policy.jwt_policy import token_required
+from .dto import message_dto
 
 #verifier si la personne qui ajoute le message est dans la room
 
+@message_dto
 @token_required
 def add_message(**kwargs):
     return chat_sql.insert_message(data = {
@@ -18,8 +20,8 @@ def add_message(**kwargs):
 
 @token_required
 def add_room(**kwargs):
-    user_id1 = request.form.get('user_id1')
-    user_id2 = request.form.get('user_id2')
+    user_id1 = uuid.isUuid(request.form.get('user_id1'))
+    user_id2 = uuid.isUuid(request.form.get('user_id2'))
 
     data = {
         'user_id1': user_id1,
@@ -47,4 +49,4 @@ def get_room_list_by_id(**kwargs):
 
 @token_required
 def get_message_list_by_room_id(**kwargs):
-    return chat_sql.get_message_list_by_room_id((request.json['room_id']))
+    return chat_sql.get_message_list_by_room_id((uuid.isUuid(request.json['room_id'])))

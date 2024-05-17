@@ -4,6 +4,7 @@ from user_module import sql as user_sql
 from flask import current_app as app
 from error_status.error import ForbiddenError, NotFoundError
 from psycopg.rows import dict_row
+from profile_module import sql as profile_sql
 
 def insert_room(data):
     if room_exists(data.get('user_id1'), data.get('user_id2')):
@@ -48,20 +49,16 @@ def get_room_list_by_id(user_id):
                     ELSE user1.username
                 END AS name,
                 (
-                    SELECT json_agg(
                         json_build_object(
                             'user_id', room.user_1, 
                             'username', user1.username
                         )
-                    )
                 ) AS user_1,
                 (
-                    SELECT json_agg(
                         json_build_object(
                             'user_id', room.user_2, 
                             'username', user2.username
                         )
-                    )
                 ) AS user_2
             FROM room
             JOIN user_table AS user1 ON room.user_1 = user1.id
@@ -73,6 +70,11 @@ def get_room_list_by_id(user_id):
     res = cur.fetchall()
     if not res:
         raise NotFoundError('This user does not have any conversation.')
+    for row in res:
+        row['user_1']['photo'] = profile_sql.get_main_photo_by_user_id(row['user_1']['user_id'])
+        row['user_2']['photo'] = profile_sql.get_main_photo_by_user_id(row['user_2']['user_id'])
+
+
     cur.close()
     return res
 
