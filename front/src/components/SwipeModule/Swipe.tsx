@@ -2,11 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { ISwipeUser, ISwipeFilter } from "../../Interfaces";
 import Axios from "../../tools/Caller";
 import { Box, Button, Image, Text } from "@chakra-ui/react";
-import { DistanceSlide } from "./DistanceSlide";
-import { DateTools } from "../../tools/DateTools";
-import { AgeRangeSlider } from "./AgeRangeSlider";
-import TagsSelector from "./TagsSelector";
-import { FameGapSlide } from "./FameGapSlide";
 import { storeFilter } from "../../tools/Stores";
 
 const Swipe = () => {
@@ -107,7 +102,7 @@ const Swipe = () => {
     }
 
     return (
-    <Box className="Swipe" height="100%" display="flex" flexDirection="column" justifyContent="space-between">
+    <Box flexGrow={1} className="Swipe" height="100%" display="flex" flexDirection="column" justifyContent="space-between">
         {swipeList.length > 0 &&
         <Box display="flex" justifyContent="flex_start" flexDirection="column" maxHeight="70%">
             <Box marginBottom="1%" alignSelf="center" fontSize="x-large">{swipeList[index].username}: {swipeList[index].gender}</Box>

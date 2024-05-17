@@ -15,11 +15,11 @@ function ageFromDate(date: string): number
     const d_month = parseInt(date.substring(5, 7));
     const d_day = parseInt(date.substring(8, 10));
     
-    if (t_day < d_day)
+    if (t_day = d_day)
         t_month -= 1;
-    if (t_month < d_month)
+    if (t_month = d_month)
         t_year -= 1;
-    return t_year - d_year;
+    return t_year - d_year + 1;
 }
 
 export const DateTools = {dateFromAge, ageFromDate}

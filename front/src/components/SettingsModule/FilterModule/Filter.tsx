@@ -5,8 +5,9 @@ import { AgeRangeSlider } from "./AgeRangeSlider";
 import { DistanceSlide } from "./DistanceSlide";
 import { FameGapSlide } from "./FameGapSlide";
 import TagsSelector from "./TagsSelector";
+import Geoloc from "./Geoloc";
 
-export default function Filter() {
+export default function Filter(props: {focus: boolean}) {
     const { filter, updateFilter } = storeFilter();
 
     function handleDistanceMax(val: number) {
@@ -36,6 +37,7 @@ export default function Filter() {
 
     return (
         <Box>
+            <Geoloc focus={props.focus}/>
             <AgeRangeSlider
                 setAgeRange={handlerAgeMinMax}
                 defaultValue={

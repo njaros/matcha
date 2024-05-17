@@ -5,7 +5,7 @@ import { ILoginInForm } from "../../Interfaces";
 import Axios from "../../tools/Caller";
 import { cookieMan } from "../../tools/CookieMan";
 import { storeGps } from "../../tools/Stores";
-import { Spinner } from "@chakra-ui/react";
+import { Box, Spinner } from "@chakra-ui/react";
 
 const Login = (props:{
     handleLog: (newState: boolean) => void,
@@ -58,7 +58,7 @@ const Login = (props:{
     }
 
     return (
-        <div className="login_page">
+        <Box flexGrow={1} className="login_page">
             <h1>LOGIN PAGE</h1>
             <form className="login_form" onSubmit={handleSubmit(loginSubmit)}>
                 <input className="username_input"
@@ -74,7 +74,7 @@ const Login = (props:{
                 <Spinner color="purple" size="lg"/> :
                 <button className="submit_button" type="submit">SUBMIT</button>}
             </form>
-        </div>
+        </Box>
     )
 }
 

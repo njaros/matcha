@@ -2,9 +2,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css"
 import L, { Map as LeafLetMap } from "leaflet";
 import { Box, Button, FormControl, FormLabel, Switch } from "@chakra-ui/react";
-import Axios from "../../tools/Caller";
-import { storeGps } from "../../tools/Stores";
-import { lngModulo } from "../../tools/Thingy";
+import Axios from "../../../tools/Caller";
+import { storeGps } from "../../../tools/Stores";
+import { lngModulo } from "../../../tools/Thingy";
 
 const Geoloc = (props: {focus: boolean}) => {
     const [ mapCtx, setMap ] = useState<LeafLetMap | null>(null);
@@ -33,7 +33,8 @@ const Geoloc = (props: {focus: boolean}) => {
         .then(response => response.json().then(
             data => {
                 setPosInfo({
-                    country: data.address.country,
+                    country:    data.address.country != undefined ?
+                                data.address.country : "Where did you clicked ?",
                     city:   data.address.city != undefined ?
                             data.address.city :
                             data.address.village != undefined ?
@@ -42,7 +43,8 @@ const Geoloc = (props: {focus: boolean}) => {
                             data.address.town :
                             data.address.county != undefined ?
                             data.address.county :
-                            data.address.state
+                            data.address.state != undefined ?
+                            data.address.state : ""
                 })
             }
         ))

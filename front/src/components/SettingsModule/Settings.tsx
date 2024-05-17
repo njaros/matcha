@@ -1,30 +1,38 @@
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from "@chakra-ui/react";
 import Profile from "./Profile";
 import Photo from "./Photo";
-import Geoloc from "./Geoloc";
+import Geoloc from "./FilterModule/Geoloc";
 import { useState } from "react";
 import Hobbies from "./Hobbies";
 import Filter from "./FilterModule/Filter";
+
+const settingFontSize = { base: '16px', sm: '18px', md: '20px', lg: '22px', xl: '24px' };
 
 const Settings = () => {
     const [ geoLocFocus, setGeoLocFocus ] = useState<boolean>(false);
 
     const handleChange = (index: number) => {
-        if (index == 4)
+        if (index == 3)
             setGeoLocFocus(true);
         else
             setGeoLocFocus(false);
     }
 
     return (
-        <Tabs isFitted onChange={(index) => handleChange(index)} defaultIndex={0}>
-            <TabList>
-                <Tab>Profile</Tab>
-                <Tab>Photos</Tab>
-                <Tab>Hobbies</Tab>
-                <Tab>Filters</Tab>
-                <Tab>Geoloc</Tab>
-            </TabList>
+        <Tabs
+            flexGrow={1}
+            display="flex"
+            flexDirection="column"
+            width={{base: "90%", sm: "90%", md: "90%", lg: "80%", xl: "80%"}}
+            isFitted
+            onChange={(index) => handleChange(index)} 
+            defaultIndex={0}>
+                <TabList display="flex" width="100%">
+                    <Tab flex="1" fontSize={settingFontSize} textAlign="center">Profile</Tab>
+                    <Tab flex="1" fontSize={settingFontSize} textAlign="center">Photos</Tab>
+                    <Tab flex="1" fontSize={settingFontSize} textAlign="center">Hobbies</Tab>
+                    <Tab flex="1" fontSize={settingFontSize} textAlign="center">Filters</Tab>
+                </TabList>
             <TabPanels>
                 <TabPanel>
                     <Profile />
@@ -36,10 +44,7 @@ const Settings = () => {
                     <Hobbies />
                 </TabPanel>
                 <TabPanel>
-                    <Filter />
-                </TabPanel>
-                <TabPanel>
-                    <Geoloc focus={geoLocFocus}/>
+                    <Filter focus={geoLocFocus}/>
                 </TabPanel>
             </TabPanels>
         </Tabs>

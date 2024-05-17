@@ -161,7 +161,12 @@ function App() {
 	//END OF TOKEN MANAGEMENT
 
 	return (
-		<Box display="flex" flexDirection="column" height="100%" width="70%">
+		<Box
+			display="flex"
+			bg="pink.300"
+			flexDirection="column"
+			height="100%"
+			width="100%">
 					<BrowserRouter>
 						<Routes>
 							<Route element={ <Layout logged={logged} handleLog={handleLog} handleAccess={handleAccess} /> }>
