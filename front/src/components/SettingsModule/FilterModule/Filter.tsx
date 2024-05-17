@@ -36,7 +36,7 @@ export default function Filter(props: {focus: boolean}) {
     }
 
     return (
-        <Box>
+        <Box marginTop="10px">
             <Geoloc focus={props.focus}/>
             <AgeRangeSlider
                 setAgeRange={handlerAgeMinMax}
