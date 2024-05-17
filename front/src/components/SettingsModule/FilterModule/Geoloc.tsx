@@ -161,6 +161,7 @@ const Geoloc = (props: {focus: boolean}) => {
             <Box display="flex" marginBottom="10px">
                 <Button
                     display="flex"
+                    height={heigthSizes} 
                     justifyContent="space-between"
                     flex={1}
                     borderRadius="15px"
@@ -168,7 +169,7 @@ const Geoloc = (props: {focus: boolean}) => {
                     color="pink.100"
                     colorScheme="matchaPink"
                     onClick={triggerMap}>
-                    <Text display="flex" height={heigthSizes} alignItems="center">
+                    <Text display="flex" alignItems="center" textOverflow="ellipsis" overflow="hidden" whiteSpace="nowrap">
                         Position: {posInfo.city}, {posInfo.country}
                     </Text>
                     <Icon   as={ChevronDownIcon}
