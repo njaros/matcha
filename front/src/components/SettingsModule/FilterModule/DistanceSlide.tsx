@@ -18,7 +18,7 @@ export function DistanceSlide(props: {setDistanceMax: (newVal: number) => void, 
                 fontWeight="bold"
                 margin={marginSize}
                 fontSize={CommentaryFontSize}
-                color="pink.200">
+                color="pink.100">
                 <Box>
                     distance max
                 </Box>

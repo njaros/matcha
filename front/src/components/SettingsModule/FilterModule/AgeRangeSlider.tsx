@@ -21,7 +21,7 @@ export function AgeRangeSlider(props: {
                 fontWeight="bold"
                 margin={marginSize}
                 fontSize={CommentaryFontSize}
-                color="pink.200">
+                color="pink.100">
                 <Box>
                     Age Range
                 </Box>

@@ -18,7 +18,7 @@ export function FameGapSlide(props: {setGapMax: (newVal: number) => void, defaul
                 fontWeight="bold"
                 margin={marginSize}
                 fontSize={CommentaryFontSize}
-                color="pink.200">
+                color="pink.100">
                 <Box>
                     Max rating gap
                 </Box>

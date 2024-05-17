@@ -6,7 +6,7 @@ import { useState } from "react";
 import Hobbies from "./Hobbies";
 import Filter from "./FilterModule/Filter";
 
-const settingFontSize = { base: '12px', sm: '14px', md: '16px', lg: '20px', xl: '24px' };
+const settingFontSize = { base: '16px', sm: '18px', md: '20px', lg: '22px', xl: '24px' };
 
 const Settings = () => {
     const [ geoLocFocus, setGeoLocFocus ] = useState<boolean>(false);

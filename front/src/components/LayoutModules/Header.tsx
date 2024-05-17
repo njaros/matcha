@@ -8,6 +8,9 @@ import { FaBinoculars } from "react-icons/fa"
 import { SettingsIcon } from "@chakra-ui/icons"
 import { useEffect, useState } from "react";
 
+const headerTextSize = {base: "14px", sm: "16px", md: "19px", lg: "22px", xl: "25px"}
+const headerIconSize = {base: 8, sm: 10, md: 12, lg: 14, xl: 16}
+
 const Header = (props: {
     logged: boolean,
     handleLog: (newState: boolean) => void,
@@ -79,17 +82,23 @@ const Header = (props: {
                 justifyContent="center"
                 margin="10%"
                 fontSize="xxx-large">
-            <Text fontSize={{ base: '24px', sm: '28px', md: '32px', lg: '40px', xl: '48px' }}><NavLink to="/">MATCHOOOOO</NavLink></Text>
+            <Text fontSize={{ base: '24px', sm: '28px', md: '32px', lg: '40px', xl: '48px' }}>
+                <NavLink to="/">MATCHOOOOO</NavLink>
+            </Text>
         </Box>
             { props.logged ?
-            <Box display="flex" flexDirection="row" justifyContent="space-evenly">
-                <NavLink to="/swipe"><Icon as={FaBinoculars} color="pink.400" boxSize={8}/></NavLink>
-                <NavLink to="/conversation"><Icon as={MdFavorite} color="pink.400" boxSize={8}/></NavLink>
-                <NavLink to="/settings"><SettingsIcon color="pink.400" boxSize={8} /></NavLink>
-                <button onClick={logout}><Icon as={ImExit} color="pink.400" boxSize={8}/></button>
+            <Box className="iconUserLogged"
+                display="flex"
+                color="pink.400"
+                flexDirection="row"
+                justifyContent="space-evenly">
+                <NavLink to="/swipe"><Icon as={FaBinoculars} boxSize={headerIconSize}/></NavLink>
+                <NavLink to="/conversation"><Icon as={MdFavorite} boxSize={headerIconSize}/></NavLink>
+                <NavLink to="/settings"><SettingsIcon boxSize={headerIconSize}/></NavLink>
+                <button onClick={logout}><Icon as={ImExit} boxSize={headerIconSize}/></button>
             </Box>
             :
-            <Box>
+            <Box className="signup_login" display="flex" justifyContent="center" fontSize={headerTextSize}>
                 {location.pathname == "/login" ?
                 <NavLink to="/signup">Not registered ? Sign Up !</NavLink> :
                 <NavLink to="/login">Already registered ? Log In !</NavLink>}
