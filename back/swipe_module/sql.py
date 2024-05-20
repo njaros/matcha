@@ -4,62 +4,13 @@ from flask import current_app
 from chat import sql as chat_sql
 import uuid
 
-
-def get_random_list_ten(**kwargs):
-    user = kwargs["user"]["id"]
-    cur = conn.cursor(row_factory=dict_row)
-    cur.execute(
-        """
-                SELECT user_table.id, username, \
-                    birthDate, gender, photos.binaries, \
-                    photos.mime_type
-                FROM user_table
-                LEFT OUTER JOIN photos ON user_table.id = photos.user_id \
-                    AND photos.main = true
-                WHERE user_table.id NOT IN (
-                    SELECT canceler_id
-                    FROM cancel
-                    WHERE canceled_id = %s
-                ) AND user_table.id NOT IN (
-                    SELECT canceled_id
-                    FROM cancel
-                    WHERE canceler_id = %s
-                ) AND user_table.id NOT IN (
-                    SELECT liked_id
-                    FROM relationship
-                    WHERE liker_id = %s
-                ) AND user_table.id NOT IN ( %s )
-                LIMIT 10;
-        """,
-        (user, user, user, user),
-    )
-    swipe_list = cur.fetchall()
-    cur.close()
-    return swipe_list
-
-
-def get_ten_with_filters(**kwargs):
-    """
-    Front must give:
-        - a date min and a date max
-        - a distance max in kilometer
-        - a fame rating gap
-        - a list of hobby_ids (can be empty)
-    This must provide:
-        - a list of 10 users
-        - sorted by age, distance, fame rating, number of common tags
-    """
-    cur = conn.cursor(row_factory=dict_row)
-    cur.execute(
-        """
-        WITH subquery AS (
+base_swipe_request = """
+        WITH prefiltered AS (
             SELECT
-                user_table.id,
+                id,
                 username,
                 birthDate,
                 gender,
-                photos.binaries,
-                photos.mime_type,
                 rank,
                 ACOS(
                     SIND(%(self_latitude)s) * SIND(latitude)
@@ -69,26 +20,24 @@ def get_ten_with_filters(**kwargs):
                 ) * 6371 AS distance
             FROM
                 user_table
-            LEFT OUTER JOIN photos ON user_table.id = photos.user_id
-                AND photos.main = true
             WHERE
                 preference IN ('all', %(gender)s)
                 AND %(preference)s IN ('all', gender)
-                AND user_table.id NOT IN (
+                AND id NOT IN (
                     SELECT canceler_id
                     FROM cancel
                     WHERE canceled_id = %(user)s
-                ) AND user_table.id NOT IN (
+                ) AND id NOT IN (
                     SELECT canceled_id
                     FROM cancel
                     WHERE canceler_id = %(user)s
-                ) AND user_table.id NOT IN (
+                ) AND id NOT IN (
                     SELECT liked_id
                     FROM relationship
                     WHERE liker_id = %(user)s
-                ) AND user_table.id NOT IN ( %(user)s )
-                AND user_table.birthDate BETWEEN %(date_min)s AND %(date_max)s
-                AND ABS(user_table.rank - %(user_rank)s) < %(ranking_gap)s
+                ) AND id NOT IN ( %(user)s )
+                AND birthDate BETWEEN %(date_min)s AND %(date_max)s
+                AND ABS(rank - %(user_rank)s) < %(ranking_gap)s
                 AND (
                     %(hobby_ids_len)s = 0
                     OR (
@@ -101,19 +50,15 @@ def get_ten_with_filters(**kwargs):
                 )
         )
         SELECT
-            subquery.id,
-            subquery.username,
-            subquery.birthDate,
-            subquery.gender,
-            subquery.binaries,
-            subquery.mime_type,
-            subquery.distance
-        FROM subquery
+            id,
+        FROM prefiltered
         WHERE
-            subquery.distance < %(distance_max)s
-        LIMIT 100;
-        """,
-        {
+            distance < %(distance_max)s
+        """
+
+
+def set_request_dict(**kwargs):
+    return {
             "user": kwargs["user"]["id"],
             "self_latitude": kwargs["user"]["latitude"],
             "self_longitude": kwargs["user"]["longitude"],
@@ -126,7 +71,90 @@ def get_ten_with_filters(**kwargs):
             "ranking_gap": kwargs["ranking_gap"],
             "hobby_ids": kwargs["hobby_ids"],
             "hobby_ids_len": len(kwargs["hobby_ids"]),
-        },
+        }
+
+
+def get_swipe_list_no_sort(**kwargs):
+    cur = conn.cursor(row_factory=dict_row)
+    cur.execute(
+        base_swipe_request,
+        set_request_dict(**kwargs),
+    )
+    swipe_list = cur.fetchall()
+    cur.close()
+    return swipe_list
+
+
+def get_swipe_list_age_sort(**kwargs):
+    request = base_swipe_request.join(
+        """
+        ORDER BY age
+        """
+    )
+    cur = conn.cursor(row_factory=dict_row)
+    cur.execute(
+        request,
+        set_request_dict(**kwargs)
+    )
+    swipe_list = cur.fetchall()
+    cur.close()
+    return swipe_list
+
+
+def get_swipe_list_ranking_sort(**kwargs):
+    request = base_swipe_request.join(
+        """
+        ORDER BY rank DESC
+        """
+    )
+    cur = conn.cursor(row_factory=dict_row)
+    cur.execute(
+        request,
+        set_request_dict(**kwargs)
+    )
+    swipe_list = cur.fetchall()
+    cur.close()
+    return swipe_list
+
+
+def get_swipe_list_distance_sort(**kwargs):
+    request = base_swipe_request.join(
+        """
+        ORDER BY distance
+        """
+    )
+    cur = conn.cursor(row_factory=dict_row)
+    cur.execute(
+        request,
+        set_request_dict(**kwargs)
+    )
+    swipe_list = cur.fetchall()
+    cur.close()
+    return swipe_list
+
+
+def get_swipe_list_tags_sort(**kwargs):
+    request = base_swipe_request.join(
+        """
+        ORDER BY (
+            SELECT COUNT(*)
+            FROM user_hobbie
+            WHERE id IN (
+                SELECT user_id
+                FROM user_hobbie
+                WHERE hobbie_id IN (
+                    SELECT hobbie_id
+                    FROM user_hobbie
+                    WHERE user_id = %(user)s
+                )
+            )
+        ) DESC
+        """
+    )
+    cur = conn.cursor(row_factory=dict_row)
+    cur.execute(
+        request,
+        set_request_dict(**kwargs)
     )
     swipe_list = cur.fetchall()
     cur.close()

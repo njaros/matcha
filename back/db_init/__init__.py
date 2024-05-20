@@ -18,6 +18,7 @@ def set_up_db():
     )
     exists = cur.fetchall()
     if len(exists) == 0:
+
         cur.execute(
             """
             CREATE TABLE user_table (

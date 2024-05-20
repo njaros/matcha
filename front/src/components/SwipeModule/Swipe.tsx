@@ -101,13 +101,10 @@ const Swipe = () => {
         }
     }
 
-    function sortHandler()
-
     return (
     <Box flexGrow={1} className="Swipe" height="100%" display="flex" flexDirection="column" justifyContent="space-between">
         {swipeList.length > 0 &&
         <Box>
-            <Sort />
             <Box display="flex" justifyContent="flex_start" flexDirection="column" maxHeight="70%">
                 <Box marginBottom="1%" alignSelf="center" fontSize="x-large">{swipeList[index].username}: {swipeList[index].gender}</Box>
                 <Image minBlockSize="150px" maxBlockSize="1000px" borderRadius="full" display="self" alignSelf="center" marginBottom="2%" src={swipeList[index].photo} alt="pouet"/>

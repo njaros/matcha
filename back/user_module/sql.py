@@ -53,6 +53,35 @@ def get_user_by_id(id):
     return user
 
 
+def get_user_profile(**kwargs):
+    cur = conn.cursor(row_factory=dict_row)
+    cur.execute
+    (
+        """
+        SELECT  user_table.id,
+                username,
+                latitude,
+                longitude,
+                biography,
+                birthDate,
+                gender,
+                rank,
+                (
+                    SELECT json_agg (
+                        SELECT photos.id, mime_type, binaries, main
+                        FROM photos
+                        WHERE user_id = %(user)s
+                    )
+                ) AS photos
+                FROM user_table
+                WHERE id = %(user)s
+        """, {"user": kwargs["user_id"]}
+    )
+    user = cur.fetchone()
+    cur.close()
+    return user
+
+
 def get_user_with_room(user_id):
     cur = conn.cursor(row_factory=dict_row)
     query = """
