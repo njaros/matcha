@@ -52,5 +52,12 @@ export interface RoomList {
         user_id: string,
         username: string,
         photo?: string
+    },
+    last_message_author?: {
+        author: {
+            id: string,
+            username: string
+        },
+        content: string
     }
 }[]

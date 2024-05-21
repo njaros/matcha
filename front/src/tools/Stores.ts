@@ -39,6 +39,7 @@ interface IstoreMe{
 	updateMe: (newMe: Me) => void
 }
 
+
 interface IstoreRoomList{
 	roomList: RoomList[] | undefined,
 	updateRoomList: (newRoomList: RoomList[]) => void
@@ -53,6 +54,16 @@ interface IFilter{
 	filter: ISwipeFilter,
 	updateFilter: (newFilter: ISwipeFilter) => void
 }
+
+interface IConvBool {
+	convBool: boolean;
+	updateConvBool: (updateConvBool: boolean) => void
+}
+
+export const storeConvBool = create<IConvBool>()((set) => ({
+	convBool: false,
+	updateConvBool: (newConvBool: boolean) => set({convBool: newConvBool})
+}))
 
 export const storeMessageList = create<IstoreMessageList>()((set) => ({
 	messageList: [],

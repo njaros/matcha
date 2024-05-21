@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { IPhoto } from "../../Interfaces";
 import Axios from "../../tools/Caller";
-import { Box, Button, Image, List, ListItem } from "@chakra-ui/react";
+import { Box, Button, Image, List, ListItem, Input } from "@chakra-ui/react";
 
 function displayListAccepted(props: string[])
 {
@@ -201,8 +201,8 @@ const Photo = () => {
     return (
         <Box margin="5%">
                     <form onSubmit={onSubmit}>
-                        <input type="file" name="file[]" onChange={onChangeFile} multiple required/>
-                        <button type="submit">Envoi</button>
+                        <Input type="file" name="file[]" onChange={onChangeFile} multiple required/>
+                        <Button type="submit">Envoi</Button>
                         {errorMsg.section != "" ? <div className="errorMsg">error: {errorMsg.section}: {errorMsg.message}</div> : null}
                         {accepted.length ? <div className="acceptedFiles">succesfully upload : {displayListAccepted(accepted)}</div> : null}
                         {denied.length ? <div className="deniedFiles">failed to upload : {displayListDenied(denied)}</div> : null}

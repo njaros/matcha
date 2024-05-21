@@ -70,7 +70,7 @@ const Hobbies = () => {
 
     return (
         <Box display="flex" flexDirection="column" bg="white" boxShadow="base" padding="10%" borderRadius="5%">
-            <Box alignSelf="center" marginBottom = "15%" fontFamily="fantasy" fontSize="lg">
+            <Box alignSelf="center" marginBottom = "15%" fontSize="lg">
                 Select your Hobbies !
             </Box>
             {hobbies.length != 0 && <SimpleGrid minChildWidth="100px" spacing={10}>
