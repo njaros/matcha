@@ -48,24 +48,34 @@ def get_room_list_by_id(user_id):
                     WHEN room.user_1 = %s THEN user2.username
                     ELSE user1.username
                 END AS name,
-                (
-                        json_build_object(
-                            'user_id', room.user_1, 
-                            'username', user1.username
-                        )
+                json_build_object(
+                    'user_id', room.user_1, 
+                    'username', user1.username
                 ) AS user_1,
+                json_build_object(
+                    'user_id', room.user_2, 
+                    'username', user2.username
+                ) AS user_2,
                 (
-                        json_build_object(
-                            'user_id', room.user_2, 
-                            'username', user2.username
+                    SELECT json_build_object(
+                        'content', message.content,
+                        'author', json_build_object(
+                            'id', user_table.id,
+                            'username', user_table.username
                         )
-                ) AS user_2
+                    )
+                    FROM message
+                    JOIN user_table ON message.sender_id = user_table.id
+                    WHERE message.room_id = room.id
+                    ORDER BY message.id DESC
+                    LIMIT 1
+                ) AS last_message_author
             FROM room
             JOIN user_table AS user1 ON room.user_1 = user1.id
             JOIN user_table AS user2 ON room.user_2 = user2.id
             WHERE room.user_1 = %s OR room.user_2 = %s
             GROUP BY room.id, user1.username, user2.username
-        """
+            """
     cur.execute(query, (user_id, user_id, user_id))
     res = cur.fetchall()
     if not res:
