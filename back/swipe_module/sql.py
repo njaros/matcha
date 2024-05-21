@@ -50,7 +50,7 @@ base_swipe_request = """
                 )
         )
         SELECT
-            id,
+            id
         FROM prefiltered
         WHERE
             distance < %(distance_max)s

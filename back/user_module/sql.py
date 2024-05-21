@@ -16,7 +16,7 @@ def get_user_by_username(username):
                 user_table.birthDate AS birthDate,
                 user_table.gender AS gender,
                 user_table.biography AS biography,
-                user_table.preference  AS preference 
+                user_table.preference  AS preference
             FROM user_table
             WHERE user_table.username = %s;
             """
@@ -40,7 +40,7 @@ def get_user_by_id(id):
                 user_table.birthDate AS birthDate,
                 user_table.gender AS gender,
                 user_table.biography AS biography,
-                user_table.preference AS preference 
+                user_table.preference AS preference
             FROM user_table
             WHERE user_table.id = %s;
             """
@@ -49,14 +49,13 @@ def get_user_by_id(id):
     if user is None:
         return None
     cur.close()
-    app.logger.info(user)
     return user
 
 
 def get_user_profile(**kwargs):
     cur = conn.cursor(row_factory=dict_row)
-    cur.execute
-    (
+    app.logger.info(kwargs)
+    cur.execute(
         """
         SELECT  user_table.id,
                 username,
@@ -68,14 +67,26 @@ def get_user_profile(**kwargs):
                 rank,
                 (
                     SELECT json_agg (
-                        SELECT photos.id, mime_type, binaries, main
+                        json_build_object (
+                            'id', photos.id,
+                            'mime_type', mime_type,
+                            'binaries', binaries,
+                            'main', main))
                         FROM photos
-                        WHERE user_id = %(user)s
-                    )
-                ) AS photos
+                        WHERE user_id = %(user_id)s
+                ) AS photos,
+                CASE (
+                    SELECT COUNT(*)
+                    FROM relationship
+                    WHERE liker_id = %(user_id)s AND liked_id = %(self_id)s
+                    LIMIT 1)
+                    WHEN 1 then true
+                    WHEN 0 then false
+                    END love
                 FROM user_table
-                WHERE id = %(user)s
-        """, {"user": kwargs["user_id"]}
+                WHERE id = %(user_id)s
+        """, {"user_id": kwargs["user_id"],
+              "self_id": kwargs["user"]["id"]}
     )
     user = cur.fetchone()
     cur.close()
@@ -85,7 +96,7 @@ def get_user_profile(**kwargs):
 def get_user_with_room(user_id):
     cur = conn.cursor(row_factory=dict_row)
     query = """
-            SELECT 
+            SELECT
                 user_table.id AS user_id,
                 user_table.username AS username,
                 user_table.email AS email,
@@ -98,7 +109,8 @@ def get_user_with_room(user_id):
                         )
                     )
                     FROM room
-                    WHERE user_table.id = room.user_1 OR user_table.id = room.user_2
+                    WHERE user_table.id = room.user_1
+                    OR user_table.id = room.user_2
                 ) AS room
             FROM user_table
             WHERE user_table.id = %s
@@ -109,7 +121,7 @@ def get_user_with_room(user_id):
         raise NotFoundError('This user does not exist in database')
     cur.close()
     return res
-    
+
 
 def get_user_with_room_and_message(user_id):
 
@@ -133,9 +145,10 @@ def get_user_with_room_and_message(user_id):
                                         'message_sender_id', message.sender_id,
                                         'message_send_at', message.send_at,
                                         'message_author', (
-                                            SELECT user_table.username 
-                                            FROM user_table 
-                                            WHERE message.sender_id = user_table.id
+                                            SELECT user_table.username
+                                            FROM user_table
+                                            WHERE message.sender_id =
+                                                user_table.id
                                         )
                                     )
                                 )
@@ -145,7 +158,8 @@ def get_user_with_room_and_message(user_id):
                         )
                     )
                     FROM room
-                    WHERE room.user_1 = user_table.id OR room.user_2 = user_table.id
+                    WHERE room.user_1 = user_table.id
+                    OR room.user_2 = user_table.id
                 ) AS rooms
             FROM
                 user_table

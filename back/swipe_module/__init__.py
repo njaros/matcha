@@ -3,7 +3,7 @@ from flask_cors import CORS
 from .routes import get_ten_randoms, \
                     like_user, \
                     dislike_user, \
-                    get_ten_with_filters
+                    get_swipe_list
 
 
 app = Blueprint('swipe', __name__)
@@ -27,8 +27,8 @@ app.add_url_rule(
     methods=["POST"]
 )
 app.add_url_rule(
-    '/swipe/get_ten_with_filters',
-    'get_ten_with_filters',
-    get_ten_with_filters,
+    '/swipe/get_swipe_list',
+    'get_swipe_list',
+    get_swipe_list,
     methods=["POST"]
 )

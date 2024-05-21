@@ -38,9 +38,13 @@ export interface ISwipeUser
 {
 	id: string,
 	username: string,
-	birthdate: string,
+	age: number,
 	gender: string,
-	photo: string
+	rank: number,
+	biography: string,
+	location: string,
+	photos: IPhoto[],
+	love: boolean
 }
 
 export interface ISwipeFilter

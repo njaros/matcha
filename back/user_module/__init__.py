@@ -7,6 +7,7 @@ from .routes import (
     get_user_by_id,
     get_gps,
     get_me,
+    get_user_profile
 )
 
 app = Blueprint("user", __name__)
@@ -35,3 +36,9 @@ app.add_url_rule(
 ),
 app.add_url_rule("/user/get_me", "get_me", get_me, methods=["GET"])
 app.add_url_rule("/user/get_gps", "get_gps", get_gps, methods=["GET"])
+app.add_url_rule(
+    "/user/get_user_profile",
+    "get_user_profile",
+    get_user_profile,
+    methods=["POST"],
+)
