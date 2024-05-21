@@ -1,5 +1,5 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { storeGps, storeTimeout } from "../../tools/Stores";
+import { storeGps, storeTimeout, storeConvBool } from "../../tools/Stores";
 import { cookieMan } from "../../tools/CookieMan";
 import { As, Box, Icon, Text } from "@chakra-ui/react"
 import { MdFavorite, MdSettings } from "react-icons/md"
@@ -42,6 +42,7 @@ const Header = (props: {
     const location = useLocation();
     const { gps, updateGps } = storeGps();
     const [ logoutClicked, setLogoutClicked] = useState<boolean>(false);
+    const convBool = storeConvBool(state => state.convBool)
  
     const logout = () => {
         if (refreshTokenTimeoutId != undefined)
@@ -96,7 +97,8 @@ const Header = (props: {
 
     return (
 
-        <Box 
+        <Box
+        hidden={convBool }
         className="iconUserLogged"
         display="flex"
         width={'60%'}
@@ -106,7 +108,7 @@ const Header = (props: {
         justifyContent="space-evenly"
         alignItems={'center'}
         marginBottom={'10px'}
-        padding={'0 5px '}
+        padding={'0 10px '}
         >
         { props.logged ?
         <>

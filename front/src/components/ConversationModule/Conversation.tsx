@@ -18,7 +18,6 @@ function Conversation(){
             const fetchData = async () => {
                 try {
                     const roomResponse = await Axios.get('/chat/get_room_list_by_id');
-                    console.log(roomResponse.data)
                     const updatedRoomList = roomResponse.data.map((room: any) => {
                         return {
                             ...room,
@@ -32,7 +31,6 @@ function Conversation(){
                             }
                         }
                     })
-                    console.log('udpated', updatedRoomList)
                     updateRoomList(updatedRoomList)
                 } catch (error) {
                     console.error(error);
