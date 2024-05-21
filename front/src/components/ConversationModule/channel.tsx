@@ -47,7 +47,7 @@ function ChannelList(){
         <Flex 
             h={'100%'}
             w={'100%'}
-            bg={'pink'}
+            bg={'white'}
             flexDirection="column"
         >
             {!showChat ? (
@@ -76,7 +76,7 @@ function ChannelList(){
                             <Flex
                                 key={index}
                                 w={'100%'}
-                                bg='pink.300'
+                                bg='#f2f2f2'
                                 textColor={'Black'}
                                 padding={'10px'}
                                 

@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Flex, FormControl, Input, ListItem, OrderedList, Text, WrapItem } from "@chakra-ui/react"
+import { Avatar, Box, Button, Flex, FormControl, Icon, Input, ListItem, OrderedList, Text, WrapItem } from "@chakra-ui/react"
 import React, { useEffect, useRef, useState } from "react"
 import { MessageData, Room_info } from "../../tools/interface"
 import { useForm } from "react-hook-form";
@@ -8,8 +8,10 @@ import { decode } from 'html-entities';
 import { ArrowRightIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
 import ChannelList from "./channel";
+import { MdOutlineKeyboardReturn } from "react-icons/md";
 
-function timeOfDay(timestampz: string | Date){
+
+export function timeOfDay(timestampz: string | Date){
     const dateObj = new Date(timestampz)
     let hour = dateObj.getHours()
     let min =  dateObj.getMinutes()
@@ -26,7 +28,7 @@ function timeOfDay(timestampz: string | Date){
         tmp2 = "0" + day.toString()
     else
         tmp2 = day.toString()
-    let date = hour.toString() + ":" + tmp + " " + tmp2 + "/" + month + "/" + year
+    let date = hour.toString() + ":" + tmp
     return (date)
 }
 
@@ -97,7 +99,7 @@ function Chatbox(props: {room: Room_info | undefined}){
         <Flex
             h={'100%'}
             width={'100%'}
-            bg={'pink.200'}
+            bg={'white'}
             flexDir={'column'}
         >
             {!chatInvisible ? (
@@ -107,18 +109,24 @@ function Chatbox(props: {room: Room_info | undefined}){
                         padding={'10px'}
                         alignItems={'center'}
                         borderBottomWidth={'1px'}
-                        borderBottomColor={'pink.300'}
-                        flexDir={'row'}
+                        borderBottomColor={'gray.200'}
+                        position={'fixed'}
+                        bg={'white'}
                     >
                         <Avatar src={me?.id === props.room?.user_1.user_id ? props.room?.user_2.photo : props.room?.user_1.photo} />
                         <Text marginLeft={'10px'} flex={1}>{props.room?.name}</Text>
-                        <Button onClick={displayConv}>Go Back</Button>
+                        <Button 
+                            onClick={displayConv}
+                            borderRadius={'100px'}
+                            >
+                                <Icon as={MdOutlineKeyboardReturn}/>
+                        </Button>
                     </Flex>
                     <Flex
                         h={'100%'}
                         flexDir={'column'}
                         width={'100%'}
-                        bg='white'
+                        bg='#f2f2f2'
                     >
                         <Flex
                             width={'100%'}
@@ -132,8 +140,7 @@ function Chatbox(props: {room: Room_info | undefined}){
                                 <Flex
                                     key={index}
                                     w={'100%'}
-                                    bg='white'
-                                    textColor={messageContent.author.id === me?.id ? 'white' : 'black'}
+                                    textColor={'black'}
                                     padding={'10px'}
                                     wrap={'wrap'}
                                     justifyContent={messageContent.author.id === me?.id ? "right" : "left"}
@@ -155,7 +162,7 @@ function Chatbox(props: {room: Room_info | undefined}){
                                             justifyContent={'space-evenly'}
                                             alignItems={'center'}
                                         >
-                                            <Text padding={'10px'}>{decode(messageContent.content)}</Text>
+                                            <Text textColor={messageContent.author.id === me?.id ? 'white' : 'black'} padding={'10px'}>{decode(messageContent.content)}</Text>
                                         </Flex>
                                     </Flex>
                                     <WrapItem
@@ -165,7 +172,7 @@ function Chatbox(props: {room: Room_info | undefined}){
                                         justifyContent={messageContent?.author.id === me?.id ? "right" : "left"}
                                         width={'100%'}
                                     >
-                                        <Text marginRight={'5px'}>{messageContent.author?.username}</Text>
+                                        <Text marginRight={'5px'}>{messageContent?.author.id !== me?.id ? messageContent.author?.username : ""}</Text>
                                         <Text>{timeOfDay(messageContent?.send_at)}</Text>
                                     </WrapItem>
                                 </Flex>
@@ -178,7 +185,7 @@ function Chatbox(props: {room: Room_info | undefined}){
                             flexDir={'row'}
                             justifyContent={'center'}
                             alignItems={'center'}
-                            bg='pink.200'
+                            bg='white'
                         >
                             <form onSubmit={handleSubmit(onSubmit)} style={{
                                 width: '100%',
@@ -193,9 +200,10 @@ function Chatbox(props: {room: Room_info | undefined}){
                                         h={'60px'}
                                         border={'none'}
                                         focusBorderColor="none"
-                                        borderRadius={'0px'}
+                                        borderRadius={'70px'}
+                                        bg={'#f2f2f2'}
                                         type='text'
-                                        color='white'
+                                        color='black'
                                         textDecoration={'none'}
                                         placeholder="Type your message..."
                                         autoComplete="off"
@@ -210,7 +218,7 @@ function Chatbox(props: {room: Room_info | undefined}){
                                     bg={'none'}
                                     _hover={{ background: 'none', transform: 'scale(1.4)' }}
                                 >
-                                    <ArrowRightIcon boxSize={4} color={'white'} />
+                                    <ArrowRightIcon boxSize={4} color={'black'} />
                                 </Button>
                             </form>
                         </Flex>
