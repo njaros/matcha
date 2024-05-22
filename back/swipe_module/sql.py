@@ -86,11 +86,7 @@ def get_swipe_list_no_sort(**kwargs):
 
 
 def get_swipe_list_age_sort(**kwargs):
-    request = base_swipe_request.join(
-        """
-        ORDER BY age
-        """
-    )
+    request = base_swipe_request + " ORDER BY birthDate DESC"
     cur = conn.cursor(row_factory=dict_row)
     cur.execute(
         request,
@@ -102,11 +98,7 @@ def get_swipe_list_age_sort(**kwargs):
 
 
 def get_swipe_list_ranking_sort(**kwargs):
-    request = base_swipe_request.join(
-        """
-        ORDER BY rank DESC
-        """
-    )
+    request = base_swipe_request + " ORDER BY rank DESC"
     cur = conn.cursor(row_factory=dict_row)
     cur.execute(
         request,
@@ -118,11 +110,7 @@ def get_swipe_list_ranking_sort(**kwargs):
 
 
 def get_swipe_list_distance_sort(**kwargs):
-    request = base_swipe_request.join(
-        """
-        ORDER BY distance
-        """
-    )
+    request = base_swipe_request + " ORDER BY distance"
     cur = conn.cursor(row_factory=dict_row)
     cur.execute(
         request,
@@ -134,8 +122,7 @@ def get_swipe_list_distance_sort(**kwargs):
 
 
 def get_swipe_list_tags_sort(**kwargs):
-    request = base_swipe_request.join(
-        """
+    request = base_swipe_request + """
         ORDER BY (
             SELECT COUNT(*)
             FROM user_hobbie
@@ -150,7 +137,6 @@ def get_swipe_list_tags_sort(**kwargs):
             )
         ) DESC
         """
-    )
     cur = conn.cursor(row_factory=dict_row)
     cur.execute(
         request,

@@ -62,7 +62,7 @@ def get_user_profile(**kwargs):
                 latitude,
                 longitude,
                 biography,
-                birthDate,
+                to_char(birthDate, 'YYYY-MM-DD') AS birthDate,
                 gender,
                 rank,
                 (
@@ -75,6 +75,16 @@ def get_user_profile(**kwargs):
                         FROM photos
                         WHERE user_id = %(user_id)s
                 ) AS photos,
+                (
+                    SELECT json_agg (
+                        json_build_object (
+                            'name', hobbie.name
+                        ))
+                    FROM hobbie
+                    LEFT OUTER JOIN user_hobbie
+                        ON hobbie.id = user_hobbie.hobbie_id
+                    WHERE user_id = user_table.id
+                ) AS hobbies,
                 CASE (
                     SELECT COUNT(*)
                     FROM relationship

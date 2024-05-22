@@ -44,6 +44,7 @@ export interface ISwipeUser
 	biography: string,
 	location: string,
 	photos: IPhoto[],
+	hobbies: string[],
 	love: boolean
 }
 

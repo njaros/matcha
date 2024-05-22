@@ -64,5 +64,6 @@ def get_user_profile(**kwargs):
         )
         del user_profile["latitude"]
         del user_profile["longitude"]
+        current_app.logger.info(user_profile)
         return user_profile, 200
     raise NotFoundError(f'user {kwargs["user_id"]} not found')

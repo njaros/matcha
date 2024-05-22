@@ -1,15 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { ISwipeUser, ISwipeFilter, IPhoto } from "../../Interfaces";
 import Axios from "../../tools/Caller";
-import { Box, Button, Image, Text } from "@chakra-ui/react";
+import { Box, Button, Circle, Icon, Image, Text, Spinner } from "@chakra-ui/react";
 import { storeFilter } from "../../tools/Stores";
 import { DateTools } from "../../tools/DateTools";
+import { RiSortAsc } from "react-icons/ri"
+import DisplayProfile from "./DisplayProfile";
 
 const Swipe = () => {
     const [ swipeList, setSwipeList ] = useState<string[]>([]);
     const [ index, setIndex ] = useState<number>(0);
-    const { filter, updateFilter } = storeFilter()
-    const [ sort, setSort ] = useState<string>("none")
+    const { filter, updateFilter } = storeFilter();
+    const [ sort, setSort ] = useState<string>("none");
+    const [ loading, setLoading ] = useState<boolean>(false);
     const [ swipeUser, setSwipeUser ] = useState<ISwipeUser>(
         {
             id: "",
@@ -20,9 +23,10 @@ const Swipe = () => {
             biography: "",
             location: "",
             photos: [],
+            hobbies: [],
             love: false
         }
-    )
+    );
 
     function getPosInfo(location: any)
     {
@@ -46,6 +50,7 @@ const Swipe = () => {
 
     function get_user_profile() {
         console.log("id = ", swipeList[0]);
+        setLoading(true);
         Axios.post("/user/get_user_profile", { user_id: swipeList[index]}).then(
             response => {
                 console.log(response.data);
@@ -79,6 +84,7 @@ const Swipe = () => {
                     biography: response.data.biography,
                     location: getPosInfo(response.data.location),
                     photos: photos,
+                    hobbies: response.data.hobbies,
                     love: response.data.love
                 })
             }
@@ -86,10 +92,15 @@ const Swipe = () => {
             err => {
                 console.warn(err);
             }
+        ).finally(
+            () => {
+                setLoading(false);
+            }
         )
     }
 
     function get_swipe_list() {
+        setLoading(true);
         Axios.post("/swipe/get_swipe_list", {...filter, sort: sort}).then(
             response => {
                 const newSwipeList = [];
@@ -104,18 +115,26 @@ const Swipe = () => {
         ).finally(
             () => {
                 setIndex(0);
+                setLoading(false);
             }
         )
     }
 
     useEffect(() => {
         get_swipe_list();
-    }, [])
+    }, [sort])
 
     useEffect(() => {
         if (swipeList.length > 0)
             get_user_profile();
     }, [swipeList, index])
+
+    const handleSort = (e: any) => {
+        if (e.target.value == sort)
+            setSort("none")
+        else
+            setSort(e.target.value)
+    }
 
     const likeHandler = (e: any) => {
         Axios.post("swipe/like_user", {"target_id": e.target.value}).then(
@@ -158,18 +177,43 @@ const Swipe = () => {
     }
 
     return (
-    <Box flexGrow={1} className="Swipe" height="100%" display="flex" flexDirection="column" justifyContent="space-between">
-        {swipeUser.id != "" &&
-        <Box>
-            <Box display="flex" justifyContent="flex_start" flexDirection="column" maxHeight="70%">
-                <Box marginBottom="1%" alignSelf="center" fontSize="x-large">{swipeUser.username}: {swipeUser.gender}</Box>
-                <Image minBlockSize="150px" maxBlockSize="1000px" borderRadius="full" display="self" alignSelf="center" marginBottom="2%" src={swipeUser.photos[0].htmlSrcImg} alt="pouet"/>
-                <Box display="flex" justifyContent="space-evenly" flexDirection="row">
-                    <Button value={swipeList[index]} onClick={likeHandler}>YES</Button>
-                    <Button value={swipeList[index]} onClick={dislikeHandler}>NO</Button>
-                </Box>
-            </Box>
+    <Box flexGrow={1} className="Swipe" w={"100%"} height="100%" display="flex" alignItems="center" flexDirection="column">
+        <Box    className="SortButtons"
+                w={"100%"}
+                display={"flex"}
+                flexDirection={"row"}
+                margin="5% 0"
+                justifyContent={"space-evenly"}>
+            <Circle className="circleIconSort"
+                    size={10}
+                    bg={"gray.100"}>
+                <Icon as={RiSortAsc} />
+            </Circle>
+            <Button colorScheme={sort == "age" ? "matchaPink": "gray"}
+                    value={"age"}
+                    onClick={handleSort}>Age</Button>
+            <Button colorScheme={sort == "distance" ? "matchaPink": "gray"}
+                    value={"distance"}
+                    onClick={handleSort}>Distance</Button>
+            <Button colorScheme={sort == "rank" ? "matchaPink": "gray"}
+                    value={"rank"}
+                    onClick={handleSort}>Rank</Button>
+            <Button colorScheme={sort == "tags" ? "matchaPink": "gray"}
+                    value={"tags"}
+                    onClick={handleSort}>Tags</Button>
+        </Box>
+        {loading && <Box display="flex" flex={1} justifyContent="center" alignItems="center">
+            <Spinner    
+                        size="xl"
+                        color="blue.500"
+                        emptyColor="gray"
+                        speed="0.8s"
+                        thickness="4px"
+            />
         </Box>}
+        {swipeUser.id != "" && !loading &&
+            <DisplayProfile user={swipeUser} likeHandler={likeHandler} dislikeHandler={dislikeHandler} />
+        }
     </Box>);
 }
 
