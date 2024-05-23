@@ -20,6 +20,7 @@ class ForbiddenError(Exception):
     def __init__(self, message):
         self.message = message
 
+
 class RequestTooLargeError(Exception):
     def __init__(self, message):
         self.message = message

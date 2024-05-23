@@ -36,12 +36,14 @@ def dislike_user(**kwargs):
 
 @token_required
 @filter_swipe_dto
-def get_ten_with_filters(**kwargs):
-    hasher = Fernet(app.config["SECRET_PHOTO"])
-    swipe_list = sql.get_ten_with_filters(**kwargs)
-    for elt in swipe_list:
-        if elt["binaries"] is not None:
-            elt["binaries"] = base64.b64encode(
-                                hasher.decrypt(elt["binaries"])
-                            ).decode("utf-8")
-    return swipe_list
+def get_swipe_list(**kwargs):
+    match kwargs["sort"]:
+        case "age":
+            return sql.get_swipe_list_age_sort(**kwargs)
+        case "distance":
+            return sql.get_swipe_list_distance_sort(**kwargs)
+        case "rank":
+            return sql.get_swipe_list_ranking_sort(**kwargs)
+        case "tags":
+            return sql.get_swipe_list_tags_sort(**kwargs)
+    return sql.get_swipe_list_no_sort(**kwargs)

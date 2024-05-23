@@ -210,8 +210,22 @@ def get_gps_from_ip(ip: str):
     loc: str = response.json().get("loc")
     if loc is None:
         return None
-    coma = loc.find(',')
+    coma = loc.find(",")
     return Gps(float(loc[0:coma]), float(loc[coma + 1:]))
+
+
+def get_town(latitude, longitude):
+    url = f"https://nominatim.openstreetmap.org/reverse?lat={latitude}&lon={longitude}&format=json"
+    headers = {
+        "User-Agent": "Matcha/1.0 (emailaa@aaaa.com)"
+    }
+    try:
+        response = requests.get(url, headers=headers, timeout=1)
+        response.raise_for_status()
+    except requests.exceptions.ReadTimeout:
+        address = None
+    address = response.json().get("address")
+    return address
 
 
 if __name__ == "__main__":

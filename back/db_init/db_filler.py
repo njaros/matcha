@@ -200,7 +200,11 @@ def do_user_near_point(latitude, longitude):
         do_random_date(),
         random.choice(genders),
         random.choice(genders),
-        "",
+        """Lorem ipsum dolor sit amet, consectetur adipiscing elit,\
+sed do eiusmod\
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim\
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea\
+commodo consequat.""",
         random.randint(0, 10),
         gps["latitude"],
         gps["longitude"],

@@ -1,4 +1,4 @@
-from validators import uuid, date, int
+from validators import uuid, date, int, str
 from functools import wraps
 from flask import request
 
@@ -27,6 +27,10 @@ def filter_swipe_dto(f):
         ]
         kwargs["ranking_gap"] = int.isInt(
             request.json["ranking_gap"], {"min": 0, "max": 10}
+        )
+        kwargs["sort"] = str.isString(
+            request.json["sort"],
+            {"allowed": ["age", "none", "distance", "rank", "tags"]},
         )
         return f(*args, **kwargs)
 

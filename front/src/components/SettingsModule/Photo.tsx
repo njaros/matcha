@@ -37,8 +37,8 @@ const Photo = () => {
                     newPhotos.push({
                         "id": photo.id,
                         "htmlSrcImg": "data:".concat(photo.mimetype)
-                    .concat(";base64,")
-                    .concat(photo.binaries),
+                        .concat(";base64,")
+                        .concat(photo.binaries),
                         "main": photo.main
                 })
             })
