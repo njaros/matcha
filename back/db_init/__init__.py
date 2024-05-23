@@ -128,6 +128,17 @@ def set_up_db():
 
         cur.execute(
             """
+            CREATE TABLE visits (
+                id serial PRIMARY KEY,
+                visitor_id uuid REFERENCES user_table(id) ON DELETE CASCADE,
+                visited_id uuid REFERENCES user_table(id) ON DELETE CASCADE,
+                at TIMESTAMP DEFAULT NOW()
+            )
+            """
+        )
+
+        cur.execute(
+            """
             INSERT INTO hobbie (name)
             VALUES  ('coder matcha'),
                     ('voiture'),

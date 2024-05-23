@@ -1,7 +1,6 @@
 from db_init import db_conn as conn
 from error_status.error import NotFoundError
 from flask import current_app as app
-from uuid import UUID
 from psycopg.rows import dict_row
 
 
@@ -182,3 +181,16 @@ def get_user_with_room_and_message(user_id):
         raise NotFoundError('This user does not exist in database')
     cur.close()
     return res
+
+
+def visite_profile(**kwargs):
+    cur = conn.cursor()
+    cur.execute(
+        """
+            INSERT INTO visits (visitor_id, visited_id)
+            VALUES (%(visitor)s, %(visited)s)
+        """, {"visitor": kwargs["user"]["id"],
+              "visited": kwargs["visited_id"]}
+    )
+    cur.close()
+    conn.commit()

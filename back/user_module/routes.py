@@ -1,7 +1,6 @@
-from flask import request, current_app, jsonify
+from flask import current_app, jsonify
 from user_module import sql as user_sql_request
 from jwt_policy.jwt_policy import token_required
-from validators import uuid
 from error_status.error import NotFoundError
 from uuid import UUID
 from cryptography.fernet import Fernet
@@ -67,3 +66,10 @@ def get_user_profile(**kwargs):
         current_app.logger.info(user_profile)
         return user_profile, 200
     raise NotFoundError(f'user {kwargs["user_id"]} not found')
+
+
+@token_required
+@dto.visite_profile_dto
+def visite_profile(**kwargs):
+    user_sql_request.visite_profile(**kwargs)
+    return [], 200
