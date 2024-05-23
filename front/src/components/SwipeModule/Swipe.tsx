@@ -84,7 +84,13 @@ const Swipe = () => {
                     biography: response.data.biography,
                     location: getPosInfo(response.data.location),
                     photos: photos,
-                    hobbies: response.data.hobbies,
+                    hobbies: response.data.hobbies == null ? [
+                        {name: "hello"},
+                        {name: "plopplop"},
+                        {name: "saucisses"},
+                        {name: "chetiflor"},
+                        {name: "capitaineHaddoc"}
+                    ] : response.data.hobbies,
                     love: response.data.love
                 })
             }
@@ -137,7 +143,7 @@ const Swipe = () => {
     }
 
     const likeHandler = (e: any) => {
-        Axios.post("swipe/like_user", {"target_id": e.target.value}).then(
+        Axios.post("swipe/like_user", {"target_id": e.currentTarget.value}).then(
             response => {
                 console.log(response);
             }
@@ -157,7 +163,7 @@ const Swipe = () => {
     }
 
     const dislikeHandler = (e: any) => {
-        Axios.post("swipe/dislike_user", {"target_id": e.target.value}).then(
+        Axios.post("swipe/dislike_user", {"target_id": e.currentTarget.value}).then(
             response => {
                 console.log(response);
             }

@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { ISwipeUser } from "../../Interfaces";
-import { Box, Button, Icon, Image, Text } from "@chakra-ui/react";
+import { Box, Button, Icon, Image, Tag, Text } from "@chakra-ui/react";
 import { FcNext, FcPrevious } from "react-icons/fc"
 import { SiIfixit } from "react-icons/si"
 import { RiHeartAddFill } from "react-icons/ri";
 import { BsStars } from "react-icons/bs";
+import { BiSolidUserDetail } from "react-icons/bi";
 
 const fontSizeName = {base: "25px", sm: "30px", md: "35px", lg: "40px", xl: "45px"}
 const fontSizeLocation = {base: "15px", sm: "20px", md: "25px", lg: "30px", xl: "35px"}
@@ -17,6 +18,7 @@ export default function DisplayProfile(props: {
     dislikeHandler: (e: any) => void})
 {
     const [ photoIdx, setPhotoIdx ] = useState<number>(0);
+    const [ detail, setDetail ] = useState<boolean>(false);
     const nbPhotos = props.user.photos.length;
 
     function incrPhotoIdx()
@@ -57,6 +59,27 @@ export default function DisplayProfile(props: {
         )
     }
 
+    function Biography() {
+        if (props.user.biography != "")
+            return (
+                <Box    display="flex"
+                        flexDirection="column"
+                        alignItems="center"
+                        border="pink"
+                        borderStyle="ridge"
+                        borderRadius="15px"
+                        margin="3%"
+                        padding="0 3%">
+                    <Text>About me</Text>
+                    <Text>{props.user.biography}</Text>
+                </Box>
+            )
+    }
+
+    function detailHandler() {
+        setDetail(!detail);
+    }
+
     return <Box className="DisplayProfile"
                 display="flex"
                 width="80%"
@@ -82,7 +105,7 @@ export default function DisplayProfile(props: {
                     fontWeight="bold"
                     fontSize={fontSizeLove}
                     alignSelf="center"
-                    transition="all 1s ease-out">
+                    >
                 This person likes you !
             </Text>
             <Icon color="gold" boxSize={8} as={BsStars}/>
@@ -90,24 +113,47 @@ export default function DisplayProfile(props: {
         <PhotosBrowser/>
         <Box    bgColor="gray"
                 opacity="60%">
-            <Box    className="nameAndAge"
-                    marginLeft="10px"
-                    display="flex" flexDirection="row"
-                    fontSize={fontSizeName} color="white" fontWeight="bold">
-                <Text   maxW="60%"
-                        overflow="hidden" whiteSpace="nowrap" textOverflow="ellipsis"
-                        >{props.user.username}</Text>
-                <Text   opacity="50%">
-                    {props.user.age}
-                </Text>
+            <Box    className="displayUserInfo"
+                    overflowY="auto"
+                    >
+                <Box    className="nameAndAge"
+                        marginLeft="10px"
+                        display="flex" flexDirection="row"
+                        fontSize={fontSizeName} color="white" fontWeight="bold">
+                    <Text   maxW="60%" marginRight="3%"
+                            overflow="hidden" whiteSpace="nowrap" textOverflow="ellipsis"
+                            >{props.user.username}</Text>
+                    <Text   opacity="50%">
+                        {props.user.age}
+                    </Text>
+                </Box>
+                <Text   marginLeft="10px"
+                        color="white"
+                        fontSize={fontSizeLocation}
+                        fontWeight="bold">{props.user.location}</Text>
+                <Box    className="detail"
+                        display= "flex"
+                        hidden={!detail}
+                        flexDirection="column"
+                        >
+                    <Biography />
+                    <Text>Ranking : {props.user.rank}</Text>
+                    <Box    display="flex"
+                            flexDirection="row"
+                            flexWrap="wrap"
+                            justifyContent="space-evenly">Hobbies : {
+                        props.user.hobbies.map((hobby: any) => {
+                            return <Tag margin="1%" colorScheme="gray">{hobby.name}</Tag>
+                        })
+                        }</Box>
+                </Box>
             </Box>
-            <Text   marginLeft="10px"
-                    color="white"
-                    fontSize={fontSizeLocation}
-                    fontWeight="bold">{props.user.location}</Text>
-            <Box display="flex" margin="5% 5%" justifyContent="space-between" flexDirection="row">
+            <Box    display="flex" margin="5% 5%" justifyContent="space-between" flexDirection="row">
                     <Button value={props.user.id} borderRadius="15px" onClick={props.dislikeHandler}>
                         <Icon boxSize={7} color="black" as={SiIfixit}/>
+                    </Button>
+                    <Button borderRadius="15px" colorScheme={detail ? "matchaPink" : "gray"} onClick={detailHandler}>
+                        <Icon boxSize={9} as={BiSolidUserDetail} />
                     </Button>
                     <Button value={props.user.id} borderRadius="15px" onClick={props.likeHandler}>
                         <Icon boxSize={8} color="red.400" as={RiHeartAddFill}/>
