@@ -105,29 +105,28 @@ function Chatbox(props: {room: Room_info | undefined}){
             {!chatInvisible ? (
                 <>
                     <Flex
-                        width={'100%'}
-                        padding={'10px'}
-                        alignItems={'center'}
-                        borderBottomWidth={'1px'}
-                        borderBottomColor={'gray.200'}
-                        position={'fixed'}
-                        bg={'white'}
-                    >
-                        <Avatar src={me?.id === props.room?.user_1.user_id ? props.room?.user_2.photo : props.room?.user_1.photo} />
-                        <Text marginLeft={'10px'} flex={1}>{props.room?.name}</Text>
-                        <Button 
-                            onClick={displayConv}
-                            borderRadius={'100px'}
-                            >
-                                <Icon as={MdOutlineKeyboardReturn}/>
-                        </Button>
-                    </Flex>
-                    <Flex
                         h={'100%'}
                         flexDir={'column'}
                         width={'100%'}
                         bg='#f2f2f2'
-                    >
+                    >    
+                        <Flex
+                            width={'100%'}
+                            padding={'10px'}
+                            alignItems={'center'}
+                            borderBottomWidth={'1px'}
+                            borderBottomColor={'gray.200'}
+                            bg={'white'}
+                        >
+                            <Avatar src={me?.id === props.room?.user_1.user_id ? props.room?.user_2.photo : props.room?.user_1.photo} />
+                            <Text marginLeft={'10px'} flex={1}>{props.room?.name}</Text>
+                            <Button 
+                                onClick={displayConv}
+                                borderRadius={'100px'}
+                            >
+                                <Icon as={MdOutlineKeyboardReturn} />
+                            </Button>
+                        </Flex>
                         <Flex
                             width={'100%'}
                             h={'100%'}
@@ -162,7 +161,9 @@ function Chatbox(props: {room: Room_info | undefined}){
                                             justifyContent={'space-evenly'}
                                             alignItems={'center'}
                                         >
-                                            <Text textColor={messageContent.author.id === me?.id ? 'white' : 'black'} padding={'10px'}>{decode(messageContent.content)}</Text>
+                                            <Text textColor={messageContent.author.id === me?.id ? 'white' : 'black'} padding={'10px'}>
+                                                {decode(messageContent.content)}
+                                            </Text>
                                         </Flex>
                                     </Flex>
                                     <WrapItem
@@ -230,5 +231,6 @@ function Chatbox(props: {room: Room_info | undefined}){
         </Flex>
     );
 }
+    
 
 export default Chatbox
