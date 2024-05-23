@@ -3,7 +3,7 @@ import Layout from "./components/LayoutModules/Layout";
 import { tokenReader, getToken} from "./tools/TokenReader";
 import { useEffect, useState } from "react";
 import { Socket, io } from 'socket.io-client';
-import { storeMe, storeSocket, storeTimeout } from "./tools/Stores";
+import { storeMe, storeRoomList, storeSocket, storeTimeout } from "./tools/Stores";
 import Login from "./components/LoginModule/Login";
 import Signup from "./components/SignUpModule/SignUp";
 import Home from "./components/HomeModule/Home";
@@ -14,11 +14,12 @@ import Axios from "./tools/Caller";
 import { cookieMan } from "./tools/CookieMan";
 import { JwtPayload } from "jsonwebtoken";
 import Settings from "./components/SettingsModule/Settings";
+import { RoomList } from "./tools/interface";
 
 function App() {
 
-	// const [socket, setSocket] = useState<Socket>(null)
 	const [userId, setUserId] = useState("")
+	const roomList = storeRoomList(state => state.roomList)
 	const { socket, updateSocket } = storeSocket()
 	const [ logged, setLogged ] = useState<boolean>(tokenReader.isLogged())
 	const [ access, setAccess ] = useState<string>(tokenReader.getToken());
@@ -44,20 +45,23 @@ function App() {
 	}, [logged])
 	
 	useEffect(() => {
-
-		getUserId()
-		console.log('userId: ', userId)
-		if (!userId || userId.length <= 0)
-			return
-		console.log('test')
-		updateSocket(io(`http://127.0.0.1:5066`, {
-			query : {
-				userId : userId,
-				token : getToken()
-			}
-		}))
-
-	},[userId]) 
+		if (logged){
+			getUserId()
+			console.log('userId: ', userId)
+			if (!userId || userId.length <= 0)
+				return
+			console.log('test')
+			updateSocket(io(`http://127.0.0.1:5066`, {
+				query : {
+					userId : userId,
+					token : getToken()
+				}
+			}))
+			roomList?.map((room : RoomList) => {
+				socket?.emit('join_chat_room', room.id)
+			})
+		}
+	},[userId, logged]) 
 
 
 	//START OF TOKEN MANAGEMENT

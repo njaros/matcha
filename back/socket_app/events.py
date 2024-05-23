@@ -24,6 +24,7 @@ def handle_connection():
         current_app.logger.info('User does not have any rooms.')
         return
     for room in user['room']:
+        current_app.logger.info('alaid')
         join_room(f"room-{room['room_id']}")
 
 
@@ -31,4 +32,5 @@ def handle_connection():
 def handle_disconnect():
     client_id = request.sid
     current_app.logger.info("Disconnect of socket ID: " + client_id)
+    del connected_clients[client_id]
     leave_room(client_id)

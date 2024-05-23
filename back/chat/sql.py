@@ -149,7 +149,8 @@ def get_message_list_by_room_id(room_id):
                 message.room_id AS room,
                 message.send_at
             FROM message
-            WHERE message.room_id = %s;
+            WHERE message.room_id = %s
+            ORDER BY message.id ASC;
     """
 
     cur.execute(query, (room_id,))

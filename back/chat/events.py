@@ -46,10 +46,15 @@ def send_message(data):
     room = get_room_with_message(room_id)
     if room is None:
         app.logger.info(f'Room {room_id} not found in database.')
-    app.logger.info('kiksssssss')
     emit('receive_message', {
         'author': {'user_id': user_id, 'username': username},
         'content': content,
         'room': room_id,
         'send_at': send_at
     }, room=f"room-{room_id}", skip_sid=request.sid)
+    emit('last_message', {
+        'author': {'user_id': user_id, 'username': username},
+        'content': content,
+        'room': room_id,
+        'send_at': send_at
+    }, room=f"room-{room_id}")

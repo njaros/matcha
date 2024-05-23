@@ -32,14 +32,14 @@ export function timeOfDay(timestampz: string | Date){
     return (date)
 }
 
-function Chatbox(props: {room: Room_info | undefined}){
+function Chatbox(props: {room: Room_info | undefined, bool_handler: () => void}){
     
     const [chatInvisible, setChatInvisible] = useState<boolean>(false)
     const scrollToBottomRef = useRef<HTMLDivElement>(null);
     const socket = storeSocket(state => state.socket)
     const me = storeMe(state => state.me)
     const msgList = storeMessageList(state => state.messageList)
-    const [convBool, updateConvBool] = storeConvBool(state => [state.convBool, state.updateConvBool])
+    // const [convBool, updateConvBool] = storeConvBool(state => [state.convBool, state.updateConvBool])
     const [messageList, setMessageList] = useState<MessageData[]>([])
     const { 
         register, 
@@ -92,7 +92,8 @@ function Chatbox(props: {room: Room_info | undefined}){
 
     const displayConv = () => {
         setChatInvisible(!chatInvisible)
-        updateConvBool(!convBool)
+        console.log('Back button')
+        props.bool_handler()
     }
 
     return (
@@ -147,7 +148,7 @@ function Chatbox(props: {room: Room_info | undefined}){
                                     <Flex
                                         maxWidth={'70%'}
                                         h={'60%'}
-                                        bg={messageContent.author.id === me?.id ? '#A659EC' : '#F7F7F7'}
+                                        bg={messageContent.author.id === me?.id ? '#A659EC' : 'white'}
                                         flexDir={'column'}
                                         wrap={'wrap'}
                                         padding={'10px'}

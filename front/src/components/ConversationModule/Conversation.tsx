@@ -1,10 +1,11 @@
 import { useEffect, useState, useRef } from "react";
-import { storeSocket, storeRoom, storeMe, storeRoomList } from "../../tools/Stores";
+import { storeSocket, storeRoom, storeMe, storeRoomList, storeConvBool } from "../../tools/Stores";
 import { Box, Button, FormControl, Input } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import Axios from "../../tools/Caller";
 import ChannelList from "./channel";
 import Chatbox from "./Chatbox";
+import { RoomList } from "../../tools/interface";
 
 function Conversation(){
     
@@ -12,7 +13,8 @@ function Conversation(){
     const [room, updateRoom] = storeRoom(state => [state.room, state.updateRoom]);
     const [roomList, updateRoomList] = storeRoomList(state => [state.roomList, state.updateRoomList])
     const me = storeMe(state => state.me)
-
+    // const [convBool, updateConvBool] = storeConvBool(state => [state.convBool, state.updateConvBool])
+    
     useEffect(() => {
         if (me){
             const fetchData = async () => {
@@ -32,6 +34,9 @@ function Conversation(){
                         }
                     })
                     updateRoomList(updatedRoomList)
+                    // updatedRoomList.map((room : RoomList) => {
+                    //     socket?.emit('join_chat_room', room.id)
+                    // })
                 } catch (error) {
                     console.error(error);
                 }
@@ -39,6 +44,12 @@ function Conversation(){
             fetchData();
         }
     }, [me]);
+
+    // useEffect(() => {
+    //     roomList?.map((room : RoomList) => {
+    //         socket?.emit('join_chat_room', room.id)
+    //     })
+    // })
 
     return (
     <Box flexGrow={1} w={'100%'} h={'100%'}>    

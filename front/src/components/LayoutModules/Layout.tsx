@@ -18,6 +18,7 @@ const Layout = (props: {
                 width="100%"
                 overflowY="auto"
                 gap={'10px'}
+                bg={'white'}
                 >
             <Outlet />
             <Header logged={props.logged} handleLog={props.handleLog} handleAccess={props.handleAccess} />
