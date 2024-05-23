@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
-import Header from "./Header";
 import Footer from "./Footer";
+import Header from "./Header";
 import { Box } from "@chakra-ui/react"
 //Ici qu'il faudra mettre les modules du genre pop-ups qui doivent pop de n importe ou
 
@@ -11,17 +11,16 @@ const Layout = (props: {
 {
     return (
         <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                height="100%"
-                width="100%"
-                overflowY="auto"
-                gap={'10px'}
-                >
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            height="100%"
+            width="100%"
+            gap={'10px'}
+            >
+            <Header />
             <Outlet />
-            <Header logged={props.logged} handleLog={props.handleLog} handleAccess={props.handleAccess} />
-            <Footer />
+            <Footer logged={props.logged} handleLog={props.handleLog} handleAccess={props.handleAccess} />
         </Box>
     )
 }

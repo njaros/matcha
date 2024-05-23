@@ -7,12 +7,15 @@ import { DateTools } from "../../tools/DateTools";
 import { RiSortAsc } from "react-icons/ri"
 import DisplayProfile from "./DisplayProfile";
 
+const fontSizeNobody = {base: "13px", sm: "20px", md: "25px", lg: "25px", xl: "25px"}
+
 const Swipe = () => {
     const [ swipeList, setSwipeList ] = useState<string[]>([]);
     const [ index, setIndex ] = useState<number>(0);
     const { filter, updateFilter } = storeFilter();
     const [ sort, setSort ] = useState<string>("none");
     const [ loading, setLoading ] = useState<boolean>(false);
+    const [ startPage, setStartPage ] = useState<boolean>(true);
     const [ swipeUser, setSwipeUser ] = useState<ISwipeUser>(
         {
             id: "",
@@ -84,13 +87,7 @@ const Swipe = () => {
                     biography: response.data.biography,
                     location: getPosInfo(response.data.location),
                     photos: photos,
-                    hobbies: response.data.hobbies == null ? [
-                        {name: "hello"},
-                        {name: "plopplop"},
-                        {name: "saucisses"},
-                        {name: "chetiflor"},
-                        {name: "capitaineHaddoc"}
-                    ] : response.data.hobbies,
+                    hobbies: response.data.hobbies,
                     love: response.data.love
                 })
             }
@@ -122,6 +119,7 @@ const Swipe = () => {
             () => {
                 setIndex(0);
                 setLoading(false);
+                setStartPage(false);
             }
         )
     }
@@ -196,7 +194,7 @@ const Swipe = () => {
     }
 
     return (
-    <Box flexGrow={1} className="Swipe" w={"100%"} height="100%" display="flex" alignItems="center" flexDirection="column">
+    <Box flex={1} className="Swipe" w="100%" display="flex" alignItems="center" flexDirection="column">
         <Box    className="SortButtons"
                 w={"100%"}
                 display={"flex"}
@@ -232,6 +230,22 @@ const Swipe = () => {
         </Box>}
         {swipeUser.id != "" && !loading &&
             <DisplayProfile user={swipeUser} likeHandler={likeHandler} dislikeHandler={dislikeHandler} />
+        }
+        {swipeUser.id == "" && !loading && !startPage &&
+            <Box    flex={1} display="flex" w="80%" maxW="590px" alignItems="start"
+                    justifyContent="center"
+                    borderRadius="25px"
+                    bgImage="cat.jpeg"
+                    bgRepeat="no-repeat"
+                    bgPosition="center"
+                    bgSize="cover">
+                <Text   fontSize={fontSizeNobody}
+                        fontWeight="bold"
+                        margin="5%"
+                        color="white">
+                    Nobody around you belong to your wishes...
+                </Text>
+            </Box>
         }
     </Box>);
 }
