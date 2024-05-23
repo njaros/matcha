@@ -133,6 +133,19 @@ const Swipe = () => {
     useEffect(() => {
         if (swipeList.length > 0)
             get_user_profile();
+        else
+            setSwipeUser({
+                id: "",
+                username: "",
+                age: 0,
+                gender: "",
+                rank: 0,
+                biography: "",
+                location: "",
+                photos: [],
+                hobbies: [],
+                love: false
+            })
     }, [swipeList, index])
 
     const handleSort = (e: any) => {
@@ -152,7 +165,7 @@ const Swipe = () => {
                 console.warn(err);
             }
         )
-        if (index == swipeList.length - 1)
+        if (index >= swipeList.length - 1)
         {
             get_swipe_list();
         }
@@ -172,7 +185,7 @@ const Swipe = () => {
                 console.warn(err);
             }
         )
-        if (index == swipeList.length - 1)
+        if (index >= swipeList.length - 1)
         {
             get_swipe_list();
         }
