@@ -76,14 +76,13 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setRoom
 function ChannelList(){
 
     const me = storeMe(state => state.me)
-    // const [convBool, updateConvBool] = storeConvBool(state => [state.convBool, state.updateConvBool])
+    const [convBool, updateConvBool] = storeConvBool(state => [state.convBool, state.updateConvBool])
     const roomList = storeRoomList(state => state.roomList)
     const socket = storeSocket(state => state.socket)
     const [room, setRoom] = useState<Room_info>()
     const scrollToBottomRef = useRef<HTMLDivElement>(null);
     const [msgList, setMsgList] = storeMessageList(state => [state.messageList, state.updateMessageList])
     const [showChat, setShowChat] = useState<boolean>(false)
-    const [convBool, setConvBool] = useState<boolean>(false)
 
 
     const setMessageList = async (conv: Room_info) => {
@@ -97,28 +96,11 @@ function ChannelList(){
         }
     }
 
-    const handler_convBool = () => {
-        setConvBool(!convBool)
-        console.log('convBool', convBool)
-        console.log('from bool_handler')
-    }
-
     const join_room = (id: string) => {
-        // socket?.emit('join_chat_room', id)
         setShowChat(!showChat)
-        // handler_convBool()
+        updateConvBool(!convBool)
     }
     
-    // useEffect(() => {
-    //     socket?.on('receive_message', (data: any) => {
-    //         console.log(data)
-    //         setLastMessage(data.content)
-    //     })
-    //     return (() => {
-    //         socket?.off('receive_message')
-    //     })
-    // }, [])
-
     useEffect(() => {
 
         if (scrollToBottomRef.current) {
@@ -126,7 +108,6 @@ function ChannelList(){
           }
     }, [roomList])
 
-    // console.log('room id', lastMessage?.room_id, 'content', lastMessage?.content)
     return (
         <Flex 
             h={'100%'}
@@ -173,7 +154,7 @@ function ChannelList(){
                     </Flex>
                 </Flex>
             ) : (
-                room && <Chatbox room={room} bool_handler={handler_convBool}/>
+                room && <Chatbox room={room}/>
             )}
         </Flex>
     );

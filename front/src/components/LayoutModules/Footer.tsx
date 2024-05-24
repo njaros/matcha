@@ -98,7 +98,7 @@ const Footer = (props: {
     return (
 
         <Box
-        hidden={convBool }
+        hidden={convBool}
         className="iconUserLogged"
         display="flex"
         width={'60%'}

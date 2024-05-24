@@ -9,6 +9,7 @@ import { ArrowRightIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
 import ChannelList from "./channel";
 import { MdOutlineKeyboardReturn } from "react-icons/md";
+import { IoChevronBack } from "react-icons/io5";
 
 
 export function timeOfDay(timestampz: string | Date){
@@ -32,14 +33,14 @@ export function timeOfDay(timestampz: string | Date){
     return (date)
 }
 
-function Chatbox(props: {room: Room_info | undefined, bool_handler: () => void}){
+function Chatbox(props: {room: Room_info | undefined}){
     
     const [chatInvisible, setChatInvisible] = useState<boolean>(false)
     const scrollToBottomRef = useRef<HTMLDivElement>(null);
     const socket = storeSocket(state => state.socket)
     const me = storeMe(state => state.me)
     const msgList = storeMessageList(state => state.messageList)
-    // const [convBool, updateConvBool] = storeConvBool(state => [state.convBool, state.updateConvBool])
+    const [convBool, updateConvBool] = storeConvBool(state => [state.convBool, state.updateConvBool])
     const [messageList, setMessageList] = useState<MessageData[]>([])
     const { 
         register, 
@@ -90,10 +91,9 @@ function Chatbox(props: {room: Room_info | undefined, bool_handler: () => void})
           }
     }, [messageList])
 
-    const displayConv = () => {
+    const backToChannel = () => {
         setChatInvisible(!chatInvisible)
-        console.log('Back button')
-        props.bool_handler()
+        updateConvBool(!convBool)
     }
 
     return (
@@ -119,14 +119,16 @@ function Chatbox(props: {room: Room_info | undefined, bool_handler: () => void})
                             borderBottomColor={'gray.200'}
                             bg={'white'}
                         >
-                            <Avatar src={me?.id === props.room?.user_1.user_id ? props.room?.user_2.photo : props.room?.user_1.photo} />
-                            <Text marginLeft={'10px'} flex={1}>{props.room?.name}</Text>
                             <Button 
-                                onClick={displayConv}
-                                borderRadius={'100px'}
+                                onClick={backToChannel}
+                                borderRadius={'100%'}
+                                padding={'0'}
+                                size={'sm'}
                             >
-                                <Icon as={MdOutlineKeyboardReturn} />
+                                <Icon as={IoChevronBack} />
                             </Button>
+                            <Avatar marginLeft={'15px'} src={me?.id === props.room?.user_1.user_id ? props.room?.user_2.photo : props.room?.user_1.photo} />
+                            <Text marginLeft={'10px'} flex={1}>{props.room?.name}</Text>
                         </Flex>
                         <Flex
                             width={'100%'}
@@ -142,16 +144,17 @@ function Chatbox(props: {room: Room_info | undefined, bool_handler: () => void})
                                     w={'100%'}
                                     textColor={'black'}
                                     padding={'10px'}
+                                    paddingBottom={'0px'}
                                     wrap={'wrap'}
                                     justifyContent={messageContent.author.id === me?.id ? "right" : "left"}
                                 >
                                     <Flex
                                         maxWidth={'70%'}
-                                        h={'60%'}
+                                        // h={'50%'}
                                         bg={messageContent.author.id === me?.id ? '#A659EC' : 'white'}
                                         flexDir={'column'}
                                         wrap={'wrap'}
-                                        padding={'10px'}
+                                        // padding={'5px 12px'}
                                         borderRadius={'20px'}
                                         wordBreak={'break-all'}
                                         justifyContent={'center'}
@@ -162,14 +165,14 @@ function Chatbox(props: {room: Room_info | undefined, bool_handler: () => void})
                                             justifyContent={'space-evenly'}
                                             alignItems={'center'}
                                         >
-                                            <Text textColor={messageContent.author.id === me?.id ? 'white' : 'black'} padding={'10px'}>
+                                            <Text padding={'7px 16px'} textColor={messageContent.author.id === me?.id ? 'white' : 'black'}>
                                                 {decode(messageContent.content)}
                                             </Text>
                                         </Flex>
                                     </Flex>
                                     <WrapItem
                                         padding={'5px'}
-                                        fontSize={'0.7em'}
+                                        fontSize={'0.6em'}
                                         flexDir={'row'}
                                         justifyContent={messageContent?.author.id === me?.id ? "right" : "left"}
                                         width={'100%'}
@@ -199,6 +202,7 @@ function Chatbox(props: {room: Room_info | undefined, bool_handler: () => void})
                             }}>
                                 <FormControl isRequired w={'80%'} h={'60px'}>
                                     <Input
+                                        required={false}
                                         h={'60px'}
                                         border={'none'}
                                         focusBorderColor="none"
@@ -209,9 +213,7 @@ function Chatbox(props: {room: Room_info | undefined, bool_handler: () => void})
                                         textDecoration={'none'}
                                         placeholder="Type your message..."
                                         autoComplete="off"
-                                        {...register("message", {
-                                            required: "Enter message",
-                                        })}
+                                        {...register("message")}
                                     />
                                 </FormControl>
                                 <Button
