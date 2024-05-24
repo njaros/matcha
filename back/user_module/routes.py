@@ -47,9 +47,7 @@ def get_me(**kwargs):
     return kwargs["user"]
 
 
-@token_required
-@dto.user_profile_dto
-def get_user_profile(**kwargs):
+def base_get_user_profile(**kwargs):
     hasher = Fernet(current_app.config["SECRET_PHOTO"])
     user_profile = user_sql_request.get_user_profile(**kwargs)
     if user_profile is not None:
@@ -64,12 +62,27 @@ def get_user_profile(**kwargs):
         del user_profile["latitude"]
         del user_profile["longitude"]
         current_app.logger.info(user_profile)
-        return user_profile, 200
+        return user_profile
     raise NotFoundError(f'user {kwargs["user_id"]} not found')
 
 
 @token_required
-@dto.visite_profile_dto
-def visite_profile(**kwargs):
+@dto.user_profile_dto
+def get_user_profile_from_swipe(**kwargs):
+    user_profile = base_get_user_profile(**kwargs)
     user_sql_request.visite_profile(**kwargs)
-    return [], 200
+    return user_profile, 200
+
+
+@token_required
+@dto.user_profile_dto
+def get_user_profile(**kwargs):
+    return base_get_user_profile(**kwargs), 200
+
+
+@token_required
+def get_visits_history(**kwargs):
+    hasher = Fernet(current_app.config["SECRET_PHOTO"])
+    history = user_sql_request.get_visited_me_history(**kwargs)
+    if history["binaries"] is not None:
+

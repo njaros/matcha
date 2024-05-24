@@ -190,7 +190,55 @@ def visite_profile(**kwargs):
             INSERT INTO visits (visitor_id, visited_id)
             VALUES (%(visitor)s, %(visited)s)
         """, {"visitor": kwargs["user"]["id"],
-              "visited": kwargs["visited_id"]}
+              "visited": kwargs["user_id"]}
     )
     cur.close()
     conn.commit()
+
+
+def get_visited_me_history(**kwargs):
+    """Returns list of users who visited my profile
+    """
+    cur = conn.cursor(row_factory=dict_row)
+    cur.execute(
+        """
+            SELECT  user_table.id AS id,
+                    user_table.username AS username,
+                    visits.at AS at,
+                    photos.binaries AS binaries,
+                    photos.mime_type AS mime_type
+            FROM visits
+            LEFT OUTER JOIN user_table ON visitor_id = user_table.id
+            LEFT OUTER JOIN photos ON photos.id = user_table.id
+                AND photos.main = true
+            WHERE visits.visited_id = %s
+        """, (kwargs["user"]["id"],)
+    )
+    history = cur.fetchall()
+    app.logger.debug(history)
+    cur.close()
+    return history
+
+
+def get_my_visits_history(**kwargs):
+    """Returns list of users whose profile I visited
+    """
+    cur = conn.cursor(row_factory=dict_row)
+    cur.execute(
+        """
+            SELECT  user_table.id AS id,
+                    user_table.username AS username,
+                    visits.at AS at,
+                    photos.binaries AS binaries,
+                    photos.mime_type AS mime_type
+            FROM visits
+            LEFT OUTER JOIN user_table ON visited_id = user_table.id
+            LEFT OUTER JOIN photos ON photos.id = user_table.id
+                AND photos.main = true
+            WHERE visits.visitor_id = %s
+        """, (kwargs["user"]["id"],)
+    )
+    history = cur.fetchall()
+    app.logger.debug(history)
+    cur.close()
+    return history

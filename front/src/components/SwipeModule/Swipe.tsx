@@ -54,7 +54,7 @@ const Swipe = () => {
     function get_user_profile() {
         console.log("id = ", swipeList[0]);
         setLoading(true);
-        Axios.post("/user/get_user_profile", { user_id: swipeList[index]}).then(
+        Axios.post("/user/get_user_profile_from_swipe", { user_id: swipeList[index]}).then(
             response => {
                 console.log(response.data);
                 const photos: IPhoto[] = [];
