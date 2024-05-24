@@ -1,5 +1,6 @@
 from flask import current_app, jsonify
 from user_module import sql as user_sql_request
+from profile_module.sql import get_photos_by_user_id
 from jwt_policy.jwt_policy import token_required
 from error_status.error import NotFoundError
 from uuid import UUID
@@ -50,9 +51,11 @@ def get_me(**kwargs):
 def base_get_user_profile(**kwargs):
     hasher = Fernet(current_app.config["SECRET_PHOTO"])
     user_profile = user_sql_request.get_user_profile(**kwargs)
+    user_profile["photos"] = get_photos_by_user_id(kwargs["user_id"])
     if user_profile is not None:
         if user_profile["photos"] is not None:
             for photo in user_profile["photos"]:
+                current_app.logger.debug(hasher.decrypt(photo["binaries"]))
                 photo["binaries"] = base64.b64encode(
                     hasher.decrypt(photo["binaries"])
                 ).decode("utf-8")
@@ -61,7 +64,6 @@ def base_get_user_profile(**kwargs):
         )
         del user_profile["latitude"]
         del user_profile["longitude"]
-        current_app.logger.info(user_profile)
         return user_profile
     raise NotFoundError(f'user {kwargs["user_id"]} not found')
 
@@ -81,8 +83,18 @@ def get_user_profile(**kwargs):
 
 
 @token_required
+def get_self_profile(**kwargs):
+    kwargs["user_id"] = kwargs["user"]["id"]
+    return base_get_user_profile(**kwargs), 200
+
+
+@token_required
 def get_visits_history(**kwargs):
     hasher = Fernet(current_app.config["SECRET_PHOTO"])
     history = user_sql_request.get_visited_me_history(**kwargs)
-    if history["binaries"] is not None:
-
+    for user in history:
+        if user["binaries"] is not None:
+            user["binaries"] = base64.b64encode(
+                hasher.decrypt(user["binaries"])
+            ).decode("utf-8")
+    return history, 200

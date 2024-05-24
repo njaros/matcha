@@ -2,7 +2,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { storeGps, storeTimeout, storeConvBool } from "../../tools/Stores";
 import { cookieMan } from "../../tools/CookieMan";
 import { As, Box, Icon, Text } from "@chakra-ui/react"
-import { MdFavorite, MdSettings } from "react-icons/md"
+import { MdFavorite, MdHome, MdSettings } from "react-icons/md"
 import { ImExit } from "react-icons/im"
 import { MdChat } from "react-icons/md";
 import { ChatIcon, SettingsIcon } from "@chakra-ui/icons"
@@ -115,6 +115,7 @@ const Footer = (props: {
             <IconNavBar url="/swipe" icon={MdFavorite} boxSize={headerIconSize} isTarget={isTarget("/swipe", location.pathname)} />
             <IconNavBar url="/conversation" icon={MdChat} boxSize={headerIconSize} isTarget={isTarget("/conversation", location.pathname)} />
             <IconNavBar url="/settings" icon={MdSettings} boxSize={headerIconSize} isTarget={isTarget("/settings", location.pathname)} />
+            <IconNavBar url="/" icon={MdHome} boxSize={headerIconSize} isTarget={isTarget("/", location.pathname)} />
             <button onClick={logout} style={{display: 'flex'}}><Icon color={"#57595D"} as={ImExit} boxSize={headerIconSize}/></button>
         </>
         :

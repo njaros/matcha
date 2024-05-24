@@ -48,6 +48,14 @@ export interface ISwipeUser
 	love: boolean
 }
 
+export interface IListUser
+{
+	id: string,
+	username: string,
+	at: string,
+	photo: string
+}
+
 export interface ISwipeFilter
 {
 	date_min: string,

@@ -1,5 +1,6 @@
 import random
 import uuid
+import hashlib
 
 names = (
     "Poulet",
@@ -195,7 +196,7 @@ def do_user_near_point(latitude, longitude):
     return (
         uuid.uuid1(),
         do_name(names, adjectives),
-        "This_is_an_hashed_pass_trust_me",
+        hashlib.sha256("mdp".encode("utf-8")).hexdigest(),
         "mock@email.com",
         do_random_date(),
         random.choice(genders),

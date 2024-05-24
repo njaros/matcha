@@ -67,16 +67,6 @@ def get_user_profile(**kwargs):
                 (
                     SELECT json_agg (
                         json_build_object (
-                            'id', photos.id,
-                            'mime_type', mime_type,
-                            'binaries', binaries,
-                            'main', main))
-                        FROM photos
-                        WHERE user_id = %(user_id)s
-                ) AS photos,
-                (
-                    SELECT json_agg (
-                        json_build_object (
                             'name', hobbie.name
                         ))
                     FROM hobbie
@@ -209,13 +199,13 @@ def get_visited_me_history(**kwargs):
                     photos.mime_type AS mime_type
             FROM visits
             LEFT OUTER JOIN user_table ON visitor_id = user_table.id
-            LEFT OUTER JOIN photos ON photos.id = user_table.id
-                AND photos.main = true
+            LEFT OUTER JOIN photos ON photos.user_id = user_table.id
+                AND main = true
             WHERE visits.visited_id = %s
+            ORDER by at DESC
         """, (kwargs["user"]["id"],)
     )
     history = cur.fetchall()
-    app.logger.debug(history)
     cur.close()
     return history
 
@@ -233,12 +223,12 @@ def get_my_visits_history(**kwargs):
                     photos.mime_type AS mime_type
             FROM visits
             LEFT OUTER JOIN user_table ON visited_id = user_table.id
-            LEFT OUTER JOIN photos ON photos.id = user_table.id
+            LEFT OUTER JOIN photos ON photos.user_id = user_table.id
                 AND photos.main = true
             WHERE visits.visitor_id = %s
+            ORDER by at DESC
         """, (kwargs["user"]["id"],)
     )
     history = cur.fetchall()
-    app.logger.debug(history)
     cur.close()
     return history
