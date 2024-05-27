@@ -37,7 +37,6 @@ export default function TagsSelector(props: any) {
         const selectedTags = updatedHobbies.filter(hobby => hobby.selected).map(hobby => hobby.id);
         setTags(selectedTags);
     };
-    console.log(hobbies.filter(hobby => hobby.selected))
     return (
         <>
             <Text fontWeight="bold" marginTop="30px">

@@ -35,7 +35,6 @@ export function timeOfDay(timestampz: string | Date){
 
 function Chatbox(props: {room: Room_info | undefined}){
     
-    const [chatInvisible, setChatInvisible] = useState<boolean>(false)
     const scrollToBottomRef = useRef<HTMLDivElement>(null);
     const socket = storeSocket(state => state.socket)
     const me = storeMe(state => state.me)
@@ -92,145 +91,138 @@ function Chatbox(props: {room: Room_info | undefined}){
     }, [messageList])
 
     const backToChannel = () => {
-        setChatInvisible(!chatInvisible)
         updateConvBool(!convBool)
     }
-
     return (
         <Flex
             h={'100%'}
             width={'100%'}
             bg={'white'}
             flexDir={'column'}
-        >
-            {!chatInvisible ? (
-                <>
-                    <Flex
-                        h={'100%'}
-                        flexDir={'column'}
-                        width={'100%'}
-                        bg='#f2f2f2'
-                    >    
+            hidden={convBool === false}
+            >
+            <Flex
+                h={'100%'}
+                flexDir={'column'}
+                width={'100%'}
+                bg='#f2f2f2'
+            >    
+                <Flex
+                    width={'100%'}
+                    padding={'10px'}
+                    alignItems={'center'}
+                    borderBottomWidth={'1px'}
+                    borderBottomColor={'gray.200'}
+                    bg={'white'}
+                >
+                    <Button 
+                        onClick={backToChannel}
+                        borderRadius={'100%'}
+                        padding={'0'}
+                        size={'sm'}
+                    >
+                        <Icon as={IoChevronBack} />
+                    </Button>
+                    <Avatar marginLeft={'15px'} src={me?.id === props.room?.user_1.user_id ? props.room?.user_2.photo : props.room?.user_1.photo} />
+                    <Text marginLeft={'10px'} flex={1}>{props.room?.name}</Text>
+                </Flex>
+                <Flex
+                    width={'100%'}
+                    h={'100%'}
+                    flexDir={'column'}
+                    overflowY={'auto'}
+                    overflowX={'hidden'}
+                    ref={scrollToBottomRef}
+                >
+                    {messageList.map((messageContent, index) => (
                         <Flex
-                            width={'100%'}
-                            padding={'10px'}
-                            alignItems={'center'}
-                            borderBottomWidth={'1px'}
-                            borderBottomColor={'gray.200'}
-                            bg={'white'}
-                        >
-                            <Button 
-                                onClick={backToChannel}
-                                borderRadius={'100%'}
-                                padding={'0'}
-                                size={'sm'}
-                            >
-                                <Icon as={IoChevronBack} />
-                            </Button>
-                            <Avatar marginLeft={'15px'} src={me?.id === props.room?.user_1.user_id ? props.room?.user_2.photo : props.room?.user_1.photo} />
-                            <Text marginLeft={'10px'} flex={1}>{props.room?.name}</Text>
-                        </Flex>
-                        <Flex
-                            width={'100%'}
-                            h={'100%'}
-                            flexDir={'column'}
-                            overflowY={'auto'}
-                            overflowX={'hidden'}
-                            ref={scrollToBottomRef}
-                        >
-                            {messageList.map((messageContent, index) => (
-                                <Flex
-                                    key={index}
-                                    w={'100%'}
-                                    textColor={'black'}
-                                    padding={'10px'}
-                                    paddingBottom={'0px'}
-                                    wrap={'wrap'}
-                                    justifyContent={messageContent.author.id === me?.id ? "right" : "left"}
-                                >
-                                    <Flex
-                                        maxWidth={'70%'}
-                                        // h={'50%'}
-                                        bg={messageContent.author.id === me?.id ? '#A659EC' : 'white'}
-                                        flexDir={'column'}
-                                        wrap={'wrap'}
-                                        // padding={'5px 12px'}
-                                        borderRadius={'20px'}
-                                        wordBreak={'break-all'}
-                                        justifyContent={'center'}
-                                    >
-                                        <Flex
-                                            flexDir={'row'}
-                                            marginBottom={'4px'}
-                                            justifyContent={'space-evenly'}
-                                            alignItems={'center'}
-                                        >
-                                            <Text padding={'7px 16px'} textColor={messageContent.author.id === me?.id ? 'white' : 'black'}>
-                                                {decode(messageContent.content)}
-                                            </Text>
-                                        </Flex>
-                                    </Flex>
-                                    <WrapItem
-                                        padding={'5px'}
-                                        fontSize={'0.6em'}
-                                        flexDir={'row'}
-                                        justifyContent={messageContent?.author.id === me?.id ? "right" : "left"}
-                                        width={'100%'}
-                                    >
-                                        <Text marginRight={'5px'}>{messageContent?.author.id !== me?.id ? messageContent.author?.username : ""}</Text>
-                                        <Text>{timeOfDay(messageContent?.send_at)}</Text>
-                                    </WrapItem>
-                                </Flex>
-                            ))}
-                        </Flex>
-                        <Flex
+                            key={index}
                             w={'100%'}
-                            h={'5%'}
-                            minH={'80px'}
-                            flexDir={'row'}
-                            justifyContent={'center'}
-                            alignItems={'center'}
-                            bg='white'
+                            textColor={'black'}
+                            padding={'10px'}
+                            paddingBottom={'0px'}
+                            wrap={'wrap'}
+                            justifyContent={messageContent.author.id === me?.id ? "right" : "left"}
                         >
-                            <form onSubmit={handleSubmit(onSubmit)} style={{
-                                width: '100%',
-                                height: '100%',
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'space-evenly',
-                                alignItems: 'center'
-                            }}>
-                                <FormControl isRequired w={'80%'} h={'60px'}>
-                                    <Input
-                                        required={false}
-                                        h={'60px'}
-                                        border={'none'}
-                                        focusBorderColor="none"
-                                        borderRadius={'70px'}
-                                        bg={'#f2f2f2'}
-                                        type='text'
-                                        color='black'
-                                        textDecoration={'none'}
-                                        placeholder="Type your message..."
-                                        autoComplete="off"
-                                        {...register("message")}
-                                    />
-                                </FormControl>
-                                <Button
-                                    type='submit'
-                                    borderRadius={'0px'}
-                                    bg={'none'}
-                                    _hover={{ background: 'none', transform: 'scale(1.4)' }}
+                            <Flex
+                                maxWidth={'70%'}
+                                // h={'50%'}
+                                bg={messageContent.author.id === me?.id ? '#A659EC' : 'white'}
+                                flexDir={'column'}
+                                wrap={'wrap'}
+                                // padding={'5px 12px'}
+                                borderRadius={'20px'}
+                                wordBreak={'break-all'}
+                                justifyContent={'center'}
+                            >
+                                <Flex
+                                    flexDir={'row'}
+                                    marginBottom={'4px'}
+                                    justifyContent={'space-evenly'}
+                                    alignItems={'center'}
                                 >
-                                    <ArrowRightIcon boxSize={4} color={'black'} />
-                                </Button>
-                            </form>
+                                    <Text padding={'7px 16px'} textColor={messageContent.author.id === me?.id ? 'white' : 'black'}>
+                                        {decode(messageContent.content)}
+                                    </Text>
+                                </Flex>
+                            </Flex>
+                            <WrapItem
+                                padding={'5px'}
+                                fontSize={'0.6em'}
+                                flexDir={'row'}
+                                justifyContent={messageContent?.author.id === me?.id ? "right" : "left"}
+                                width={'100%'}
+                            >
+                                <Text marginRight={'5px'}>{messageContent?.author.id !== me?.id ? messageContent.author?.username : ""}</Text>
+                                <Text>{timeOfDay(messageContent?.send_at)}</Text>
+                            </WrapItem>
                         </Flex>
-                    </Flex>
-                </>
-            ) : (
-                <ChannelList />
-            )}
+                    ))}
+                </Flex>
+                <Flex
+                    w={'100%'}
+                    h={'5%'}
+                    minH={'80px'}
+                    flexDir={'row'}
+                    justifyContent={'center'}
+                    alignItems={'center'}
+                    bg='white'
+                >
+                    <form onSubmit={handleSubmit(onSubmit)} style={{
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-evenly',
+                        alignItems: 'center'
+                    }}>
+                        <FormControl isRequired w={'80%'} h={'60px'}>
+                            <Input
+                                required={false}
+                                h={'60px'}
+                                border={'none'}
+                                focusBorderColor="none"
+                                borderRadius={'70px'}
+                                bg={'#f2f2f2'}
+                                type='text'
+                                color='black'
+                                textDecoration={'none'}
+                                placeholder="Type your message..."
+                                autoComplete="off"
+                                {...register("message")}
+                            />
+                        </FormControl>
+                        <Button
+                            type='submit'
+                            borderRadius={'0px'}
+                            bg={'none'}
+                            _hover={{ background: 'none', transform: 'scale(1.4)' }}
+                        >
+                            <ArrowRightIcon boxSize={4} color={'black'} />
+                        </Button>
+                    </form>
+                </Flex>
+            </Flex>
         </Flex>
     );
 }

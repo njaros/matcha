@@ -1,14 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import "leaflet/dist/leaflet.css"
+import { ChevronDownIcon } from "@chakra-ui/icons";
+import { Box, Icon, Text } from "@chakra-ui/react";
 import L, { Map as LeafLetMap } from "leaflet";
-import { Box, Button, Text, Icon } from "@chakra-ui/react";
+import "leaflet/dist/leaflet.css";
+import { useCallback, useEffect, useState } from "react";
+import { FaLock, FaLockOpen } from "react-icons/fa";
 import Axios from "../../../tools/Caller";
 import { storeGps } from "../../../tools/Stores";
 import { lngModulo } from "../../../tools/Thingy";
-import { FaLock, FaLockOpen } from "react-icons/fa";
-import { ChevronDownIcon } from "@chakra-ui/icons";
-import { FaHome } from "react-icons/fa";
-import { render } from 'react-dom';
 
 
 const geolocFontSize = { base: '12px', sm: '14px', md: '16px', lg: '20px', xl: '24px' };
@@ -75,23 +73,20 @@ const Geoloc = (props: {focus: boolean}) => {
             console.log(error);
         })
     }
+    
 
     const handleMapClick = (e: L.LeafletMouseEvent) => {
         const popupContent = document.createElement("div");
         const buttonValidate = document.createElement("button");
-        const iconHome = <Icon as={FaHome}/>
-        const tempContainer = document.createElement("div");
-        render(iconHome, tempContainer);
-        const iconNode = tempContainer.firstChild;
-        if (iconNode) {
-            buttonValidate.appendChild(iconNode);
-        }
+        buttonValidate.innerHTML = "validate";
+        buttonValidate.style.textAlign = 'center'
+        buttonValidate.value = e.latlng.toString();
         buttonValidate.onclick = sendPosToServer;
-        popupContent.style.textAlign = 'center'
         popupContent.appendChild(buttonValidate);
         popup.setLatLng(e.latlng).setContent(popupContent)
         .openOn(e.target)
-        };
+    };
+
 
     const mapRef = useCallback((node: HTMLDivElement | null) => {
         if (props.focus == true)

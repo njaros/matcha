@@ -47,10 +47,8 @@ function App() {
 	useEffect(() => {
 		if (logged){
 			getUserId()
-			console.log('userId: ', userId)
 			if (!userId || userId.length <= 0)
 				return
-			console.log('test')
 			updateSocket(io(`http://127.0.0.1:5066`, {
 				query : {
 					userId : userId,
@@ -149,7 +147,6 @@ function App() {
 		}
 		
 		return () => {
-			console.log("useEffect of app returns");
 			clearTimeout(timeIdTmp);
 		}
 	}, [access, logged])

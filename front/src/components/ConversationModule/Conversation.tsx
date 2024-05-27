@@ -12,8 +12,8 @@ function Conversation(){
     const socket = storeSocket(state => state.socket)
     const [room, updateRoom] = storeRoom(state => [state.room, state.updateRoom]);
     const [roomList, updateRoomList] = storeRoomList(state => [state.roomList, state.updateRoomList])
+    const [convBool, updateConvBool] = storeConvBool(state => [state.convBool, state.updateConvBool])
     const me = storeMe(state => state.me)
-    // const [convBool, updateConvBool] = storeConvBool(state => [state.convBool, state.updateConvBool])
     
     useEffect(() => {
         if (me){
@@ -34,22 +34,13 @@ function Conversation(){
                         }
                     })
                     updateRoomList(updatedRoomList)
-                    // updatedRoomList.map((room : RoomList) => {
-                    //     socket?.emit('join_chat_room', room.id)
-                    // })
                 } catch (error) {
                     console.error(error);
                 }
             };
             fetchData();
         }
-    }, [me]);
-
-    // useEffect(() => {
-    //     roomList?.map((room : RoomList) => {
-    //         socket?.emit('join_chat_room', room.id)
-    //     })
-    // })
+    }, [me, convBool]);
 
     return (
     <Box flexGrow={1} w={'100%'} h={'100%'}>    
@@ -59,78 +50,3 @@ function Conversation(){
 }
 
 export default Conversation;
-
-
-// function Conversation(){
-    
-//     const {register, handleSubmit, reset} =  useForm()
-//     const socket = storeSocket(state => state.socket)
-//     const [me, setMe] = useState<
-//     {
-//         id: string,
-//         username: string
-//     } | undefined>(undefined)
-
-//     useEffect(() => {
-//             Axios.get('/user/get_me').then(
-//                 res => {
-//                     console.log(res.data)
-//                     setMe({id: res.data.id, username: res.data.username})
-//                 }
-//             ).catch(
-//                 err => {
-//                     //toast error
-//                 }
-//             )
-//             socket?.on('receive_message', (data: any) => {
-//                 console.log('from receive: ',data)
-//             })
-//         return () => {
-//             socket?.off('receive_message')
-//         }
-//     }, [])
-
-//     const onSubmit = (data : {message: string}) => {
-//         console.log('from onsubmit: ', data.message)
-//         console.log(me?.id, me?.username)
-//         const dt = {
-//             user_id: me?.id,
-//             username: me?.username,
-//             content: data.message,
-//             room_id: 'bc239290-f0e9-11ee-8465-e5428ae796fb',
-//             send_at: '111'
-//         }
-//         socket?.emit('send_message', dt)
-//         reset()
-//     }
-    
-//     return (
-//     <div>
-//         <h1>CONVERSATION PAGE</h1>
-//         <form onSubmit={handleSubmit(onSubmit)}>
-//         <FormControl>
-//             <Input
-//                 type='text'
-//                 placeholder="type your message"
-//                 {
-//                     ...register("message")
-//                 }
-//             />
-//             <Button
-//                 fontWeight={'normal'}
-//                 borderRadius={'0px'}
-//                 textAlign={'center'}
-//                 bg={'none'}
-//                 textColor={'black'}
-//                 type='submit' marginTop="15px"
-//                 >
-//                     send your message
-//             </Button>
-//         </FormControl>
-
-//         </form>
-//     </div>
-//     );
-// }
-
-// export default Conversation;

@@ -1,5 +1,5 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { storeGps, storeTimeout, storeConvBool } from "../../tools/Stores";
+import { storeGps, storeTimeout, storeConvBool, storeMsgCount } from "../../tools/Stores";
 import { cookieMan } from "../../tools/CookieMan";
 import { As, Box, Icon, Text } from "@chakra-ui/react"
 import { MdFavorite, MdSettings } from "react-icons/md"
@@ -20,7 +20,6 @@ interface IIconNavBar {
     isTarget: boolean
 }
 const IconNavBar = ({url, icon, boxSize, isTarget}: IIconNavBar) => {
-    console.log(isTarget)
     const color = isTarget ? '#FFFFFF' : '#57595D'
     const iconBorder = isTarget ? '2px red solid' : ''
     return (
@@ -43,7 +42,8 @@ const Footer = (props: {
     const { gps, updateGps } = storeGps();
     const [ logoutClicked, setLogoutClicked] = useState<boolean>(false);
     const convBool = storeConvBool(state => state.convBool)
- 
+    const [count, setCount] = storeMsgCount(state => [state.msgCount, state.updateMsgCount])
+
     const logout = () => {
         if (refreshTokenTimeoutId != undefined)
         {
