@@ -81,7 +81,15 @@ def get_user_profile(**kwargs):
                     LIMIT 1)
                     WHEN 1 then true
                     WHEN 0 then false
-                    END love
+                    END love,
+                CASE (
+                    SELECT COUNT(*)
+                    FROM relationship
+                    WHERE liker_id = %(self_id)s AND liked_id = %(user_id)s
+                    LIMIT 1)
+                    WHEN 1 then true
+                    WHEN 0 then false
+                    END loved
                 FROM user_table
                 WHERE id = %(user_id)s
         """, {"user_id": kwargs["user_id"],

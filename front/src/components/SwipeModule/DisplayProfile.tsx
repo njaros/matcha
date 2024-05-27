@@ -105,10 +105,6 @@ export default function DisplayProfile(props: {
         setDetail(!detail);
     }
 
-    useEffect(() => {
-        console.log(loveRef);
-    }, [loveRef])
-
     return <Box className="DisplayProfile"
                 display="flex"
                 width="80%"

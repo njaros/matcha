@@ -222,7 +222,7 @@ def get_town(latitude, longitude):
     try:
         response = requests.get(url, headers=headers, timeout=1)
         response.raise_for_status()
-    except requests.exceptions.ReadTimeout:
+    except Exception:
         address = None
     address = response.json().get("address")
     return address

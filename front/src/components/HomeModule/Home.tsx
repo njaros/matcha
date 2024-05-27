@@ -3,16 +3,19 @@ import { storeTimeout } from "../../tools/Stores";
 import Axios from "../../tools/Caller";
 import { Box, Button, Spinner, transition } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { IListUser, ISwipeUser, IUser } from "../../Interfaces";
+import { IListUser, ISwipeUser, IPhoto } from "../../Interfaces";
+import { DateTools } from "../../tools/DateTools";
 import UserList from "./UserList";
-import { set } from "react-hook-form";
-import OtherProfile from "./OtherProfile";
+import UserProfile from "./UserProfile";
 
 const Home: React.FC = () => {
 
     const [ visitorList, setVisitorList ] = useState<IListUser[]>([]);
+    const [ likedList, setLikedList ] = useState<IListUser[]>([]);
+    const [ matchedList, setMatchedList ] = useState<IListUser[]>([]);
     const [ profileId, setProfileId ] = useState<string>("");
     const [ loading, setLoading ] = useState<boolean>(true);
+    const [ selfId, setSelfId ] = useState<string>("")
     const [ user, setUser ] = useState<ISwipeUser>({
         id: "",
         username: "",
@@ -21,9 +24,10 @@ const Home: React.FC = () => {
         rank: 0,
         biography: "",
         location: "",
-        photos: [],
+        photos: [{id: '0', htmlSrcImg: "default-user.png", main: true}],
         hobbies: [],
-        love: false
+        love: false,
+        loved: false
     })
     const [ switchProfile, setSwitchProfile ] = useState<boolean>(true);
 
@@ -47,13 +51,60 @@ const Home: React.FC = () => {
         return "";
     }
 
+    function ParsePhotosFromBack(toParse: {id: string, binaries: string, mimetype: string}[])
+    {
+        const parsed: IPhoto[] = [];
+        if (toParse.length > 0)
+        {
+            toParse.map((photo: any) => {
+                parsed.push({
+                    id: photo.id,
+                    htmlSrcImg: "data:".concat(photo.mimetype)
+                    .concat(";base64,")
+                    .concat(photo.binaries),
+                    main: photo.main
+                });
+            })
+        }
+        else
+        {
+            parsed.push({
+                id: '0',
+                htmlSrcImg: "default-avatar.png",
+                main: true
+            });
+        }
+        return parsed;
+    }
+
+    function parsePhotoFromBack(user: any)
+    {
+        if (user.photo == undefined || user.photo == undefined)
+            return "default-avatar.png"
+        return "data:".concat(user.mime_type).concat(";base64,").concat(user.binaries)
+    }
+
     function getSelfProfile()
     {
         setLoading(true);
         Axios.get("user/get_self_profile").then(
             response => {
-                setUser(response.data);
+                const photos = ParsePhotosFromBack(response.data.photos);
+                setUser({
+                    id: response.data.id,
+                    username: response.data.username,
+                    age: DateTools.ageFromDate(response.data.birthdate),
+                    gender: response.data.gender,
+                    rank: response.data.rank,
+                    biography: response.data.biography,
+                    location: getPosInfo(response.data.location),
+                    photos: photos,
+                    hobbies: response.data.hobbies,
+                    love: response.data.love,
+                    loved: false
+                });
                 setProfileId(response.data.id);
+                setSelfId(response.data.id);
             }
         ).catch(
             error => {
@@ -69,7 +120,21 @@ const Home: React.FC = () => {
         setLoading(true);
         Axios.post("user/get_user_profile", { user_id: profileId }).then(
             response => {
-                setUser(response.data);
+                const photos = ParsePhotosFromBack(response.data.photos);
+                setUser({
+                    id: response.data.id,
+                    username: response.data.username,
+                    age: DateTools.ageFromDate(response.data.birthdate),
+                    gender: response.data.gender,
+                    rank: response.data.rank,
+                    biography: response.data.biography,
+                    location: getPosInfo(response.data.location),
+                    photos: photos,
+                    hobbies: response.data.hobbies,
+                    love: response.data.love,
+                    loved: false
+                });
+                setProfileId(response.data.id);
             }
         ).catch(
             error => {
@@ -91,11 +156,52 @@ const Home: React.FC = () => {
                         id: elt.id,
                         username: elt.username,
                         at: elt.at,
-                        photo:"data:".concat(elt.mime_type)
-                        .concat(";base64,")
-                        .concat(elt.binaries)})
+                        photo: parsePhotoFromBack(elt)})
                 })
                 setVisitorList(newList);
+            }
+        ).catch(
+            err => {
+                console.warn(err);
+            }
+        )
+    }
+
+    function getLiked()
+    {
+        Axios.get("relationship/get_liked_not_matched").then(
+            response => {
+                console.log(response.data)
+                let newList: IListUser[] = [];
+                response.data.map((elt: any) => {
+                    newList.push({
+                        id: elt.id,
+                        username: elt.username,
+                        at: "",
+                        photo: parsePhotoFromBack(elt)})
+                })
+                setLikedList(newList);
+            }
+        ).catch(
+            err => {
+                console.warn(err);
+            }
+        )
+    }
+
+    function getMatched()
+    {
+        Axios.get("relationship/get_matched").then(
+            response => {
+                let newList: IListUser[] = [];
+                response.data.map((elt: any) => {
+                    newList.push({
+                        id: elt.id,
+                        username: elt.username,
+                        at: "",
+                        photo: parsePhotoFromBack(elt)})
+                })
+                setMatchedList(newList);
             }
         ).catch(
             err => {
@@ -109,21 +215,32 @@ const Home: React.FC = () => {
     }
 
     function changeProfileId(e: any) {
+        console.log(e.currentTarget.value)
         setProfileId(e.currentTarget.value);
         setSwitchProfile(true);
     }
 
-    function backToSelfProfileHandler() {
-        getSelfProfile();
+    function likeHandler(e: any) {
+        Axios.post("swipe/like_user", {user_id: e.currentTarget.value}).then(
+            () => {
+
+            }
+        ).catch(
+            err => {
+                console.warn(err);
+            }
+        )
     }
 
-    function likeHandler(e: any) {
+    function removeLikeHandler(e: any) {
 
     }
 
     useEffect(() => {
         getSelfProfile();
         getVisitors();
+        getMatched();
+        getLiked();
     }, [])
 
     useEffect(() => {
@@ -144,22 +261,25 @@ const Home: React.FC = () => {
                         transition="width 0.7s ease"
                         backgroundColor="blue"
                         >
-                        <UserList userList={visitorList} ClickOnUserHandler={changeProfileId} />
+                        <UserList userList={visitorList} ClickOnUserHandler={changeProfileId} enableDate={true}/>
+                        <UserList userList={likedList} ClickOnUserHandler={changeProfileId} enableDate={false}/>
+                        <UserList userList={matchedList} ClickOnUserHandler={changeProfileId} enableDate={false}/>
                 </Box>
                 <Box    className="profile"
                         width={switchProfile ? "100%" : "0"}
                         transition="width 0.7s ease"
                         backgroundColor="green"
+                        display="flex"
                         >
                         {loading ? <Spinner size="xl"
                                             color="blue.500"
                                             emptyColor="gray"
                                             speed="0.8s"
                                             thickness="4px" /> :
-                        <OtherProfile   user={user}
+                        <UserProfile    user={user}
+                                        self={selfId == user.id}
                                         likeHandler={likeHandler}
-                                        returnHandler={switchHandler}
-                                        backToSelfProfile={backToSelfProfileHandler} />
+                                        returnHandler={switchHandler} />
                         }
                 </Box>
             </Box>

@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { ISwipeUser, ISwipeFilter, IPhoto } from "../../Interfaces";
+import { useEffect, useState } from "react";
+import { ISwipeUser, IPhoto } from "../../Interfaces";
 import Axios from "../../tools/Caller";
 import { Box, Button, Circle, Icon, Image, Text, Spinner } from "@chakra-ui/react";
 import { storeFilter } from "../../tools/Stores";
@@ -27,7 +27,8 @@ const Swipe = () => {
             location: "",
             photos: [],
             hobbies: [],
-            love: false
+            love: false,
+            loved: false
         }
     );
 
@@ -58,7 +59,7 @@ const Swipe = () => {
             response => {
                 console.log(response.data);
                 const photos: IPhoto[] = [];
-                if (response.data.photos != null)
+                if (response.data.photos.length > 0)
                 {
                     response.data.photos.map((photo: any) => {
                         photos.push({
@@ -88,7 +89,8 @@ const Swipe = () => {
                     location: getPosInfo(response.data.location),
                     photos: photos,
                     hobbies: response.data.hobbies,
-                    love: response.data.love
+                    love: response.data.love,
+                    loved: false
                 })
             }
         ).catch(
@@ -142,7 +144,8 @@ const Swipe = () => {
                 location: "",
                 photos: [],
                 hobbies: [],
-                love: false
+                love: false,
+                loved: false
             })
     }, [swipeList, index])
 

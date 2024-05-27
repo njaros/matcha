@@ -12,11 +12,11 @@ const fontSizeLocation = {base: "15px", sm: "20px", md: "25px", lg: "30px", xl: 
 const fontSizeLove = {base: "17px", sm: "22px", md: "25px", lg: "28px", xl: "33px"}
 
 
-export default function OtherProfile(props: {
+export default function UserProfile(props: {
     user: ISwipeUser,
+    self: boolean,
     likeHandler: (e: any) => void,
-    returnHandler: () => void
-    backToSelfProfile: () => void})
+    returnHandler: () => void})
 {
     const [ photoIdx, setPhotoIdx ] = useState<number>(0);
     const [ detail, setDetail ] = useState<boolean>(false);
@@ -106,16 +106,13 @@ export default function OtherProfile(props: {
         setDetail(!detail);
     }
 
-    useEffect(() => {
-        console.log(loveRef);
-    }, [loveRef])
-
     return <Box className="DisplayProfile"
                 display="flex"
                 width="80%"
                 maxW="590px"
                 flex={1}
-                bgImage={props.user.photos[photoIdx].htmlSrcImg}
+                bgImage={props.user.photos.length > 0 ? props.user.photos[photoIdx].htmlSrcImg
+                    : "default-user.png"}
                 backgroundSize="cover" bgPosition="center" bgRepeat="no-repeat"
                 borderRadius="25px"
                 margin="2px"

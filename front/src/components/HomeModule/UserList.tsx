@@ -1,9 +1,8 @@
 import { Box, Button, Card, Icon, Image, Text } from "@chakra-ui/react";
 import { IListUser } from "../../Interfaces";
 import { useEffect } from "react";
-import { CgProfile } from "react-icons/cg";
 
-export default function UserList(props: {userList: IListUser[], ClickOnUserHandler: (e: any) => void})
+export default function UserList(props: {userList: IListUser[], ClickOnUserHandler: (e: any) => void, enableDate: boolean})
 {
     useEffect(() => {
         console.log("hello", props.userList)
@@ -13,10 +12,10 @@ export default function UserList(props: {userList: IListUser[], ClickOnUserHandl
         <Box    className="userList"
                 display="flex"
                 flexDirection="column"
-                height="96%"
                 overflowY="auto"
                 >
             {props.userList.map((user) => {
+                console.log(user)
                 return <Button  bgColor="purple"
                                 h="10%"
                                 flexDirection="row"
@@ -34,9 +33,9 @@ export default function UserList(props: {userList: IListUser[], ClickOnUserHandl
                     <Text   margin="0 5%">
                         {user.username}
                     </Text>
-                    <Text>
+                    {props.enableDate && <Text>
                         {user.at}
-                    </Text>
+                    </Text>}
                 </Button>
             })}
         </Box>
