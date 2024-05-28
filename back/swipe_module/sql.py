@@ -1,6 +1,5 @@
 from db_init import db_conn as conn
 from psycopg.rows import dict_row
-from flask import current_app
 from chat import sql as chat_sql
 import uuid
 

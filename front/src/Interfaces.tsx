@@ -45,7 +45,16 @@ export interface ISwipeUser
 	location: string,
 	photos: IPhoto[],
 	hobbies: string[],
-	love: boolean
+	love: boolean,
+	loved: boolean
+}
+
+export interface IListUser
+{
+	id: string,
+	username: string,
+	at: string,
+	photo: string
 }
 
 export interface ISwipeFilter

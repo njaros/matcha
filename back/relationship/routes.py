@@ -4,6 +4,7 @@ from jwt_policy.jwt_policy import token_required
 from validators import uuid
 from error_status.error import ForbiddenError
 from chat.sql import insert_room
+from .dto import remove_like_dto
 
 
 @token_required
@@ -50,3 +51,20 @@ def create_room_when_user_are_matched():
                 'user_id1': uuid.isUuid(request.form['liker_id']),
                 'user_id2': uuid.isUuid(request.form['liked_id'])
             })
+
+
+@token_required
+@remove_like_dto
+def remove_like(**kwargs):
+    relationship_sql.remove_like(**kwargs)
+    return [], 200
+
+
+@token_required
+def get_matches(**kwargs):
+    return relationship_sql.get_matches_by_user_id(**kwargs), 200
+
+
+@token_required
+def get_liked_not_matched(**kwargs):
+    return relationship_sql.get_liked_by_user_id(**kwargs), 200

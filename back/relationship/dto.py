@@ -1,12 +1,12 @@
 from functools import wraps
 from validators import uuid
-from flask import request, current_app
+from flask import request
 
 
-def user_profile_dto(f):
+def remove_like_dto(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         kwargs["user_id"] = uuid.isUuid(request.json["user_id"])
-        return f(*args, **kwargs)
+        return f(**kwargs)
 
     return decorated

@@ -8,6 +8,9 @@ from .routes import (
     get_relationship_by_id,
     is_matched,
     create_room_when_user_are_matched,
+    remove_like,
+    get_matches,
+    get_liked_not_matched
 )
 
 
@@ -40,4 +43,22 @@ app.add_url_rule(
     "create_room_when_user_are_matched",
     create_room_when_user_are_matched,
     methods=["POST"],
+)
+app.add_url_rule(
+    "/relationshit/remove_like",
+    "remove_like",
+    remove_like,
+    methods=["POST"]
+)
+app.add_url_rule(
+    "/relationship/get_matches",
+    "get_matches",
+    get_matches,
+    methods=["GET"]
+)
+app.add_url_rule(
+    "/relationship/get_liked_not_matched",
+    "get_liked_not_matched",
+    get_liked_not_matched,
+    methods=["GET"]
 )

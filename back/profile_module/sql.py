@@ -81,6 +81,7 @@ def get_photos_by_user_id(user_id):
     cur.close()
     return photos
 
+
 def get_main_photo_by_user_id(user_id):
     cur = conn.cursor(row_factory=dict_row)
     query = """
@@ -96,9 +97,12 @@ def get_main_photo_by_user_id(user_id):
     if res is None:
         return None
     hasher = Fernet(app.config["SECRET_PHOTO"])
-    res['binaries'] = base64.b64encode(hasher.decrypt(res['binaries'])).decode("utf-8")
+    res["binaries"] = base64.b64encode(hasher.decrypt(res["binaries"])).decode(
+        "utf-8"
+    )
     cur.close()
     return res
+
 
 def delete_photo_by_id(photo_id):
     cur = conn.cursor()
@@ -399,14 +403,16 @@ def delete_user_hobbies(**kwargs):
 
 def get_userid_with_hobbies_ids(**kwargs):
     cur = conn.cursor(row_factory=dict_row)
-    cur.execute("""
+    cur.execute(
+        """
                 SELECT  user_id
                 FROM    user_hobbie
                 WHERE   hobbie_id IN %s
                 GROUP BY user_id
                 HAVING COUNT(DISTINCT hobbie_id) = %s
                 """,
-                (kwargs["hobbie_ids"], len(kwargs["hobbie_ids"])))
+        (kwargs["hobbie_ids"], len(kwargs["hobbie_ids"])),
+    )
     user_ids = cur.fetchall()
     cur.close()
     return user_ids

@@ -256,3 +256,20 @@ def get_room_with_message(room_id):
         raise NotFoundError('Room does not exist in database')
     cur.close()
     return room
+
+
+def delete_room_by_user_ids(**kwargs):
+    cur = conn.cursor()
+    cur.execute(
+        """
+        DELETE FROM room
+        WHERE   user_1 = %(self_id)s AND user_2 = %(other_id)s
+                OR user_1 = %(other_id)s AND user_2 = %(self_id)s
+        """,
+        {
+            "self_id": kwargs["user"]["id"],
+            "other_id": kwargs["user_id"]
+        }
+    )
+    conn.commit()
+    cur.close()

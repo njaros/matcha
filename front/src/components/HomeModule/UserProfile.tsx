@@ -3,7 +3,7 @@ import { ISwipeUser } from "../../Interfaces";
 import { Box, Button, Icon, Image, Tag, Text } from "@chakra-ui/react";
 import { FcNext, FcPrevious } from "react-icons/fc"
 import { SiIfixit } from "react-icons/si"
-import { RiHeartAddFill } from "react-icons/ri";
+import { RiHeartAddFill, RiSendBackward } from "react-icons/ri";
 import { BsStars } from "react-icons/bs";
 import { BiSolidUserDetail } from "react-icons/bi";
 
@@ -12,10 +12,11 @@ const fontSizeLocation = {base: "15px", sm: "20px", md: "25px", lg: "30px", xl: 
 const fontSizeLove = {base: "17px", sm: "22px", md: "25px", lg: "28px", xl: "33px"}
 
 
-export default function DisplayProfile(props: {
+export default function UserProfile(props: {
     user: ISwipeUser,
+    self: boolean,
     likeHandler: (e: any) => void,
-    dislikeHandler: (e: any) => void})
+    returnHandler: () => void})
 {
     const [ photoIdx, setPhotoIdx ] = useState<number>(0);
     const [ detail, setDetail ] = useState<boolean>(false);
@@ -110,7 +111,8 @@ export default function DisplayProfile(props: {
                 width="80%"
                 maxW="590px"
                 flex={1}
-                bgImage={props.user.photos[photoIdx].htmlSrcImg}
+                bgImage={props.user.photos.length > 0 ? props.user.photos[photoIdx].htmlSrcImg
+                    : "default-user.png"}
                 backgroundSize="cover" bgPosition="center" bgRepeat="no-repeat"
                 borderRadius="25px"
                 margin="2px"
@@ -173,8 +175,8 @@ export default function DisplayProfile(props: {
                 </Box>
             </Box>
             <Box    ref={buttonsRef} display="flex" margin="5% 5%" justifyContent="space-between" flexDirection="row">
-                    <Button value={props.user.id} borderRadius="15px" onClick={props.dislikeHandler}>
-                        <Icon boxSize={7} color="black" as={SiIfixit}/>
+                    <Button borderRadius="15px" onClick={props.returnHandler}>
+                        <Icon boxSize={7} color="black" as={RiSendBackward}/>
                     </Button>
                     <Button borderRadius="15px" colorScheme={detail ? "matchaPink" : "gray"} onClick={detailHandler}>
                         <Icon boxSize={9} as={BiSolidUserDetail} />

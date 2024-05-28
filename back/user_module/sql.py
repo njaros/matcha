@@ -1,7 +1,6 @@
 from db_init import db_conn as conn
 from error_status.error import NotFoundError
 from flask import current_app as app
-from uuid import UUID
 from psycopg.rows import dict_row
 
 
@@ -68,16 +67,6 @@ def get_user_profile(**kwargs):
                 (
                     SELECT json_agg (
                         json_build_object (
-                            'id', photos.id,
-                            'mime_type', mime_type,
-                            'binaries', binaries,
-                            'main', main))
-                        FROM photos
-                        WHERE user_id = %(user_id)s
-                ) AS photos,
-                (
-                    SELECT json_agg (
-                        json_build_object (
                             'name', hobbie.name
                         ))
                     FROM hobbie
@@ -92,7 +81,15 @@ def get_user_profile(**kwargs):
                     LIMIT 1)
                     WHEN 1 then true
                     WHEN 0 then false
-                    END love
+                    END love,
+                CASE (
+                    SELECT COUNT(*)
+                    FROM relationship
+                    WHERE liker_id = %(self_id)s AND liked_id = %(user_id)s
+                    LIMIT 1)
+                    WHEN 1 then true
+                    WHEN 0 then false
+                    END loved
                 FROM user_table
                 WHERE id = %(user_id)s
         """, {"user_id": kwargs["user_id"],
@@ -182,3 +179,64 @@ def get_user_with_room_and_message(user_id):
         raise NotFoundError('This user does not exist in database')
     cur.close()
     return res
+
+
+def visite_profile(**kwargs):
+    cur = conn.cursor()
+    cur.execute(
+        """
+            INSERT INTO visits (visitor_id, visited_id)
+            VALUES (%(visitor)s, %(visited)s)
+        """, {"visitor": kwargs["user"]["id"],
+              "visited": kwargs["user_id"]}
+    )
+    cur.close()
+    conn.commit()
+
+
+def get_visited_me_history(**kwargs):
+    """Returns list of users who visited my profile
+    """
+    cur = conn.cursor(row_factory=dict_row)
+    cur.execute(
+        """
+            SELECT  user_table.id AS id,
+                    user_table.username AS username,
+                    visits.at AS at,
+                    photos.binaries AS binaries,
+                    photos.mime_type AS mime_type
+            FROM visits
+            LEFT OUTER JOIN user_table ON visitor_id = user_table.id
+            LEFT OUTER JOIN photos ON photos.user_id = user_table.id
+                AND main = true
+            WHERE visits.visited_id = %s
+            ORDER by at DESC
+        """, (kwargs["user"]["id"],)
+    )
+    history = cur.fetchall()
+    cur.close()
+    return history
+
+
+def get_my_visits_history(**kwargs):
+    """Returns list of users whose profile I visited
+    """
+    cur = conn.cursor(row_factory=dict_row)
+    cur.execute(
+        """
+            SELECT  user_table.id AS id,
+                    user_table.username AS username,
+                    visits.at AS at,
+                    photos.binaries AS binaries,
+                    photos.mime_type AS mime_type
+            FROM visits
+            LEFT OUTER JOIN user_table ON visited_id = user_table.id
+            LEFT OUTER JOIN photos ON photos.user_id = user_table.id
+                AND photos.main = true
+            WHERE visits.visitor_id = %s
+            ORDER by at DESC
+        """, (kwargs["user"]["id"],)
+    )
+    history = cur.fetchall()
+    cur.close()
+    return history
