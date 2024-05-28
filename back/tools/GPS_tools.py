@@ -215,16 +215,17 @@ def get_gps_from_ip(ip: str):
 
 
 def get_town(latitude, longitude):
-    url = f"https://nominatim.openstreetmap.org/reverse?lat={latitude}&lon={longitude}&format=json"
+    url = f"https://nominatim.openstreetmap.org\
+/reverse?lat={latitude}&lon={longitude}&format=json"
     headers = {
         "User-Agent": "Matcha/1.0 (emailaa@aaaa.com)"
     }
     try:
         response = requests.get(url, headers=headers, timeout=1)
         response.raise_for_status()
+        address = response.json().get("address")
     except Exception:
         address = None
-    address = response.json().get("address")
     return address
 
 

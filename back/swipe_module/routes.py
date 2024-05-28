@@ -3,15 +3,19 @@ from . import sql
 from .dto import like_dislike_dto, filter_swipe_dto
 from flask_socketio import emit
 from extensions import socketio
+from tools.thingy import to_socket_uuid
+from flask import current_app
 
 
 @token_required
 @like_dislike_dto
 def like_user(**kwargs):
     new_room = sql.like_user(**kwargs)
+    current_app.logger.info(to_socket_uuid(kwargs["target_id"]))
+    socketio.emit('send_like',
+                  room=f"user-{to_socket_uuid(kwargs['target_id'])}")
     if new_room is not None:
         return new_room
-    socketio.emit('send_like', {}, room=f'user-{kwargs["target_id"]}')
     return [], 200
 
 
