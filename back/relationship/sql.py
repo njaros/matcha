@@ -139,14 +139,12 @@ def get_matches_by_user_id(**kwargs):
                                 THEN photos_1.mime_type
                             END mime_type
             FROM    room
-            LEFT OUTER JOIN user_table ON user_1 = user_table.id
-                        AS user_table_1
-            LEFT OUTER JOIN user_table ON user_2 = user_table.id
-                        AS user_table_2
-            LEFT OUTER JOIN photos ON user_1 = photos.user_id
-                        AS photos_1
-            LEFT OUTER JOIN photos ON user_2 = photos.user_id
-                        AS photos_2
+            LEFT OUTER JOIN user_table AS user_table_1
+                ON user_1 = user_table_1.id
+            LEFT OUTER JOIN user_table AS user_table_2
+                ON user_2 = user_table_2.id
+            LEFT OUTER JOIN photos AS photos_1 ON user_1 = photos_1.user_id
+            LEFT OUTER JOIN photos AS photos_2 ON user_2 = photos_2.user_id
             WHERE   user_1 = %(self_id)s OR user_2 = %(self_id)s
             ORDER BY username
         """,

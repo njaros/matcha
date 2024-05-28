@@ -1,4 +1,6 @@
 from flask import current_app, jsonify
+from flask_socketio import emit
+from tools.thingy import to_socket_uuid
 from user_module import sql as user_sql_request
 from profile_module.sql import get_photos_by_user_id
 from jwt_policy.jwt_policy import token_required
@@ -55,7 +57,6 @@ def base_get_user_profile(**kwargs):
     if user_profile is not None:
         if user_profile["photos"] is not None:
             for photo in user_profile["photos"]:
-                current_app.logger.debug(hasher.decrypt(photo["binaries"]))
                 photo["binaries"] = base64.b64encode(
                     hasher.decrypt(photo["binaries"])
                 ).decode("utf-8")
@@ -79,6 +80,8 @@ def get_user_profile_from_swipe(**kwargs):
 @token_required
 @dto.user_profile_dto
 def get_user_profile(**kwargs):
+    emit("test", room=f"user-{to_socket_uuid(kwargs['user']['id'])}",
+         namespace=None)
     return base_get_user_profile(**kwargs), 200
 
 

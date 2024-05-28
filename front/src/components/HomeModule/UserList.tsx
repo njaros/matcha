@@ -4,10 +4,6 @@ import { useEffect } from "react";
 
 export default function UserList(props: {userList: IListUser[], ClickOnUserHandler: (e: any) => void, enableDate: boolean})
 {
-    useEffect(() => {
-        console.log("hello", props.userList)
-    }, [])
-
     return (
         <Box    className="userList"
                 display="flex"

@@ -191,7 +191,7 @@ const Home: React.FC = () => {
 
     function getMatched()
     {
-        Axios.get("relationship/get_matched").then(
+        Axios.get("relationship/get_matches").then(
             response => {
                 let newList: IListUser[] = [];
                 response.data.map((elt: any) => {

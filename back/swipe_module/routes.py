@@ -1,6 +1,8 @@
 from jwt_policy.jwt_policy import token_required
 from . import sql
 from .dto import like_dislike_dto, filter_swipe_dto
+from flask_socketio import emit
+from extensions import socketio
 
 
 @token_required
@@ -9,6 +11,7 @@ def like_user(**kwargs):
     new_room = sql.like_user(**kwargs)
     if new_room is not None:
         return new_room
+    socketio.emit('send_like', {}, room=f'user-{kwargs["target_id"]}')
     return [], 200
 
 

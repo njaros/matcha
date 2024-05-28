@@ -1,7 +1,6 @@
 import { Socket, io } from "socket.io-client";
 import { create } from "zustand";
 import { Room, Me, RoomList, MessageData } from "./interface";
-import { LatLng } from "leaflet";
 import { ISwipeFilter } from "../Interfaces"
 import { DateTools } from "./DateTools";
 
