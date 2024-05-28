@@ -128,6 +128,20 @@ def set_up_db():
 
         cur.execute(
             """
+            CREATE TABLE unread_msg (
+                id serial PRIMARY KEY,
+                user_id uuid,
+                room_id uuid,
+                count   integer default 0,
+                FOREIGN KEY (user_id) REFERENCES user_table(id),
+                FOREIGN KEY (room_id) REFERENCES room(id)
+                
+            );
+            """
+        )
+
+        cur.execute(
+            """
             INSERT INTO hobbie (name)
             VALUES  ('coder matcha'),
                     ('voiture'),

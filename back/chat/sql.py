@@ -22,6 +22,18 @@ def insert_room(data):
             """
     cur.execute(query, (room_id, data.get('user_id1'), data.get('user_id2')))
     room = cur.fetchone()
+    query2 = """
+            INSERT INTO unread_msg (
+                user_id,
+                room_id
+            VALUES (%s, %s)
+            )
+            """
+    data = [
+        (room['user_1'], room['id']),
+        (room['user_2'], room['id'])
+    ]
+    cur.executemany(query2, data)
     conn.commit()
     cur.close()
     return room

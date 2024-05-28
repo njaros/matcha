@@ -32,7 +32,7 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setRoom
             socket?.off('last_message')
             socket?.off('receive_message')
         })
-    })
+    }) 
 
     return (
         <Flex
@@ -102,7 +102,7 @@ function ChannelList(){
 
     const join_room = (id: string) => {
         updateConvBool(!convBool)
-        setCount(0)
+        // setCount(0)
     }
     
     useEffect(() => {
