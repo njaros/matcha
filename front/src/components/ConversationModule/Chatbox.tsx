@@ -240,3 +240,4 @@ function Chatbox(props: {room: Room_info | undefined}){
     
 
 export default Chatbox
+

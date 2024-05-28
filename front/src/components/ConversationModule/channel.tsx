@@ -49,16 +49,16 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setRoom
                 setLastMessage({sender_id: data.author.user_id, content: data.content})
             }   
         })
-        socket?.on('receive_message', (data: any) => {
+        socket?.on('count_message', () => {
             incrementCount()
             get_unread_msg_count()
 
         })
         return (() => {
             socket?.off('last_message')
-            socket?.off('receive_message')
+            socket?.off('count_message')
         })
-    }) 
+    }, []) 
 
     return (
         <Flex
@@ -126,6 +126,7 @@ function ChannelList(){
     }
 
     const join_room = async (room_id: string) => {
+        socket?.emit('join_chat_room', room_id)
         updateConvBool(!convBool)
         try {
             await Axios.post('/chat/set_unread_msg_count_to_0', {'room_id': room_id})
