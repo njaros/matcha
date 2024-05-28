@@ -14,6 +14,11 @@ import Axios from "./tools/Caller";
 import { cookieMan } from "./tools/CookieMan";
 import { JwtPayload } from "jsonwebtoken";
 import Settings from "./components/SettingsModule/Settings";
+import Photo from "./components/SettingsModule/Photo";
+import Profile from "./components/SettingsModule/Profile";
+import Geoloc from "./components/SettingsModule/FilterModule/Geoloc";
+import Filter from "./components/SettingsModule/FilterModule/Filter";
+import Hobbies from "./components/SettingsModule/Hobbies";
 
 function App() {
 
@@ -176,7 +181,15 @@ function App() {
 								<Route path="/signUp" element={ logged ? <Navigate to="/" /> : (<Signup />) } />
 								<Route element={ logged ? <Outlet /> : <Navigate to="/login" /> } >
 									<Route path="/" element={ <Home />} />
-									<Route path="/settings" element={ <Settings />} />
+									<Route path="/settings" element={ <Settings />}>
+										<Route path="/settings/photos" element={ <Photo />}/>
+										<Route path="/settings/profile" element={ <Profile />}/>
+										<Route path="/settings/match_list" />
+										<Route path="/settings/liked_list" />
+										<Route path="/settings/visits_list" />
+										<Route path="/settings/filter" element={ <Filter focus={true} /> } />
+										<Route path="/settings/hobbies" element= { <Hobbies /> } />
+									</Route>
 									<Route path="/conversation" element={ <Conversation />} />
 									<Route path="/swipe" element={ <Swipe/> } />
 								</Route>
