@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from "react"
 import { MessageData, Room_info } from "../../tools/interface"
 import { useForm } from "react-hook-form";
 import Axios from "../../tools/Caller";
-import { storeMe, storeMessageList, storeSocket, storeConvBool } from "../../tools/Stores";
+import { storeMe, storeMessageList, storeSocket, storeConvBool, storeMsgCount } from "../../tools/Stores";
 import { decode } from 'html-entities';
 import { ArrowRightIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
@@ -40,6 +40,7 @@ function Chatbox(props: {room: Room_info | undefined}){
     const me = storeMe(state => state.me)
     const msgList = storeMessageList(state => state.messageList)
     const [convBool, updateConvBool] = storeConvBool(state => [state.convBool, state.updateConvBool])
+    const [msgCount, updateMsgCount] = storeMsgCount(state => [state.msgCount, state.updateMsgCount])
     const [messageList, setMessageList] = useState<MessageData[]>([])
     const { 
         register, 
@@ -58,6 +59,7 @@ function Chatbox(props: {room: Room_info | undefined}){
             const senderData : MessageData = res.data
             socket?.emit("send_message", senderData)
             setMessageList((list) => [...list, senderData])
+            console.log('from send message')
         }
         catch(err){
             if (err)
@@ -67,6 +69,7 @@ function Chatbox(props: {room: Room_info | undefined}){
 
     useEffect(() => {
         socket?.on("receive_message", (data: any) => {
+            console.log('from receive_message')
             if (data.room === props.room?.id)
             {
                 setMessageList((list) => [...list, data])
@@ -90,8 +93,16 @@ function Chatbox(props: {room: Room_info | undefined}){
           }
     }, [messageList])
 
-    const backToChannel = () => {
+    const backToChannel = async () => {
         updateConvBool(!convBool)
+        try {
+            await Axios.post('/chat/set_unread_msg_count_to_0', {'room_id': props.room?.id})
+            updateMsgCount(0)
+        }
+        catch(err){
+            if (err)
+                console.error(err)
+        }
     }
     return (
         <Flex

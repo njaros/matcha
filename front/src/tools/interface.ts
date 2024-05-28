@@ -63,6 +63,5 @@ export interface RoomList {
 }[]
 
 export interface msgCount {
-    room_id: string,
     count: number
 }

@@ -18,6 +18,31 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setRoom
         })
     const socket = storeSocket(state => state.socket)
 
+
+    const incrementCount = async () => {
+        
+        try{
+            await Axios.post('/chat/increment_unread_msg_count', {room_id: props.conv.id})
+        }
+        catch(err){
+            if(err)
+                console.error(err)
+        }
+    }
+
+    const get_unread_msg_count = async () => {
+        
+        try{
+            const res = await Axios.post('/chat/get_unread_msg_count', {room_id: props.conv.id})
+            updateMsgCount(res.data.count)
+
+        }
+        catch(err){
+            if(err)
+                console.error(err)
+        }
+    }
+
     useEffect(() => {
         socket?.on('last_message', (data: any) => {
             if (data.room === props.conv.id){
@@ -25,8 +50,9 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setRoom
             }   
         })
         socket?.on('receive_message', (data: any) => {
+            incrementCount()
+            get_unread_msg_count()
 
-            
         })
         return (() => {
             socket?.off('last_message')
@@ -71,7 +97,7 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setRoom
                     </>
                     }
                 </Text>
-                {/* <Text>//count//</Text> */}
+                <Text>{msgCount}</Text>
             </Box>
     </Flex>
     )
@@ -87,7 +113,6 @@ function ChannelList(){
     const [room, setRoom] = useState<Room_info>()
     const scrollToBottomRef = useRef<HTMLDivElement>(null);
     const [msgList, setMsgList] = storeMessageList(state => [state.messageList, state.updateMessageList])
-    const [count, setCount] = storeMsgCount(state => [state.msgCount, state.updateMsgCount])
 
     const setMessageList = async (conv: Room_info) => {
         try{
@@ -100,9 +125,15 @@ function ChannelList(){
         }
     }
 
-    const join_room = (id: string) => {
+    const join_room = async (room_id: string) => {
         updateConvBool(!convBool)
-        // setCount(0)
+        try {
+            await Axios.post('/chat/set_unread_msg_count_to_0', {'room_id': room_id})
+        }
+        catch(err){
+            if (err)
+                console.error(err)
+        }
     }
     
     useEffect(() => {

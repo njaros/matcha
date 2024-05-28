@@ -61,13 +61,13 @@ interface IConvBool {
 }
 
 interface ImsgCount {
-	msgCount: msgCount[];
-	updateMsgCount: (updateMsgCount: msgCount[]) => void
+	msgCount: number;
+	updateMsgCount: (updateMsgCount: number) => void
 }
 
 export const storeMsgCount = create<ImsgCount>()((set) => ({
-	msgCount: [],
-	updateMsgCount: (newMsgCount: msgCount[]) => set({msgCount: newMsgCount})
+	msgCount: 0,
+	updateMsgCount: (newMsgCount: number) => set({msgCount: newMsgCount})
 }))
 
 export const storeConvBool = create<IConvBool>()((set) => ({

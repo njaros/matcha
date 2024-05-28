@@ -26,8 +26,8 @@ def insert_room(data):
             INSERT INTO unread_msg (
                 user_id,
                 room_id
-            VALUES (%s, %s)
             )
+            VALUES (%s, %s)
             """
     data = [
         (room['user_1'], room['id']),
@@ -273,3 +273,41 @@ def delete_room_by_user_ids(**kwargs):
     )
     conn.commit()
     cur.close()
+
+
+def increment_unread_msg_count(user_id, room_id):
+    cur = conn.cursor()
+    query = """
+            UPDATE unread_msg
+            SET count = count + 1
+            WHERE user_id = %s AND room_id = %s
+            """
+    cur.execute(query, (user_id, room_id))
+    conn.commit()
+    cur.close()
+
+
+def set_unread_msg_count_to_0(user_id, room_id):
+    cur = conn.cursor()
+    query = """
+            UPDATE unread_msg
+            SET count = 0
+            WHERE user_id = %s AND room_id = %s
+            """
+    cur.execute(query, (user_id, room_id))
+    conn.commit()
+    cur.close()
+
+
+def get_unread_msg_count(user_id, room_id):
+    cur = conn.cursor(row_factory=dict_row)
+    query = """
+            SELECT
+                count
+            FROM unread_msg
+            WHERE user_id = %s AND room_id = %s
+            """
+    cur.execute(query, (user_id, room_id))
+    res = cur.fetchone()
+    cur.close()
+    return res

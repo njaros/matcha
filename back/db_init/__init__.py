@@ -2,6 +2,8 @@ import os
 import psycopg
 from psycopg.rows import dict_row
 from .db_filler import insert_users_in_database
+import uuid
+import hashlib
 
 
 def set_up_db():
@@ -128,6 +130,17 @@ def set_up_db():
 
         cur.execute(
             """
+            CREATE TABLE visits (
+                id serial PRIMARY KEY,
+                visitor_id uuid REFERENCES user_table(id) ON DELETE CASCADE,
+                visited_id uuid REFERENCES user_table(id) ON DELETE CASCADE,
+                at TIMESTAMP DEFAULT NOW()
+            )
+            """
+        )
+
+        cur.execute(
+            """
             CREATE TABLE unread_msg (
                 id serial PRIMARY KEY,
                 user_id uuid,
@@ -157,6 +170,43 @@ def set_up_db():
                     ('poney');
             """
         )
+
+        # USER TEST INSERTION
+
+        cur.execute(
+            """
+            INSERT INTO user_table \
+            (id, username, password, email, birthDate, \
+            gender, preference, biography, rank, latitude, \
+            longitude, gpsfixed)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (uuid.uuid1(), 'jeremy', hashlib.sha256("mdp".encode("utf-8")).hexdigest(), 'jeremy@jeremy.fr', '2000-11-20',
+                  'man', 'all', '', 10, 48.866667, 2.333333, False)
+        )
+
+        cur.execute(
+            """
+            INSERT INTO user_table \
+            (id, username, password, email, birthDate, \
+            gender, preference, biography, rank, latitude, \
+            longitude, gpsfixed)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (uuid.uuid1(), 'nico',  hashlib.sha256("mdp".encode("utf-8")).hexdigest(), 'nico@nico.fr', '2000-11-20',
+                  'man', 'all', '', 10, 48.866667, 2.333333, False)
+        )
+
+        cur.execute(
+            """
+            INSERT INTO user_table \
+            (id, username, password, email, birthDate, \
+            gender, preference, biography, rank, latitude, \
+            longitude, gpsfixed)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """, (uuid.uuid1(), 'max', hashlib.sha256("mdp".encode("utf-8")).hexdigest(), 'max@max.fr', '2000-11-20',
+                  'man', 'all', '', 10, 48.866667, 2.333333, False)
+        )
+
+        # USER TEST INSERTION
 
         insert_users_in_database(db_conn, 50, 20, 20)
         cur.close()

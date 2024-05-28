@@ -49,7 +49,7 @@ def send_message(data):
     emit('receive_message', {
         'author': {'user_id': user_id, 'username': username},
         'content': content,
-        'room': room_id,
+        'room_id': room_id,
         'send_at': send_at
     }, room=f"room-{room_id}", skip_sid=request.sid)
     emit('last_message', {
