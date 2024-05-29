@@ -6,6 +6,7 @@ import { DistanceSlide } from "./DistanceSlide";
 import { FameGapSlide } from "./FameGapSlide";
 import TagsSelector from "./TagsSelector";
 import Geoloc from "./Geoloc";
+import ReturnButton from "../ReturnButton";
 
 export default function Filter(props: {focus: boolean}) {
     const { filter, updateFilter } = storeFilter();
@@ -58,6 +59,7 @@ export default function Filter(props: {focus: boolean}) {
                 setTags={handlerTags}
                 defaultValue={filter.hobby_ids}
                  />
+            <ReturnButton />
         </Box>
     )
 }

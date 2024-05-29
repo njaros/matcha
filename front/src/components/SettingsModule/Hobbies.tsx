@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import Axios from "../../tools/Caller";
 import { Box, Tag, SimpleGrid, Button } from "@chakra-ui/react"
+import ReturnButton from "./ReturnButton";
 
 const Hobbies = () => {
     const [ hobbies, setHobbies ] = useState<{id: number, name: string, belong: boolean}[]>([]);
@@ -53,6 +54,7 @@ const Hobbies = () => {
         return hobbies.map((elt) => {
             return(
                     <Button key={elt.id}
+                            margin="2% 2%"
                             colorScheme={elt.belong? "matchaPink": "gray"}
                             boxShadow="base"
                             value={elt.id}
@@ -69,13 +71,16 @@ const Hobbies = () => {
     }, [])
 
     return (
-        <Box display="flex" flexDirection="column" bg="white" boxShadow="base" padding="10%" borderRadius="5%">
+        <Box flex={1} overflowY={"auto"} display="flex" flexDirection="column" bg="white" boxShadow="base" padding="10%" borderRadius="5%">
             <Box alignSelf="center" marginBottom = "15%" fontSize="lg">
                 Select your Hobbies !
             </Box>
-            {hobbies.length != 0 && <SimpleGrid minChildWidth="100px" spacing={10}>
+            {hobbies.length != 0 && <Box    display={"flex"}
+                                            flexWrap={"wrap"}
+                                            flexDirection={"row"}>
                 <Hobbies_Boxes />
-            </SimpleGrid>}
+            </Box>}
+            <ReturnButton />
         </Box>
     )
 }

@@ -181,9 +181,11 @@ function App() {
 								<Route path="/signUp" element={ logged ? <Navigate to="/" /> : (<Signup />) } />
 								<Route element={ logged ? <Outlet /> : <Navigate to="/login" /> } >
 									<Route path="/" element={ <Home />} />
-									<Route path="/settings" element={ <Settings />}>
-										<Route path="/settings/photos" element={ <Photo />}/>
-										<Route path="/settings/profile" element={ <Profile />}/>
+									<Route path="/settings" element={ <Outlet />}>
+										<Route path="/settings/" element={ <Settings /> } />
+										<Route path="/settings/photos" element={ <Photo />} />
+										<Route path="/settings/profile" element={ <Profile />} />
+										<Route path="/settings/other_profile:id" />
 										<Route path="/settings/match_list" />
 										<Route path="/settings/liked_list" />
 										<Route path="/settings/visits_list" />

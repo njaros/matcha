@@ -32,3 +32,30 @@ export function lngModulo(lng: number): number
         lng *= -1;
     return lng;
 }
+
+/**
+ * given an nominatim.openstreetmap location object
+ * this function extract a decent location description
+ * as a string.
+ * @param location 
+ * @returns 
+ */
+export function getPosInfo(location: any)
+{
+    if (location != null && location != undefined)
+    {
+        return location.city != undefined ?
+        location.city :
+        location.village != undefined ?
+        location.village :
+        location.town != undefined ?
+        location.town :
+        location.county != undefined ?
+        location.county :
+        location.state != undefined ?
+        location.state : 
+        location.country != undefined ?
+        location.country : "";
+    }
+    return "";
+}

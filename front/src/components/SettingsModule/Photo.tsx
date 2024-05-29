@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { IPhoto } from "../../Interfaces";
 import Axios from "../../tools/Caller";
 import { Box, Button, Image, List, ListItem, Input } from "@chakra-ui/react";
+import ReturnButton from "./ReturnButton";
 
 function displayListAccepted(props: string[])
 {
@@ -199,7 +200,7 @@ const Photo = () => {
     }
 
     return (
-        <Box margin="5%">
+        <Box margin="5%" flex={1} display={"flex"} flexDirection={"column"}>
                     <form onSubmit={onSubmit}>
                         <Input type="file" name="file[]" onChange={onChangeFile} multiple required/>
                         <Button type="submit">Envoi</Button>
@@ -208,6 +209,7 @@ const Photo = () => {
                         {denied.length ? <div className="deniedFiles">failed to upload : {displayListDenied(denied)}</div> : null}
                     </form>
                     {displayListPhotos(photos)}
+                    <ReturnButton />
         </Box>
     )
 

@@ -3,6 +3,7 @@ import Axios from "../../tools/Caller";
 import { IUser } from "../../Interfaces";
 import { Box, Textarea, List, ListItem, Image, Button, FormControl, Input, Text, Center } from "@chakra-ui/react"
 import { useForm } from "react-hook-form";
+import ReturnButton from "./ReturnButton";
 
 const Profile = () => {
     const [user, setUser] = useState<IUser>();
@@ -134,6 +135,7 @@ const Profile = () => {
                 </FormControl>
             </form>
             : null}
+            <ReturnButton />
         </Box>
     );
 }
