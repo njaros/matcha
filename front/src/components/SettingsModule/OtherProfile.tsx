@@ -1,54 +1,47 @@
 import { createRef, useEffect, useRef, useState } from "react";
 import { IPhoto, ISwipeUser } from "../../Interfaces";
-import { Box, Button, Icon, Image, Tag, Text } from "@chakra-ui/react";
+import { Box, Button, Icon, Text, Spinner, Tag } from "@chakra-ui/react";
 import { FcNext, FcPrevious } from "react-icons/fc"
 import { SiIfixit } from "react-icons/si"
-import { RiHeartAddFill, RiSendBackward } from "react-icons/ri";
+import { RiHeartAddFill } from "react-icons/ri";
+import { BsFillHeartbreakFill } from "react-icons/bs";
 import { BsStars } from "react-icons/bs";
 import { BiSolidUserDetail } from "react-icons/bi";
 import { useParams } from "react-router-dom";
 import Axios from "../../tools/Caller";
 import { DateTools } from "../../tools/DateTools";
 import { getPosInfo } from "../../tools/Thingy";
+import { storeMe } from "../../tools/Stores";
+import ReturnButton from "./ReturnButton";
 
 const fontSizeName = {base: "25px", sm: "30px", md: "35px", lg: "40px", xl: "45px"}
 const fontSizeLocation = {base: "15px", sm: "20px", md: "25px", lg: "30px", xl: "35px"}
 const fontSizeLove = {base: "17px", sm: "22px", md: "25px", lg: "28px", xl: "33px"}
 
-function parsePhotosFromBack(toParse: {id: string, binaries: string, mimetype: string}[])
+function parsePhotosFromBack(toParse: {id: string, binaries: string, mime_type: string}[])
 {
     const parsed: IPhoto[] = [];
-    if (toParse.length > 0)
-    {
-        toParse.map((photo: any) => {
-            parsed.push({
-                id: photo.id,
-                htmlSrcImg: "data:".concat(photo.mimetype)
-                .concat(";base64,")
-                .concat(photo.binaries),
-                main: photo.main
-            });
-        })
-    }
-    else
-    {
+    toParse.map((photo: any) => {
         parsed.push({
-            id: '0',
-            htmlSrcImg: "default-avatar.png",
-            main: true
+            id: photo.id,
+            htmlSrcImg: "data:".concat(photo.mime_type)
+            .concat(";base64,")
+            .concat(photo.binaries),
+            main: photo.main
         });
-    }
+    })
     return parsed;
 }
 
 export default function OtherProfile()
 {
     const userParam = useParams().id;
+    const me = storeMe(state => state.me)
     const [ user, setUser ] = useState<ISwipeUser>()
     const [ loading, setLoading ] = useState<boolean>(false);
     const [ photoIdx, setPhotoIdx ] = useState<number>(0);
     const [ detail, setDetail ] = useState<boolean>(false);
-    let nbPhotos = 0;
+    const [ nbPhotos, setNbPhotos ] = useState<number>(0);
     const userInfoRef = useRef<HTMLElement>();
     const loveRef = useRef<HTMLElement>();
     const buttonsRef = useRef<HTMLElement>();
@@ -56,10 +49,12 @@ export default function OtherProfile()
     useEffect(() => {
         if (userParam != undefined)
         {
+            setLoading(true)
             Axios.post("user/get_user_profile", { user_id: userParam }).then(
                 response => {
+                    console.log(response)
                     const photos = parsePhotosFromBack(response.data.photos);
-                    nbPhotos = photos.length;
+                    setNbPhotos(photos.length);
                     setUser({
                         id: response.data.id,
                         username: response.data.username,
@@ -74,9 +69,15 @@ export default function OtherProfile()
                         loved: false
                     });
                 }
+            ).catch(
+                err => {
+                    console.warn(err)
+                }
+            ).finally(
+                () => {setLoading(false);}
             )
         }
-    })
+    }, [])
 
     function incrPhotoIdx()
     {
@@ -97,6 +98,7 @@ export default function OtherProfile()
     const PhotosBrowser = () => {
         return (
         <Box    display="flex"
+                className="photoBrowser"
                 flex={1}
                 flexDirection="row"
                 alignItems="center"
@@ -117,13 +119,13 @@ export default function OtherProfile()
     }
 
     function HobbiesDisplay() {
-        if (props.user.hobbies != null)
+        if (user != undefined && user.hobbies != null)
         {
             return (
                 <Box    display="flex" justifyContent="flex-start" flexDirection="column" margin="5% 0">
                     <Text   marginBottom="3%" textDecoration="underline" fontWeight="bold" alignSelf="center">I like</Text>
                     <Box    display="flex" flexDirection="row" justifyContent="space-evenly" flexWrap="wrap">
-                    {props.user.hobbies.map((hobby: any, key) => {
+                    {user.hobbies.map((hobby: any, key) => {
                         return (
                             <Tag key={key} margin="1%" color="white" bgColor="black">{hobby.name}</Tag>
                         )
@@ -135,7 +137,7 @@ export default function OtherProfile()
     }
 
     function Biography() {
-        if (props.user.biography != "")
+        if (user != undefined && user.biography != "")
             return (
                 <Box    display="flex"
                         bgColor="white"
@@ -147,10 +149,10 @@ export default function OtherProfile()
                         margin="3%"
                         padding="0 3%">
                     <Text textDecoration="underline" fontWeight="bold" marginTop="3%">About me</Text>
-                    <Text>{props.user.biography}</Text>
+                    <Text>{user.biography}</Text>
                     <HobbiesDisplay />
-                    <Text alignSelf="center" margin="1% 5%" fontWeight="bold">My ranking: {props.user.rank}</Text>
-                    <Text margin="1% 5%" alignSelf="center" fontWeight="bold">My gender: {props.user.gender}</Text>
+                    <Text alignSelf="center" margin="1% 5%" fontWeight="bold">My ranking: {user.rank}</Text>
+                    <Text margin="1% 5%" alignSelf="center" fontWeight="bold">My gender: {user.gender}</Text>
                 </Box>
             )
     }
@@ -159,85 +161,122 @@ export default function OtherProfile()
         setDetail(!detail);
     }
 
-    return <Box className="DisplayProfile"
+    function like(e:any) {
+
+    }
+
+    function unlike(e:any) {
+        Axios.post("relationship/remove_like", {user_id: e.target.value}).then(
+            () => {
+                let newUser = user;
+                newUser.loved = false;
+                setUser(newUser);
+            }
+        ).catch(
+            err => {
+                console.warn(err)
+            }
+        )
+    }
+
+    function FooterButtons() {
+        if (user != undefined)
+        {
+            return (
+            <Box    ref={buttonsRef} display="flex" margin="5% 5%" justifyContent="space-between" flexDirection="row">
+                    <Button borderRadius="15px" colorScheme={detail ? "matchaPink" : "gray"} onClick={detailHandler}>
+                        <Icon boxSize={9} as={BiSolidUserDetail} />
+                    </Button>
+                    {me.id != user.id && 
+                    <>
+                        {user.loved ?
+                            <Button value={user.id} borderRadius="15px" onClick={unlike}>
+                                <Icon boxSize={8} color="red.400" as={BsFillHeartbreakFill} />
+                            </Button> : 
+                            <Button value={user.id} borderRadius="15px" onClick={like}>
+                                <Icon boxSize={8} color="red.400" as={RiHeartAddFill}/>
+                            </Button>
+                        }
+                    </>
+                    }
+            </Box>)
+        }
+    }
+
+    return (
+    <Box flex={1} w="100%" display={"flex"} flexDirection={"column"} justifyContent={"flex-end"} alignItems={"center"}>
+        {loading ? <Spinner margin="60% 0" size={"xl"} borderWidth={"5px"} color="blue.500" justifySelf={"center"} alignSelf={"center"}/> : user != undefined ?
+            <Box className="DisplayProfile"
                 display="flex"
                 width="80%"
+                alignSelf={"center"}
                 maxW="590px"
                 flex={1}
-                bgImage={props.user.photos.length > 0 ? props.user.photos[photoIdx].htmlSrcImg
-                    : "default-user.png"}
+                bgImage={user.photos[photoIdx].htmlSrcImg}
                 backgroundSize="cover" bgPosition="center" bgRepeat="no-repeat"
                 borderRadius="25px"
                 margin="2px"
                 justifyContent="flex-end"
                 flexDirection="column"
                 overflowY="auto"
-                ref={userInfoRef}
-                >
-        <Box    display="flex"
-                flexDirection="row"
-                margin="2% 5% 2% 5%"
-                justifyContent="space-between"
-                alignContent="center"
-                hidden={props.user.love}
-                ref={loveRef}>
-            <Icon color="gold" boxSize={8} as={BsStars}/>
-            <Text   color="hsl(324, 70%, 45%)"
-                    animation="wheelHueColor 10s infinite"
-                    fontWeight="bold"
-                    fontSize={fontSizeLove}
-                    >
-                This person likes you !
-            </Text>
-            <Icon color="gold" boxSize={8} as={BsStars}/>
-        </Box>
-        <PhotosBrowser/>
-        <Box    bgColor="gray"
-                opacity="60%"     
-                >
-            <Box    className="displayUserInfo"
-                    display="flex"
-                    flexDirection="column"
-                    justifyContent="flex-start"
-                    maxHeight={`calc(${userInfoRef.current?.clientHeight}px - \
-                        ${loveRef.current?.clientHeight}px - \
-                        ${buttonsRef.current?.clientHeight}px - 50px)`}
-                    overflowY="auto"
-                    >
-                <Box    className="nameAndAge"
-                        marginLeft="10px"
-                        display="flex" flexDirection="row"
-                        fontSize={fontSizeName} color="white" fontWeight="bold">
-                    <Text   maxW="60%" marginRight="3%"
-                            overflow="hidden" whiteSpace="nowrap" textOverflow="ellipsis"
-                            >{props.user.username}</Text>
-                    <Text   opacity="50%">
-                        {props.user.age}
+                ref={userInfoRef}>
+                <Box    display="flex"
+                        flexDirection="row"
+                        margin="2% 5% 2% 5%"
+                        justifyContent="space-between"
+                        alignContent="center"
+                        hidden={!user.love}
+                        ref={loveRef}>
+                    <Icon color="gold" boxSize={8} as={BsStars}/>
+                    <Text   color="hsl(324, 70%, 45%)"
+                            animation="wheelHueColor 10s infinite"
+                            fontWeight="bold"
+                            fontSize={fontSizeLove}
+                            >
+                        This person likes you !
                     </Text>
+                    <Icon color="gold" boxSize={8} as={BsStars}/>
                 </Box>
-                <Text   marginLeft="10px"
-                        color="white"
-                        fontSize={fontSizeLocation}
-                        fontWeight="bold">{props.user.location}</Text>
-                <Box    className="detail"
-                        display= "flex"
-                        hidden={!detail}
-                        flexDirection="column"
+                <PhotosBrowser/>
+                <Box    bgColor="gray"
+                        opacity="60%"     
                         >
-                    <Biography />
+                    <Box    className="displayUserInfo"
+                            display="flex"
+                            flexDirection="column"
+                            justifyContent="flex-start"
+                            maxHeight={`calc(${userInfoRef.current?.clientHeight}px - \
+                                ${loveRef.current?.clientHeight}px - \
+                                ${buttonsRef.current?.clientHeight}px - 50px)`}
+                            overflowY="auto"
+                            >
+                        <Box    className="nameAndAge"
+                                marginLeft="10px"
+                                display="flex" flexDirection="row"
+                                fontSize={fontSizeName} color="white" fontWeight="bold">
+                            <Text   maxW="60%" marginRight="3%"
+                                    overflow="hidden" whiteSpace="nowrap" textOverflow="ellipsis"
+                                    >{user.username}</Text>
+                            <Text   opacity="50%">
+                                {user.age}
+                            </Text>
+                        </Box>
+                        <Text   marginLeft="10px"
+                                color="white"
+                                fontSize={fontSizeLocation}
+                                fontWeight="bold">{user.location}</Text>
+                        <Box    className="detail"
+                                display= "flex"
+                                hidden={!detail}
+                                flexDirection="column"
+                                >
+                            <Biography />
+                        </Box>
+                    </Box>
+                    <FooterButtons />
                 </Box>
-            </Box>
-            <Box    ref={buttonsRef} display="flex" margin="5% 5%" justifyContent="space-between" flexDirection="row">
-                    <Button borderRadius="15px" onClick={props.returnHandler}>
-                        <Icon boxSize={7} color="black" as={RiSendBackward}/>
-                    </Button>
-                    <Button borderRadius="15px" colorScheme={detail ? "matchaPink" : "gray"} onClick={detailHandler}>
-                        <Icon boxSize={9} as={BiSolidUserDetail} />
-                    </Button>
-                    <Button value={props.user.id} borderRadius="15px" onClick={props.likeHandler}>
-                        <Icon boxSize={8} color="red.400" as={RiHeartAddFill}/>
-                    </Button>
-            </Box>
-        </Box>
-    </Box>
+            </Box> :
+            <Text>Nothing to display</Text>}
+            <ReturnButton to="/settings"/>
+        </Box>)
 }

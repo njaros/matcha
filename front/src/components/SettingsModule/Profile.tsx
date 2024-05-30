@@ -135,7 +135,7 @@ const Profile = () => {
                 </FormControl>
             </form>
             : null}
-            <ReturnButton />
+            <ReturnButton to="/settings"/>
         </Box>
     );
 }

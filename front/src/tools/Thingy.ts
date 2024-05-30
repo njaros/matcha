@@ -59,3 +59,10 @@ export function getPosInfo(location: any)
     }
     return "";
 }
+
+export function parsePhotoFromBack(user: any)
+{
+    if (user.binaries == undefined)
+        return "default-avatar.png"
+    return "data:".concat(user.mime_type).concat(";base64,").concat(user.binaries)
+}

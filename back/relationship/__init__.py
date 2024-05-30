@@ -45,7 +45,7 @@ app.add_url_rule(
     methods=["POST"],
 )
 app.add_url_rule(
-    "/relationshit/remove_like",
+    "/relationship/remove_like",
     "remove_like",
     remove_like,
     methods=["POST"]

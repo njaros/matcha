@@ -80,7 +80,7 @@ const Hobbies = () => {
                                             flexDirection={"row"}>
                 <Hobbies_Boxes />
             </Box>}
-            <ReturnButton />
+            <ReturnButton to="/settings"/>
         </Box>
     )
 }

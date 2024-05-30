@@ -19,6 +19,10 @@ import Profile from "./components/SettingsModule/Profile";
 import Geoloc from "./components/SettingsModule/FilterModule/Geoloc";
 import Filter from "./components/SettingsModule/FilterModule/Filter";
 import Hobbies from "./components/SettingsModule/Hobbies";
+import OtherProfile from "./components/SettingsModule/OtherProfile";
+import MatchList from "./components/SettingsModule/UserLists/MatchList";
+import LikeList from "./components/SettingsModule/UserLists/LikeList";
+import VisitorList from "./components/SettingsModule/UserLists/VisitorList";
 
 function App() {
 
@@ -185,13 +189,13 @@ function App() {
 										<Route path="/settings/" element={ <Settings /> } />
 										<Route path="/settings/photos" element={ <Photo />} />
 										<Route path="/settings/profile" element={ <Profile />} />
-										<Route path="/settings/other_profile:id" />
-										<Route path="/settings/match_list" />
-										<Route path="/settings/liked_list" />
-										<Route path="/settings/visits_list" />
+										<Route path="/settings/match_list" element={ <MatchList />}/>
+										<Route path="/settings/liked_list" element={ <LikeList /> } />
+										<Route path="/settings/visits_list" element={ <VisitorList/> } />
 										<Route path="/settings/filter" element={ <Filter focus={true} /> } />
 										<Route path="/settings/hobbies" element= { <Hobbies /> } />
 									</Route>
+									<Route path="/other_profile/:id" element={ <OtherProfile /> } />
 									<Route path="/conversation" element={ <Conversation />} />
 									<Route path="/swipe" element={ <Swipe/> } />
 								</Route>

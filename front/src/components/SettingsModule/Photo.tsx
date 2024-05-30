@@ -209,7 +209,7 @@ const Photo = () => {
                         {denied.length ? <div className="deniedFiles">failed to upload : {displayListDenied(denied)}</div> : null}
                     </form>
                     {displayListPhotos(photos)}
-                    <ReturnButton />
+                    <ReturnButton to="/settings"/>
         </Box>
     )
 

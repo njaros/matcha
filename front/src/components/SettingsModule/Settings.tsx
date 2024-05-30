@@ -25,6 +25,9 @@ const Settings = () => {
             <NavLinkSettings path={"/settings/photos"} name={"photos"}/>
             <NavLinkSettings path={"/settings/filter"} name={"filter"}/>
             <NavLinkSettings path={"/settings/hobbies"} name={"hobbies"}/>
+            <NavLinkSettings path={"/settings/liked_list"} name={"likes"}/>
+            <NavLinkSettings path={"/settings/match_list"} name={"matches"}/>
+            <NavLinkSettings path={"/settings/visits_list"} name={"visitors"}/>
         </Box>
     )
 }

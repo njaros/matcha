@@ -59,14 +59,13 @@ const Swipe = () => {
         setLoading(true);
         Axios.post("/user/get_user_profile_from_swipe", { user_id: swipeList[index]}).then(
             response => {
-                console.log(response.data);
                 const photos: IPhoto[] = [];
                 if (response.data.photos.length > 0)
                 {
                     response.data.photos.map((photo: any) => {
                         photos.push({
                             id: photo.id,
-                            htmlSrcImg: "data:".concat(photo.mimetype)
+                            htmlSrcImg: "data:".concat(photo.mime_type)
                             .concat(";base64,")
                             .concat(photo.binaries),
                             main: photo.main
