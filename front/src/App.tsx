@@ -3,7 +3,7 @@ import Layout from "./components/LayoutModules/Layout";
 import { tokenReader, getToken} from "./tools/TokenReader";
 import { useEffect, useState } from "react";
 import { Socket, io } from 'socket.io-client';
-import { storeMe, storeRoomList, storeSocket, storeTimeout } from "./tools/Stores";
+import { storeConvBool, storeMe, storeMsgCount, storeRoomList, storeSocket, storeTimeout } from "./tools/Stores";
 import Login from "./components/LoginModule/Login";
 import Signup from "./components/SignUpModule/SignUp";
 import Home from "./components/HomeModule/Home";
@@ -19,17 +19,48 @@ import { RoomList } from "./tools/interface";
 function App() {
 
 	const [userId, setUserId] = useState("")
-	const roomList = storeRoomList(state => state.roomList)
 	const { socket, updateSocket } = storeSocket()
 	const [ logged, setLogged ] = useState<boolean>(tokenReader.isLogged())
 	const [ access, setAccess ] = useState<string>(tokenReader.getToken());
     const { refreshTokenTimeoutId, updateRefreshTimeout } = storeTimeout();
 	const [ me, updateMe ] = storeMe(state => [state.me, state.updateMe])
+	const updateMsgCount = storeMsgCount(state => state.updateMsgCount)
+    const roomList = storeRoomList(state => state.roomList)
+
 
 	const getUserId = () => {
 		setUserId(tokenReader.getAttrAsString(getToken(), "user_id"))
 	}
 
+	const get_unread_msg_count = async (room_id : string) => {
+        
+        try{
+            const res = await Axios.post('/chat/get_unread_msg_count', {room_id: room_id})
+            updateMsgCount(room_id, res.data.count)
+
+        }
+        catch(err){
+            if(err)
+                console.error(err)
+        }
+    }
+
+    useEffect(() => {
+        socket?.on('msg_count', (data: any) => {
+                get_unread_msg_count(data)
+        })
+        return (() => {
+            socket?.off('msg_count')
+        })
+    })
+
+	useEffect(() => {
+		roomList?.forEach(elt => {
+			get_unread_msg_count(elt.id)			
+		});
+	})
+
+	
 	useEffect(() => {
 		const fetchMe = async () => {
 			try {
@@ -51,13 +82,10 @@ function App() {
 				return
 			updateSocket(io(`http://127.0.0.1:5066`, {
 				query : {
-					userId : userId,
 					token : getToken()
 				}
 			}))
-			roomList?.map((room : RoomList) => {
-				socket?.emit('join_chat_room', room.id)
-			})
+
 		}
 	},[userId, logged]) 
 

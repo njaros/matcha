@@ -97,7 +97,8 @@ function Chatbox(props: {room: Room_info | undefined}){
         updateConvBool(!convBool)
         try {
             await Axios.post('/chat/set_unread_msg_count_to_0', {'room_id': props.room?.id})
-            updateMsgCount(0)
+            
+            updateMsgCount(props.room!.id, 0)
         }
         catch(err){
             if (err)
@@ -157,11 +158,9 @@ function Chatbox(props: {room: Room_info | undefined}){
                         >
                             <Flex
                                 maxWidth={'70%'}
-                                // h={'50%'}
                                 bg={messageContent.author.id === me?.id ? '#A659EC' : 'white'}
                                 flexDir={'column'}
                                 wrap={'wrap'}
-                                // padding={'5px 12px'}
                                 borderRadius={'20px'}
                                 wordBreak={'break-all'}
                                 justifyContent={'center'}
@@ -207,10 +206,10 @@ function Chatbox(props: {room: Room_info | undefined}){
                         justifyContent: 'space-evenly',
                         alignItems: 'center'
                     }}>
-                        <FormControl isRequired w={'80%'} h={'60px'}>
+                        <FormControl isRequired w={'80%'} h={'45px'}>
                             <Input
                                 required={false}
-                                h={'60px'}
+                                h={'45px'}
                                 border={'none'}
                                 focusBorderColor="none"
                                 borderRadius={'70px'}

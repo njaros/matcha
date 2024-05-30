@@ -3,19 +3,39 @@ from flask_socketio import join_room, leave_room
 from flask import request, current_app
 from user_module.sql import get_user_with_room
 from uuid import UUID
+from user_module.sql import get_user_by_id
+import jwt
+
 
 connected_clients = {}
 
 @socketio.on('connect')
 def handle_connection():
     client_id = request.sid
+
+    try:
+        token = request.args.get('token')
+        data = jwt.decode(token, current_app.config["SECRET_ACCESS"],
+                            algorithms=["HS256"])
+        expDate = data.get("exp")
+        if expDate is None:
+            current_app.logger.error("token expiration date is expired")
+            return
+        user = get_user_by_id(data["user_id"])
+        if user is None:
+            current_app.logger.error("User does not exist")
+            return
+        connected_clients[client_id] = user
+    except jwt.exceptions.InvalidTokenError:
+        current_app.logger.error("Invalid Authentication token")
+        return
+    
     current_app.logger.info('Connection of socket ID: {}'.format(client_id))
-    user_id = request.args.get('userId')
-    token = request.args.get('token')
+    user_id = user['id']
     room_user = f'user-{user_id}'
     join_room(room_user)
     current_app.logger.info(f"Client {client_id} joined room {room_user}")
-    connected_clients[client_id] = {'user_id': user_id, 'token': token}
+    # connected_clients[client_id] = {'user_id': user_id, 'token': token}
     user = get_user_with_room(user_id)
     if user is None:
         current_app.logger.info('User not found in database.')
@@ -24,7 +44,6 @@ def handle_connection():
         current_app.logger.info('User does not have any rooms.')
         return
     for room in user['room']:
-        current_app.logger.info('alaid')
         join_room(f"room-{room['room_id']}")
 
 

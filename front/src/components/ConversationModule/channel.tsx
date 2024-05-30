@@ -1,16 +1,15 @@
-import React, {useEffect, useRef, useState} from "react";
-import { storeSocket, storeRoom, storeMe, storeRoomList, storeMessageList, storeConvBool, storeMsgCount } from "../../tools/Stores";
-import Axios from "../../tools/Caller";
-import { Box, Button, ListItem, UnorderedList, Flex, Text, Avatar, Icon, Divider } from "@chakra-ui/react";
-import Chatbox from "./Chatbox";
-import { RoomList, Room_info, msgCount } from "../../tools/interface";
-import { ArrowForwardIcon } from "@chakra-ui/icons";
+import { Avatar, Box, Flex, Icon, Text } from "@chakra-ui/react";
+import { useEffect, useRef, useState } from "react";
 import { BsArrowReturnRight } from "react-icons/bs";
+import Axios from "../../tools/Caller";
+import { storeConvBool, storeMe, storeMessageList, storeMsgCount, storeRoomList, storeSocket } from "../../tools/Stores";
+import { Room_info } from "../../tools/interface";
+import Chatbox from "./Chatbox";
 
 
 function Conv(props: {conv: any, index: number, me: any, join_room: any, setRoom: any, setMessageList: any}){
     
-    const [msgCount, updateMsgCount] = storeMsgCount(state => [state.msgCount, state.updateMsgCount])
+    const msgCount = storeMsgCount(state => state.msgCount)
     const [lastMessage, setLastMessage] = useState<{sender_id: string, content: string}>(
         {
             sender_id: props.conv.last_message_author?.author.id, 
@@ -18,48 +17,17 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setRoom
         })
     const socket = storeSocket(state => state.socket)
 
-
-    const incrementCount = async () => {
-        
-        try{
-            await Axios.post('/chat/increment_unread_msg_count', {room_id: props.conv.id})
-        }
-        catch(err){
-            if(err)
-                console.error(err)
-        }
-    }
-
-    const get_unread_msg_count = async () => {
-        
-        try{
-            const res = await Axios.post('/chat/get_unread_msg_count', {room_id: props.conv.id})
-            updateMsgCount(res.data.count)
-
-        }
-        catch(err){
-            if(err)
-                console.error(err)
-        }
-    }
-
     useEffect(() => {
         socket?.on('last_message', (data: any) => {
             if (data.room === props.conv.id){
                 setLastMessage({sender_id: data.author.user_id, content: data.content})
             }   
         })
-        socket?.on('count_message', () => {
-            incrementCount()
-            get_unread_msg_count()
-
-        })
         return (() => {
             socket?.off('last_message')
-            socket?.off('count_message')
         })
-    }, []) 
-
+    }, [socket, props.conv.id]) 
+    const current_count = msgCount[props.conv.id]?.count 
     return (
         <Flex
         key={props.index}
@@ -97,8 +65,22 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setRoom
                     </>
                     }
                 </Text>
-                <Text>{msgCount}</Text>
+        
             </Box>
+            <Box margin={15} position="relative">
+            <Box
+                width={6} // Largeur du cercle
+                height={6} // Hauteur du cercle
+                borderRadius="full" // Rend le div circulaire
+                backgroundColor={current_count > 0 ? "#A659EC" : ""} // Couleur de fond du cercle
+                display="flex" // Utiliser flexbox pour centrer le contenu
+                justifyContent="center" // Centrer horizontalement
+                alignItems={'center'}
+            >
+        <Text fontSize={'small'} textColor={'#f2f2f2'}>{current_count > 0 ? current_count : ""}</Text>
+    </Box>
+</Box>
+
     </Flex>
     )
 }
@@ -128,13 +110,6 @@ function ChannelList(){
     const join_room = async (room_id: string) => {
         socket?.emit('join_chat_room', room_id)
         updateConvBool(!convBool)
-        try {
-            await Axios.post('/chat/set_unread_msg_count_to_0', {'room_id': room_id})
-        }
-        catch(err){
-            if (err)
-                console.error(err)
-        }
     }
     
     useEffect(() => {

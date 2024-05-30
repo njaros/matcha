@@ -196,33 +196,29 @@ def get_room_with_message(room_id):
             SELECT
                 room.id AS room_id,
                 (
-                    SELECT json_agg(
-                        json_build_object(
-                            'id', user_table.id,
-                            'username', user_table.username,
-                            'email', user_table.email,
-                            'rank', user_table.rank,
-                            'birthdate', user_table.birthdate,
-                            'gender', user_table.gender,
-                            'biography', user_table.biography,
-                            'preference', user_table.preference
-                        )
+                    SELECT json_build_object(
+                        'id', user_table.id,
+                        'username', user_table.username,
+                        'email', user_table.email,
+                        'rank', user_table.rank,
+                        'birthdate', user_table.birthdate,
+                        'gender', user_table.gender,
+                        'biography', user_table.biography,
+                        'preference', user_table.preference
                     )
                     FROM user_table
                     WHERE user_table.id = room.user_1
                 ) AS user_1,
                 (
-                    SELECT json_agg(
-                        json_build_object(
-                            'id', user_table.id,
-                            'username', user_table.username,
-                            'email', user_table.email,
-                            'rank', user_table.rank,
-                            'birthdate', user_table.birthdate,
-                            'gender', user_table.gender,
-                            'biography', user_table.biography,
-                            'preference', user_table.preference
-                        )
+                    SELECT json_build_object(
+                        'id', user_table.id,
+                        'username', user_table.username,
+                        'email', user_table.email,
+                        'rank', user_table.rank,
+                        'birthdate', user_table.birthdate,
+                        'gender', user_table.gender,
+                        'biography', user_table.biography,
+                        'preference', user_table.preference
                     )
                     FROM user_table
                     WHERE user_table.id = room.user_2

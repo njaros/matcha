@@ -1,18 +1,13 @@
-import { useEffect, useState, useRef } from "react";
-import { storeSocket, storeRoom, storeMe, storeRoomList, storeConvBool } from "../../tools/Stores";
-import { Box, Button, FormControl, Input } from "@chakra-ui/react";
-import { useForm } from "react-hook-form";
+import { Box } from "@chakra-ui/react";
+import { useEffect } from "react";
 import Axios from "../../tools/Caller";
+import { storeConvBool, storeMe, storeRoomList } from "../../tools/Stores";
 import ChannelList from "./channel";
-import Chatbox from "./Chatbox";
-import { RoomList } from "../../tools/interface";
 
 function Conversation(){
     
-    const socket = storeSocket(state => state.socket)
-    const [room, updateRoom] = storeRoom(state => [state.room, state.updateRoom]);
-    const [roomList, updateRoomList] = storeRoomList(state => [state.roomList, state.updateRoomList])
-    const [convBool, updateConvBool] = storeConvBool(state => [state.convBool, state.updateConvBool])
+    const updateRoomList = storeRoomList(state => state.updateRoomList)
+    const convBool = storeConvBool(state => state.convBool)
     const me = storeMe(state => state.me)
     
     useEffect(() => {
