@@ -3,7 +3,7 @@ import { useState } from "react";
 
 const SliderFontSize = { base: '12px', sm: '14px', md: '16px', lg: '20px', xl: '24px' };
 const CommentaryFontSize = { base: '15px', sm: '18px', md: '21px', lg: '25px', xl: '30px' };
-const marginSize = { base: '8px', sm: '11px', md: '14px', lg: '17px', xl: '21px' };
+const marginSize = { base: '8px 0px', sm: '11px 0px', md: '14px 0px', lg: '17px 0px', xl: '21px 0px' };
 
 export function DistanceSlide(props: {setDistanceMax: (newVal: number) => void, defaultValue: number})
 {
@@ -18,16 +18,15 @@ export function DistanceSlide(props: {setDistanceMax: (newVal: number) => void, 
                 fontWeight="bold"
                 margin={marginSize}
                 fontSize={CommentaryFontSize}
-                color="pink.100">
+                >
                 <Box>
-                    distance max
+                    Distance max
                 </Box>
                 <Box>
                     {sliderValue} km
                 </Box>
             </Box>
             <Slider
-                colorScheme="matchaPink"
                 display="flex"
                 id="distanceMaxSlideFilter"
                 min={0}
@@ -38,10 +37,10 @@ export function DistanceSlide(props: {setDistanceMax: (newVal: number) => void, 
                     props.setDistanceMax(val);
                 }}
                 >
-                <SliderTrack backgroundColor="pink.400">
-                    <SliderFilledTrack backgroundColor="white"/>
+                <SliderTrack backgroundColor="#F2F2F2">
+                    <SliderFilledTrack backgroundColor="#A659EC"/>
                 </SliderTrack>
-                <SliderThumb boxSize="14px" outline="solid 2px #F687B3" />
+                <SliderThumb boxSize="10px" outline="solid 2px #A659EC" />
             </Slider>
         </Box>
     )
