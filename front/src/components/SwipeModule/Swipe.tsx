@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { ISwipeUser, IPhoto } from "../../Interfaces";
 import Axios from "../../tools/Caller";
-import { Box, Button, Circle, Icon, Image, Text, Spinner } from "@chakra-ui/react";
-import { storeFilter } from "../../tools/Stores";
+import { Box, Button, Circle, Icon, Image, Text, Spinner, useToast } from "@chakra-ui/react";
+import { storeFilter, storeSocket } from "../../tools/Stores";
 import { DateTools } from "../../tools/DateTools";
 import { RiSortAsc } from "react-icons/ri"
 import DisplayProfile from "./DisplayProfile";
@@ -10,6 +10,8 @@ import DisplayProfile from "./DisplayProfile";
 const fontSizeNobody = {base: "13px", sm: "20px", md: "25px", lg: "25px", xl: "25px"}
 
 const Swipe = () => {
+    const toast = useToast()
+    const socket = storeSocket(state => state.socket)
     const [ swipeList, setSwipeList ] = useState<string[]>([]);
     const [ index, setIndex ] = useState<number>(0);
     const { filter, updateFilter } = storeFilter();
@@ -127,6 +129,22 @@ const Swipe = () => {
     useEffect(() => {
         get_swipe_list();
     }, [sort])
+
+    useEffect(() => {
+        if (socket) {
+            socket.on("send_like", () => {
+                console.log("from send_like");
+                toast({title: "hello", description: "someone like U"})
+            });
+            console.log("swipe socket listener created")
+        }
+
+        return (() => {
+            if (socket) {
+                socket.off("send_like")
+            }
+        })
+    })
 
     useEffect(() => {
         if (swipeList.length > 0)
