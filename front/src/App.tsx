@@ -3,7 +3,7 @@ import Layout from "./components/LayoutModules/Layout";
 import { tokenReader, getToken} from "./tools/TokenReader";
 import { useEffect, useState } from "react";
 import { Socket, io } from 'socket.io-client';
-import { storeMe, storeSocket, storeTimeout } from "./tools/Stores";
+import { storeConvBool, storeMe, storeMsgCount, storeRoomList, storeSocket, storeTimeout } from "./tools/Stores";
 import Login from "./components/LoginModule/Login";
 import Signup from "./components/SignUpModule/SignUp";
 import Home from "./components/HomeModule/Home";
@@ -23,21 +23,53 @@ import OtherProfile from "./components/SettingsModule/OtherProfile";
 import MatchList from "./components/SettingsModule/UserLists/MatchList";
 import LikeList from "./components/SettingsModule/UserLists/LikeList";
 import VisitorList from "./components/SettingsModule/UserLists/VisitorList";
+import { RoomList } from "./tools/interface";
 
 function App() {
 
-	// const [socket, setSocket] = useState<Socket>(null)
 	const [userId, setUserId] = useState("")
 	const { socket, updateSocket } = storeSocket()
 	const [ logged, setLogged ] = useState<boolean>(tokenReader.isLogged())
 	const [ access, setAccess ] = useState<string>(tokenReader.getToken());
     const { refreshTokenTimeoutId, updateRefreshTimeout } = storeTimeout();
 	const [ me, updateMe ] = storeMe(state => [state.me, state.updateMe])
+	const updateMsgCount = storeMsgCount(state => state.updateMsgCount)
+    const roomList = storeRoomList(state => state.roomList)
+
 
 	const getUserId = () => {
 		setUserId(tokenReader.getAttrAsString(getToken(), "user_id"))
 	}
 
+	const get_unread_msg_count = async (room_id : string) => {
+        
+        try{
+            const res = await Axios.post('/chat/get_unread_msg_count', {room_id: room_id})
+            updateMsgCount(room_id, res.data.count)
+
+        }
+        catch(err){
+            if(err)
+                console.error(err)
+        }
+    }
+
+    useEffect(() => {
+        socket?.on('msg_count', (data: any) => {
+                get_unread_msg_count(data)
+        })
+        return (() => {
+            socket?.off('msg_count')
+        })
+    })
+
+	useEffect(() => {
+		roomList?.forEach(elt => {
+			get_unread_msg_count(elt.id)			
+		});
+	})
+
+	
 	useEffect(() => {
 		const fetchMe = async () => {
 			try {
@@ -53,20 +85,18 @@ function App() {
 	}, [logged])
 	
 	useEffect(() => {
+		if (logged){
+			getUserId()
+			if (!userId || userId.length <= 0)
+				return
+			updateSocket(io(`http://127.0.0.1:5066`, {
+				query : {
+					token : getToken()
+				}
+			}))
 
-		getUserId()
-		console.log('userId: ', userId)
-		if (!userId || userId.length <= 0)
-			return
-		console.log('test')
-		updateSocket(io(`http://127.0.0.1:5066`, {
-			query : {
-				userId : userId,
-				token : getToken()
-			}
-		}))
-
-	},[userId]) 
+		}
+	},[userId, logged]) 
 
 
 	//START OF TOKEN MANAGEMENT
@@ -154,7 +184,6 @@ function App() {
 		}
 		
 		return () => {
-			console.log("useEffect of app returns");
 			clearTimeout(timeIdTmp);
 		}
 	}, [access, logged])

@@ -54,8 +54,7 @@ const Hobbies = () => {
         return hobbies.map((elt) => {
             return(
                     <Button key={elt.id}
-                            margin="2% 2%"
-                            colorScheme={elt.belong? "matchaPink": "gray"}
+                            colorScheme={elt.belong? "purple_palet": "gray"}
                             boxShadow="base"
                             value={elt.id}
                             onClick={elt.belong? handleClickOff: handleClickOn}>

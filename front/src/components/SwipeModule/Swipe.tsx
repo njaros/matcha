@@ -55,7 +55,6 @@ const Swipe = () => {
     }
 
     function get_user_profile() {
-        console.log("id = ", swipeList[0]);
         setLoading(true);
         Axios.post("/user/get_user_profile_from_swipe", { user_id: swipeList[index]}).then(
             response => {
@@ -226,16 +225,16 @@ const Swipe = () => {
                     bg={"gray.100"}>
                 <Icon as={RiSortAsc} />
             </Circle>
-            <Button colorScheme={sort == "age" ? "matchaPink": "gray"}
+            <Button colorScheme={sort == "age" ? "purple_palet": "gray"}
                     value={"age"}
                     onClick={handleSort}>Age</Button>
-            <Button colorScheme={sort == "distance" ? "matchaPink": "gray"}
+            <Button colorScheme={sort == "distance" ? "purple_palet": "gray"}
                     value={"distance"}
                     onClick={handleSort}>Distance</Button>
-            <Button colorScheme={sort == "rank" ? "matchaPink": "gray"}
+            <Button colorScheme={sort == "rank" ? "purple_palet": "gray"}
                     value={"rank"}
                     onClick={handleSort}>Rank</Button>
-            <Button colorScheme={sort == "tags" ? "matchaPink": "gray"}
+            <Button colorScheme={sort == "tags" ? "purple_palet": "gray"}
                     value={"tags"}
                     onClick={handleSort}>Tags</Button>
         </Box>

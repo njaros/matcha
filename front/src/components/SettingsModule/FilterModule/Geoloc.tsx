@@ -1,12 +1,13 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import "leaflet/dist/leaflet.css"
+import { ChevronDownIcon } from "@chakra-ui/icons";
+import { Box, Icon, Text } from "@chakra-ui/react";
 import L, { Map as LeafLetMap } from "leaflet";
-import { Box, Button, Text, Icon } from "@chakra-ui/react";
+import "leaflet/dist/leaflet.css";
+import { useCallback, useEffect, useState } from "react";
+import { FaLock, FaLockOpen } from "react-icons/fa";
 import Axios from "../../../tools/Caller";
 import { storeGps } from "../../../tools/Stores";
 import { lngModulo } from "../../../tools/Thingy";
-import { FaLock, FaLockOpen } from "react-icons/fa";
-import { ChevronDownIcon } from "@chakra-ui/icons";
+
 
 const geolocFontSize = { base: '12px', sm: '14px', md: '16px', lg: '20px', xl: '24px' };
 const commentaryFontSize = { base: '15px', sm: '18px', md: '21px', lg: '25px', xl: '30px' };
@@ -63,29 +64,29 @@ const Geoloc = (props: {focus: boolean}) => {
             latitude: parseFloat(posAsStr.substring(posAsStr.indexOf("(") + 1, posAsStr.indexOf(","))),
             longitude: lngModulo(parseFloat(posAsStr.substring(posAsStr.indexOf(",") + 2, posAsStr.indexOf(")"))))
         }
-        console.log(posAsStr);
-        console.log(posClicked);
         Axios.post("profile/set_pos", posClicked)
         .then((response) => {
-            console.log(response);
             updateGpsLatLng(posClicked);
+            popup.remove()
         })
         .catch((error) => {
             console.log(error);
         })
     }
+    
 
     const handleMapClick = (e: L.LeafletMouseEvent) => {
         const popupContent = document.createElement("div");
-        popupContent.innerText = "click validate to register this localisation\n";
         const buttonValidate = document.createElement("button");
         buttonValidate.innerHTML = "validate";
+        buttonValidate.style.textAlign = 'center'
         buttonValidate.value = e.latlng.toString();
         buttonValidate.onclick = sendPosToServer;
         popupContent.appendChild(buttonValidate);
         popup.setLatLng(e.latlng).setContent(popupContent)
         .openOn(e.target)
     };
+
 
     const mapRef = useCallback((node: HTMLDivElement | null) => {
         if (props.focus == true)
@@ -158,28 +159,37 @@ const Geoloc = (props: {focus: boolean}) => {
                 display="flex"
                 flexDirection="column"
                 >
-            <Box display="flex" marginBottom="10px">
-                <Button
+            <Box display="flex" alignItems={'center'} marginBottom="10px">
+                <Box
                     display="flex"
-                    height={heigthSizes} 
                     justifyContent="space-between"
+                    alignItems={'center'}
                     flex={1}
+                    padding={'7px 15px'}
                     borderRadius="15px"
                     fontSize={commentaryFontSize}
-                    color="pink.100"
-                    colorScheme="matchaPink"
+                    backgroundColor={'#F2F2F2'}
                     onClick={triggerMap}>
-                    <Text display="flex" alignItems="center" textOverflow="ellipsis" overflow="hidden" whiteSpace="nowrap">
-                        Position: {posInfo.city}, {posInfo.country}
-                    </Text>
+                    <Box>
+                        <Text  fontWeight={'normal'} fontSize={'small'} color={'#6C6565'} opacity={'80%'}>
+                            Current location
+                        </Text>
+                        <Text textOverflow="ellipsis" overflow="hidden" whiteSpace="nowrap">
+                             {posInfo.city}, {posInfo.country}
+                        </Text>
+                    </Box>
                     <Icon   as={ChevronDownIcon}
                             boxSize={5}
+                            stroke={'white'}
                             transition="transform 0.3s"
                             transform={hideMap? 'rotate(0deg)' : 'rotate(180deg)'} />
-                </Button>
-                <Button marginLeft="15px" borderRadius="15px" colorScheme="matchaPink" height={heigthSizes} width={heigthSizes} onClick={fixedGpsHandler}><Icon color="pink.100" as={fixed ? FaLock : FaLockOpen}/></Button>
+                </Box>
+                <Box marginLeft="15px" onClick={fixedGpsHandler}><Icon color="#534a4a" as={fixed ? FaLock : FaLockOpen}/></Box>
             </Box>
-            <Box ref={mapRef} hidden={hideMap} border="solid 2px #FED7E2" borderRadius="10px" height="50vh" width="100%" />
+
+
+
+            <Box ref={mapRef} hidden={hideMap} borderRadius="10px" height="50vh" width="100%" />
         </Box>
     )
    

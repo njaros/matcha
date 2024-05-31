@@ -9,6 +9,7 @@ from .dto import message_dto
 
 #verifier si la personne qui ajoute le message est dans la room
 
+
 @message_dto
 @token_required
 def add_message(**kwargs):
@@ -17,6 +18,7 @@ def add_message(**kwargs):
         'sender_id': kwargs['user']['id'],
         'room_id': uuid.isUuid(request.json['room_id']),
     })
+
 
 @token_required
 def add_room(**kwargs):
@@ -30,23 +32,46 @@ def add_room(**kwargs):
     chat_sql.insert_room(data)
     return [], 200
 
+
 @token_required
 def get_room(**kwargs):
     return chat_sql.get_room(uuid.isUuid(request.form.get('room_id')))
 
+
 @token_required
 def get_room_with_message(**kwargs):
     return chat_sql.get_room_with_message(uuid.isUuid(request.json['room_id']))
+
 
 @token_required
 def get_message(**kwargs):
     room = get_room_with_message()
     return room['messages'], 200
 
+
 @token_required
 def get_room_list_by_id(**kwargs):
     return chat_sql.get_room_list_by_id(kwargs['user']['id'])
 
+
 @token_required
 def get_message_list_by_room_id(**kwargs):
     return chat_sql.get_message_list_by_room_id((uuid.isUuid(request.json['room_id'])))
+
+
+@token_required
+def increment_unread_msg_count(**kwargs):
+    chat_sql.increment_unread_msg_count(kwargs['user']['id'], uuid.isUuid(request.json['room_id']))
+    return [], 200 
+
+
+@token_required
+def set_unread_msg_count_to_0(**kwargs):
+    current_app.logger.info('######################################## TEST #############################################')
+    chat_sql.set_unread_msg_count_to_0(kwargs['user']['id'], uuid.isUuid(request.json['room_id']))
+    return [], 200
+
+
+@token_required
+def get_unread_msg_count(**kwargs):
+    return chat_sql.get_unread_msg_count(kwargs['user']['id'], uuid.isUuid(request.json['room_id']))

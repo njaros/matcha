@@ -37,24 +37,26 @@ export default function Filter(props: {focus: boolean}) {
     }
 
     return (
-        <Box marginTop="10px">
+        <Box marginTop="10px" >
             <Geoloc focus={props.focus}/>
-            <AgeRangeSlider
-                setAgeRange={handlerAgeMinMax}
-                defaultValue={
-                    [
-                        DateTools.ageFromDate(filter.date_max),
-                        DateTools.ageFromDate(filter.date_min)
-                    ]
-                } />
-            <DistanceSlide
-                setDistanceMax={handleDistanceMax}
-                defaultValue={filter.distance_max}
-                />
-            <FameGapSlide
-                setGapMax={handleGapMax}
-                defaultValue={filter.ranking_gap}
-                />
+            <Box padding={'15px'} borderRadius={'15px'} backgroundColor={'#f2f2f2'}>
+                <AgeRangeSlider
+                    setAgeRange={handlerAgeMinMax}
+                    defaultValue={
+                        [
+                            DateTools.ageFromDate(filter.date_max),
+                            DateTools.ageFromDate(filter.date_min)
+                        ]
+                    } />
+                <DistanceSlide
+                    setDistanceMax={handleDistanceMax}
+                    defaultValue={filter.distance_max}
+                    />
+                <FameGapSlide
+                    setGapMax={handleGapMax}
+                    defaultValue={filter.ranking_gap}
+                    />
+            </Box>
             <TagsSelector
                 setTags={handlerTags}
                 defaultValue={filter.hobby_ids}

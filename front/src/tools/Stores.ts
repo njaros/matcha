@@ -1,6 +1,7 @@
 import { Socket, io } from "socket.io-client";
 import { create } from "zustand";
-import { Room, Me, RoomList, MessageData } from "./interface";
+import { Room, Me, RoomList, MessageData, msgCount } from "./interface";
+import { LatLng } from "leaflet";
 import { ISwipeFilter } from "../Interfaces"
 import { DateTools } from "./DateTools";
 
@@ -58,6 +59,21 @@ interface IConvBool {
 	convBool: boolean;
 	updateConvBool: (updateConvBool: boolean) => void
 }
+
+interface ImsgCount {
+	msgCount: {[room_id: string]: msgCount};
+	updateMsgCount: (room_id: string, newCount: number) => void
+}
+
+export const storeMsgCount = create<ImsgCount>()((set) => ({
+	msgCount: {},
+	updateMsgCount: (room_id: string, newCount: number) => set((state) => ({
+		msgCount: {
+			...state.msgCount,
+			[room_id]: {count: newCount}
+		}
+	}))
+}))
 
 export const storeConvBool = create<IConvBool>()((set) => ({
 	convBool: false,

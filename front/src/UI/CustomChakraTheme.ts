@@ -14,5 +14,17 @@ export const CustomTheme = extendTheme({
         800: "#ee4596",
         900: "#ee4596",
       },
+      purple_palet: {
+        50: "#c694f2",
+        100: "#be86f1",
+        200: "#b677ef",
+        300: "#ae68ed",
+        400: "#a659ec",
+        500: "#9e4bea",
+        600: "#963ce8",
+        700: "#8f2ee7",
+        800: "#871fe5",
+        900: "#7f19db",
+      }
     }
   })

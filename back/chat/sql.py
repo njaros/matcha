@@ -22,6 +22,18 @@ def insert_room(data):
             """
     cur.execute(query, (room_id, data.get('user_id1'), data.get('user_id2')))
     room = cur.fetchone()
+    query2 = """
+            INSERT INTO unread_msg (
+                user_id,
+                room_id
+            )
+            VALUES (%s, %s)
+            """
+    data = [
+        (room['user_1'], room['id']),
+        (room['user_2'], room['id'])
+    ]
+    cur.executemany(query2, data)
     conn.commit()
     cur.close()
     return room
@@ -149,7 +161,8 @@ def get_message_list_by_room_id(room_id):
                 message.room_id AS room,
                 message.send_at
             FROM message
-            WHERE message.room_id = %s;
+            WHERE message.room_id = %s
+            ORDER BY message.id ASC;
     """
 
     cur.execute(query, (room_id,))
@@ -183,33 +196,29 @@ def get_room_with_message(room_id):
             SELECT
                 room.id AS room_id,
                 (
-                    SELECT json_agg(
-                        json_build_object(
-                            'id', user_table.id,
-                            'username', user_table.username,
-                            'email', user_table.email,
-                            'rank', user_table.rank,
-                            'birthdate', user_table.birthdate,
-                            'gender', user_table.gender,
-                            'biography', user_table.biography,
-                            'preference', user_table.preference
-                        )
+                    SELECT json_build_object(
+                        'id', user_table.id,
+                        'username', user_table.username,
+                        'email', user_table.email,
+                        'rank', user_table.rank,
+                        'birthdate', user_table.birthdate,
+                        'gender', user_table.gender,
+                        'biography', user_table.biography,
+                        'preference', user_table.preference
                     )
                     FROM user_table
                     WHERE user_table.id = room.user_1
                 ) AS user_1,
                 (
-                    SELECT json_agg(
-                        json_build_object(
-                            'id', user_table.id,
-                            'username', user_table.username,
-                            'email', user_table.email,
-                            'rank', user_table.rank,
-                            'birthdate', user_table.birthdate,
-                            'gender', user_table.gender,
-                            'biography', user_table.biography,
-                            'preference', user_table.preference
-                        )
+                    SELECT json_build_object(
+                        'id', user_table.id,
+                        'username', user_table.username,
+                        'email', user_table.email,
+                        'rank', user_table.rank,
+                        'birthdate', user_table.birthdate,
+                        'gender', user_table.gender,
+                        'biography', user_table.biography,
+                        'preference', user_table.preference
                     )
                     FROM user_table
                     WHERE user_table.id = room.user_2
@@ -260,3 +269,41 @@ def delete_room_by_user_ids(**kwargs):
     )
     conn.commit()
     cur.close()
+
+
+def increment_unread_msg_count(user_id, room_id):
+    cur = conn.cursor()
+    query = """
+            UPDATE unread_msg
+            SET count = count + 1
+            WHERE user_id = %s AND room_id = %s
+            """
+    cur.execute(query, (user_id, room_id))
+    conn.commit()
+    cur.close()
+
+
+def set_unread_msg_count_to_0(user_id, room_id):
+    cur = conn.cursor()
+    query = """
+            UPDATE unread_msg
+            SET count = 0
+            WHERE user_id = %s AND room_id = %s
+            """
+    cur.execute(query, (user_id, room_id))
+    conn.commit()
+    cur.close()
+
+
+def get_unread_msg_count(user_id, room_id):
+    cur = conn.cursor(row_factory=dict_row)
+    query = """
+            SELECT
+                count
+            FROM unread_msg
+            WHERE user_id = %s AND room_id = %s
+            """
+    cur.execute(query, (user_id, room_id))
+    res = cur.fetchone()
+    cur.close()
+    return res

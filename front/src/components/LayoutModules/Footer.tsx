@@ -1,5 +1,5 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { storeGps, storeTimeout, storeConvBool } from "../../tools/Stores";
+import { storeGps, storeTimeout, storeConvBool, storeMsgCount, storeRoomList } from "../../tools/Stores";
 import { cookieMan } from "../../tools/CookieMan";
 import { As, Box, Icon, Text } from "@chakra-ui/react"
 import { MdFavorite, MdHome, MdSettings } from "react-icons/md"
@@ -20,7 +20,6 @@ interface IIconNavBar {
     isTarget: boolean
 }
 const IconNavBar = ({url, icon, boxSize, isTarget}: IIconNavBar) => {
-    console.log(isTarget)
     const color = isTarget ? '#FFFFFF' : '#57595D'
     const iconBorder = isTarget ? '2px red solid' : ''
     return (
@@ -43,7 +42,10 @@ const Footer = (props: {
     const { gps, updateGps } = storeGps();
     const [ logoutClicked, setLogoutClicked] = useState<boolean>(false);
     const convBool = storeConvBool(state => state.convBool)
- 
+    const msgCount = storeMsgCount(state => state.msgCount)
+    const roomList = storeRoomList(state => state.roomList)
+    const [msgBool, setMsgBool] = useState<boolean>(false)
+
     const logout = () => {
         if (refreshTokenTimeoutId != undefined)
         {
@@ -94,11 +96,18 @@ const Footer = (props: {
             updateGps(undefined);
         }
     }, [logoutClicked])
+    
+    useEffect(() =>  {
+        roomList?.forEach(elt => {
+            if (msgCount[elt.id].count > 0)
+                setMsgBool(true)
+        })
+    }, [msgCount])
 
     return (
 
         <Box
-        hidden={convBool }
+        hidden={convBool}
         className="iconUserLogged"
         display="flex"
         width={'60%'}
@@ -113,7 +122,7 @@ const Footer = (props: {
         { props.logged ?
         <>
             <IconNavBar url="/swipe" icon={MdFavorite} boxSize={headerIconSize} isTarget={isTarget("/swipe", location.pathname)} />
-            <IconNavBar url="/conversation" icon={MdChat} boxSize={headerIconSize} isTarget={isTarget("/conversation", location.pathname)} />
+            <IconNavBar url="/conversation" icon={msgBool === false ? MdChat : MdChat} boxSize={headerIconSize} isTarget={isTarget("/conversation", location.pathname)} />
             <IconNavBar url="/settings" icon={MdSettings} boxSize={headerIconSize} isTarget={isTarget("/settings", location.pathname)} />
             <IconNavBar url="/" icon={MdHome} boxSize={headerIconSize} isTarget={isTarget("/", location.pathname)} />
             <button onClick={logout} style={{display: 'flex'}}><Icon color={"#57595D"} as={ImExit} boxSize={headerIconSize}/></button>

@@ -81,7 +81,6 @@ const Profile = () => {
     }
 
     const profileSubmit = (data: IUser) => {
-        console.log("data = ", data);
         const form = new FormData();
         if (data.username != user?.username)
             form.append("username", data.username);
@@ -97,7 +96,6 @@ const Profile = () => {
             form.append("preference", data.preference);
         Axios.post("profile/update_user", form).then(
             response => {
-                console.log(response);
                 setUser(response.data.updated_user)
             }
         ).catch(

@@ -13,14 +13,15 @@ const Layout = (props: {
 {
     return (
         <Box
-            display="flex"
-            flexDirection="column"
-            alignItems="center"
-            height="100%"
-            width="100%"
-            gap={'10px'}
-            >
-            <Header />
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                height="100%"
+                width="100%"
+                overflowY="auto"
+                gap={'10px'}
+                bg={'white'}
+                >
             <Outlet />
             <Footer logged={props.logged} handleLog={props.handleLog} handleAccess={props.handleAccess} />
         </Box>
