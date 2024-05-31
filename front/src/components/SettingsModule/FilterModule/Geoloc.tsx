@@ -189,7 +189,7 @@ const Geoloc = (props: {focus: boolean}) => {
 
 
 
-            <Box ref={mapRef} hidden={hideMap} borderRadius="10px" height="50vh" width="100%" />
+            <Box ref={mapRef} hidden={hideMap} marginBottom="15px" borderRadius="10px" height="50vh" width="100%" />
         </Box>
     )
    

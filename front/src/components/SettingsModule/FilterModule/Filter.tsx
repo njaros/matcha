@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Flex } from "@chakra-ui/react";
 import { storeFilter } from "../../../tools/Stores";
 import { DateTools } from "../../../tools/DateTools";
 import { AgeRangeSlider } from "./AgeRangeSlider";
@@ -37,31 +37,36 @@ export default function Filter(props: {focus: boolean}) {
     }
 
     return (
-        <Box marginTop="10px" >
-            <Geoloc focus={props.focus}/>
-            <Box padding={'15px'} borderRadius={'15px'} backgroundColor={'#f2f2f2'}>
-                <AgeRangeSlider
-                    setAgeRange={handlerAgeMinMax}
-                    defaultValue={
-                        [
-                            DateTools.ageFromDate(filter.date_max),
-                            DateTools.ageFromDate(filter.date_min)
-                        ]
-                    } />
-                <DistanceSlide
-                    setDistanceMax={handleDistanceMax}
-                    defaultValue={filter.distance_max}
+        <Flex   flex={1} flexDirection={"column"} overflow={"hidden"} alignItems={"center"} justifyContent={"flex-end"}>
+            <Flex   flex={1}
+                    overflowY={"auto"}
+                    marginTop="10px" width="80%"
+                    flexDirection="column" alignItems="center" >
+                <Geoloc focus={props.focus}/>
+                <Box padding={'15px'} width={"100%"} borderRadius={'15px'} backgroundColor={'#f2f2f2'}>
+                    <AgeRangeSlider
+                        setAgeRange={handlerAgeMinMax}
+                        defaultValue={
+                            [
+                                DateTools.ageFromDate(filter.date_max),
+                                DateTools.ageFromDate(filter.date_min)
+                            ]
+                        } />
+                    <DistanceSlide
+                        setDistanceMax={handleDistanceMax}
+                        defaultValue={filter.distance_max}
+                        />
+                    <FameGapSlide
+                        setGapMax={handleGapMax}
+                        defaultValue={filter.ranking_gap}
+                        />
+                </Box>
+                <TagsSelector
+                    setTags={handlerTags}
+                    defaultValue={filter.hobby_ids}
                     />
-                <FameGapSlide
-                    setGapMax={handleGapMax}
-                    defaultValue={filter.ranking_gap}
-                    />
-            </Box>
-            <TagsSelector
-                setTags={handlerTags}
-                defaultValue={filter.hobby_ids}
-                 />
-            <ReturnButton />
-        </Box>
+            </Flex>
+            <ReturnButton to="/settings" />
+        </Flex>
     )
 }

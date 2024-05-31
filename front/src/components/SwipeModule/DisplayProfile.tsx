@@ -124,7 +124,7 @@ export default function DisplayProfile(props: {
                 margin="2% 5% 2% 5%"
                 justifyContent="space-between"
                 alignContent="center"
-                hidden={props.user.love}
+                hidden={!props.user.love}
                 ref={loveRef}>
             <Icon color="gold" boxSize={8} as={BsStars}/>
             <Text   color="hsl(324, 70%, 45%)"
@@ -153,7 +153,7 @@ export default function DisplayProfile(props: {
                         marginLeft="10px"
                         display="flex" flexDirection="row"
                         fontSize={fontSizeName} color="white" fontWeight="bold">
-                    <Text   maxW="60%" marginRight="3%"
+                    <Text   maxW="80%" marginRight="3%"
                             overflow="hidden" whiteSpace="nowrap" textOverflow="ellipsis"
                             >{props.user.username}</Text>
                     <Text   opacity="50%">

@@ -5,6 +5,7 @@ from validators import uuid
 from error_status.error import ForbiddenError
 from chat.sql import insert_room
 from .dto import remove_like_dto, report_dto
+from swipe_module.sql import dislike_user
 
 
 @token_required
@@ -73,5 +74,9 @@ def get_liked_not_matched(**kwargs):
 @token_required
 @report_dto
 def report_user(**kwargs):
-    relationship_sql.report_user(**kwargs)
+    user_deleted = relationship_sql.report_user(**kwargs)
+    if user_deleted is False:
+        relationship_sql.remove_like(**kwargs)
+        kwargs["target_id"] = kwargs["user_id"]
+        dislike_user(**kwargs)
     return [], 200

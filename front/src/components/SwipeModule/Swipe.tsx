@@ -6,6 +6,7 @@ import { storeFilter, storeSocket } from "../../tools/Stores";
 import { DateTools } from "../../tools/DateTools";
 import { RiSortAsc } from "react-icons/ri"
 import DisplayProfile from "./DisplayProfile";
+import ReportTrigger from "../ReportTrigger";
 
 const fontSizeNobody = {base: "13px", sm: "20px", md: "25px", lg: "25px", xl: "25px"}
 
@@ -172,6 +173,17 @@ const Swipe = () => {
             setSort(e.target.value)
     }
 
+    function incrementIndex() {
+        if (index >= swipeList.length - 1)
+        {
+            get_swipe_list();
+        }
+        else
+        {
+            setIndex(idx => idx + 1);
+        }
+    }
+
     const likeHandler = (e: any) => {
         Axios.post("swipe/like_user", {"target_id": e.currentTarget.value}).then(
             response => {
@@ -181,15 +193,9 @@ const Swipe = () => {
             err => {
                 console.warn(err);
             }
+        ).finally(
+            () => {incrementIndex();}
         )
-        if (index >= swipeList.length - 1)
-        {
-            get_swipe_list();
-        }
-        else
-        {
-            setIndex(idx => idx + 1);
-        }
     }
 
     const dislikeHandler = (e: any) => {
@@ -201,15 +207,9 @@ const Swipe = () => {
             err => {
                 console.warn(err);
             }
+        ).finally(
+            () => {incrementIndex();}
         )
-        if (index >= swipeList.length - 1)
-        {
-            get_swipe_list();
-        }
-        else
-        {
-            setIndex(idx => idx + 1);
-        }
     }
 
     return (
@@ -220,11 +220,7 @@ const Swipe = () => {
                 flexDirection={"row"}
                 margin="5% 0"
                 justifyContent={"space-evenly"}>
-            <Circle className="circleIconSort"
-                    size={10}
-                    bg={"gray.100"}>
-                <Icon as={RiSortAsc} />
-            </Circle>
+            <ReportTrigger user_id={swipeUser.id} optionAction={incrementIndex}/>
             <Button colorScheme={sort == "age" ? "purple_palet": "gray"}
                     value={"age"}
                     onClick={handleSort}>Age</Button>

@@ -40,7 +40,7 @@ export default function TagsSelector(props: any) {
     return (
         <>
             <Text fontWeight="bold" marginTop="30px">
-                Select your hobbies
+                What hobbies they must have ?
             </Text>
             <Box display="flex" justifyContent="flex-start" flexDirection="column" margin="5% 0">
                 <Box display="flex" flexDirection="row" flexWrap="wrap">

@@ -201,36 +201,34 @@ function App() {
 	return (
 		<Box
 			display="flex"
-			bg="pink.300"
 			flexDirection="column"
 			height="100%"
 			width="100%"
 			fontFamily="roboto"
 			>
-					<BrowserRouter>
-						<Routes>
-							<Route element={ <Layout logged={logged} handleLog={handleLog} handleAccess={handleAccess} /> }>
-								<Route path="/login" element={ logged ? <Navigate to="/" /> : (<Login handleLog={handleLog} handleAccess={handleAccess} />) } />
-								<Route path="/signUp" element={ logged ? <Navigate to="/" /> : (<Signup />) } />
-								<Route element={ logged ? <Outlet /> : <Navigate to="/login" /> } >
-									<Route path="/" element={ <Home />} />
-									<Route path="/settings" element={ <Outlet />}>
-										<Route path="/settings/" element={ <Settings /> } />
-										<Route path="/settings/photos" element={ <Photo />} />
-										<Route path="/settings/profile" element={ <Profile />} />
-										<Route path="/settings/match_list" element={ <MatchList />}/>
-										<Route path="/settings/liked_list" element={ <LikeList /> } />
-										<Route path="/settings/visits_list" element={ <VisitorList/> } />
-										<Route path="/settings/filter" element={ <Filter focus={true} /> } />
-										<Route path="/settings/hobbies" element= { <Hobbies /> } />
-									</Route>
-									<Route path="/other_profile/:id" element={ <OtherProfile /> } />
-									<Route path="/conversation" element={ <Conversation />} />
-									<Route path="/swipe" element={ <Swipe/> } />
-								</Route>
+			<BrowserRouter>
+				<Routes>
+					<Route element={ <Layout logged={logged} handleLog={handleLog} handleAccess={handleAccess} /> }>
+						<Route path="/login" element={ logged ? <Navigate to="/swipe" /> : (<Login handleLog={handleLog} handleAccess={handleAccess} />) } />
+						<Route path="/signUp" element={ logged ? <Navigate to="/swipe" /> : (<Signup />) } />
+						<Route element={ logged ? <Outlet /> : <Navigate to="/login" /> } >
+							<Route path="/settings" element={ <Outlet />}>
+								<Route path="/settings/" element={ <Settings /> } />
+								<Route path="/settings/photos" element={ <Photo />} />
+								<Route path="/settings/profile" element={ <Profile />} />
+								<Route path="/settings/match_list" element={ <MatchList />}/>
+								<Route path="/settings/liked_list" element={ <LikeList /> } />
+								<Route path="/settings/visits_list" element={ <VisitorList/> } />
+								<Route path="/settings/filter" element={ <Filter focus={true} /> } />
+								<Route path="/settings/hobbies" element= { <Hobbies /> } />
 							</Route>
-						</Routes>
-					</BrowserRouter>
+							<Route path="/other_profile/:id" element={ <OtherProfile /> } />
+							<Route path="/conversation" element={ <Conversation />} />
+							<Route path="/swipe" element={ <Swipe/> } />
+						</Route>
+					</Route>
+				</Routes>
+			</BrowserRouter>
 		</Box>
 		)
 }

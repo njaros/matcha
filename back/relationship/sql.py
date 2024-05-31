@@ -166,26 +166,28 @@ def get_liked_by_user_id(**kwargs):
             FROM    relationship
             LEFT OUTER JOIN user_table ON liked_id = user_table.id
             LEFT OUTER JOIN photos ON photos.user_id = user_table.id
+                                   AND photos.main = true
             WHERE liker_id = %s
             ORDER BY username;
         """, (kwargs["user"]["id"],)
     )
-    list = cur.fetchmany()
+    list = cur.fetchall()
     cur.close()
     return list
 
 
 def report_user(**kwargs):
+    user_deleted = False
     cur = conn.cursor()
     cur.execute(
         """
         INSERT INTO report (reported_id, reporter_id)
         VALUES (%(reported)s, %(reporter)s)
-        ON CONFLIT DO NOTHING
+        ON CONFLICT DO NOTHING
         RETURNING (
             SELECT COUNT(*)
             FROM report
-            WHERE reported_id == %(reported)s
+            WHERE reported_id = %(reported)s
         )
         """, {"reported": kwargs["user_id"], "reporter": kwargs["user"]["id"]}
     )
@@ -194,8 +196,10 @@ def report_user(**kwargs):
         cur.execute(
             """
             DELETE FROM user_table
-            WHERE id == %s
+            WHERE id = %s
             """, (kwargs["user_id"],)
         )
+        user_deleted = True
     cur.close()
     conn.commit()
+    return user_deleted

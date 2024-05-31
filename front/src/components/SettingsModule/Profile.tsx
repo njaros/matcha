@@ -110,7 +110,7 @@ const Profile = () => {
     }
 
     return (
-        <Box    display="flex" flexDirection="column">
+        <Box    display="flex" flex={1} flexDirection="column">
             {user?
             <form onSubmit={handleSubmit(profileSubmit)}>
                 <FormControl    display="flex" flexDirection="column">

@@ -12,6 +12,8 @@ const headerTextSize = {base: "14px", sm: "16px", md: "19px", lg: "22px", xl: "2
 const headerIconSize = {base: 8, sm: 10, md: 12, lg: 14, xl: 16}
 
 const isTarget = (location: string, itemLocation: string) => location === itemLocation
+const isTargetSettings = (itemLocation: string) => "/settings" == itemLocation.substring(0, 9)
+                                                || "/other_profile" == itemLocation.substring(0, 14)
 
 interface IIconNavBar {
     url: string,
@@ -123,8 +125,7 @@ const Footer = (props: {
         <>
             <IconNavBar url="/swipe" icon={MdFavorite} boxSize={headerIconSize} isTarget={isTarget("/swipe", location.pathname)} />
             <IconNavBar url="/conversation" icon={msgBool === false ? MdChat : MdChat} boxSize={headerIconSize} isTarget={isTarget("/conversation", location.pathname)} />
-            <IconNavBar url="/settings" icon={MdSettings} boxSize={headerIconSize} isTarget={isTarget("/settings", location.pathname)} />
-            <IconNavBar url="/" icon={MdHome} boxSize={headerIconSize} isTarget={isTarget("/", location.pathname)} />
+            <IconNavBar url="/settings" icon={MdSettings} boxSize={headerIconSize} isTarget={isTargetSettings(location.pathname)} />
             <button onClick={logout} style={{display: 'flex'}}><Icon color={"#57595D"} as={ImExit} boxSize={headerIconSize}/></button>
         </>
         :

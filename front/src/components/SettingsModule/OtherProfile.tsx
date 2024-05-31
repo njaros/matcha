@@ -1,18 +1,18 @@
-import { createRef, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IPhoto, ISwipeUser } from "../../Interfaces";
 import { Box, Button, Icon, Text, Spinner, Tag } from "@chakra-ui/react";
 import { FcNext, FcPrevious } from "react-icons/fc"
-import { SiIfixit } from "react-icons/si"
 import { RiHeartAddFill } from "react-icons/ri";
 import { BsFillHeartbreakFill } from "react-icons/bs";
 import { BsStars } from "react-icons/bs";
 import { BiSolidUserDetail } from "react-icons/bi";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Axios from "../../tools/Caller";
 import { DateTools } from "../../tools/DateTools";
 import { getPosInfo } from "../../tools/Thingy";
 import { storeMe } from "../../tools/Stores";
 import ReturnButton from "./ReturnButton";
+import ReportTrigger from "../ReportTrigger";
 
 const fontSizeName = {base: "25px", sm: "30px", md: "35px", lg: "40px", xl: "45px"}
 const fontSizeLocation = {base: "15px", sm: "20px", md: "25px", lg: "30px", xl: "35px"}
@@ -21,14 +21,25 @@ const fontSizeLove = {base: "17px", sm: "22px", md: "25px", lg: "28px", xl: "33p
 function parsePhotosFromBack(toParse: {id: string, binaries: string, mime_type: string}[])
 {
     const parsed: IPhoto[] = [];
-    toParse.map((photo: any) => {
-        parsed.push({
-            id: photo.id,
-            htmlSrcImg: "data:".concat(photo.mime_type)
-            .concat(";base64,")
-            .concat(photo.binaries),
-            main: photo.main
-        });
+    if (toParse.length > 0)
+    {
+        toParse.map((photo: any) => {
+            parsed.push({
+                id: photo.id,
+                htmlSrcImg: "data:".concat(photo.mime_type)
+                .concat(";base64,")
+                .concat(photo.binaries),
+                main: photo.main
+            })
+        })
+        parsed.sort((a, b) => {
+            return (b.main ? 1 : 0) - (a.main ? 1 : 0)
+        })
+    }
+    else parsed.push({
+        id: "0",
+        htmlSrcImg: "default-avatar.png",
+        main: true
     })
     return parsed;
 }
@@ -42,9 +53,11 @@ export default function OtherProfile()
     const [ photoIdx, setPhotoIdx ] = useState<number>(0);
     const [ detail, setDetail ] = useState<boolean>(false);
     const [ nbPhotos, setNbPhotos ] = useState<number>(0);
+    const [ forceRerender, setForceRerender ] = useState<boolean>(true);
     const userInfoRef = useRef<HTMLElement>();
     const loveRef = useRef<HTMLElement>();
     const buttonsRef = useRef<HTMLElement>();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (userParam != undefined)
@@ -52,7 +65,6 @@ export default function OtherProfile()
             setLoading(true)
             Axios.post("user/get_user_profile", { user_id: userParam }).then(
                 response => {
-                    console.log(response)
                     const photos = parsePhotosFromBack(response.data.photos);
                     setNbPhotos(photos.length);
                     setUser({
@@ -66,7 +78,7 @@ export default function OtherProfile()
                         photos: photos,
                         hobbies: response.data.hobbies,
                         love: response.data.love,
-                        loved: false
+                        loved: response.data.loved
                     });
                 }
             ).catch(
@@ -162,13 +174,23 @@ export default function OtherProfile()
     }
 
     function like(e:any) {
-
+        Axios.post("swipe/like_user", {target_id: e.currentTarget.value}).then(
+            () => {
+                let newUser = {...user};
+                newUser.loved = true;
+                setUser(newUser);
+            }
+        ).catch(
+            err => {
+                console.warn(err)
+            }
+        )
     }
 
     function unlike(e:any) {
-        Axios.post("relationship/remove_like", {user_id: e.target.value}).then(
+        Axios.post("relationship/remove_like", {user_id: e.currentTarget.value}).then(
             () => {
-                let newUser = user;
+                let newUser = {...user};
                 newUser.loved = false;
                 setUser(newUser);
             }
@@ -187,12 +209,13 @@ export default function OtherProfile()
                     <Button borderRadius="15px" colorScheme={detail ? "matchaPink" : "gray"} onClick={detailHandler}>
                         <Icon boxSize={9} as={BiSolidUserDetail} />
                     </Button>
+                    <ReportTrigger user_id={user.id} optionAction={() => navigate("/settings", {replace: true})} />
                     {me.id != user.id && 
                     <>
                         {user.loved ?
                             <Button value={user.id} borderRadius="15px" onClick={unlike}>
                                 <Icon boxSize={8} color="red.400" as={BsFillHeartbreakFill} />
-                            </Button> : 
+                            </Button> :
                             <Button value={user.id} borderRadius="15px" onClick={like}>
                                 <Icon boxSize={8} color="red.400" as={RiHeartAddFill}/>
                             </Button>
@@ -206,20 +229,19 @@ export default function OtherProfile()
     return (
     <Box flex={1} w="100%" display={"flex"} flexDirection={"column"} justifyContent={"flex-end"} alignItems={"center"}>
         {loading ? <Spinner margin="60% 0" size={"xl"} borderWidth={"5px"} color="blue.500" justifySelf={"center"} alignSelf={"center"}/> : user != undefined ?
-            <Box className="DisplayProfile"
-                display="flex"
-                width="80%"
-                alignSelf={"center"}
-                maxW="590px"
-                flex={1}
-                bgImage={user.photos[photoIdx].htmlSrcImg}
-                backgroundSize="cover" bgPosition="center" bgRepeat="no-repeat"
-                borderRadius="25px"
-                margin="2px"
-                justifyContent="flex-end"
-                flexDirection="column"
-                overflowY="auto"
-                ref={userInfoRef}>
+            <Box    className="DisplayProfile"
+                    display="flex"
+                    width="80%"
+                    maxW="590px"
+                    flex={1}
+                    bgImage={user.photos[photoIdx].htmlSrcImg}
+                    backgroundSize="cover" bgPosition="center" bgRepeat="no-repeat"
+                    borderRadius="25px"
+                    margin="2px"
+                    justifyContent="flex-end"
+                    flexDirection="column"
+                    overflowY="auto"
+                    ref={userInfoRef}>
                 <Box    display="flex"
                         flexDirection="row"
                         margin="2% 5% 2% 5%"

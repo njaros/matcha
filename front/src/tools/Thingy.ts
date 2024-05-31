@@ -62,7 +62,7 @@ export function getPosInfo(location: any)
 
 export function parsePhotoFromBack(user: any)
 {
-    if (user.binaries == undefined)
-        return "default-avatar.png"
+    if (user.binaries == undefined || user.binaries == null)
+        return "/default-avatar.png"
     return "data:".concat(user.mime_type).concat(";base64,").concat(user.binaries)
 }
