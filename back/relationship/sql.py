@@ -173,3 +173,29 @@ def get_liked_by_user_id(**kwargs):
     list = cur.fetchmany()
     cur.close()
     return list
+
+
+def report_user(**kwargs):
+    cur = conn.cursor()
+    cur.execute(
+        """
+        INSERT INTO report (reported_id, reporter_id)
+        VALUES (%(reported)s, %(reporter)s)
+        ON CONFLIT DO NOTHING
+        RETURNING (
+            SELECT COUNT(*)
+            FROM report
+            WHERE reported_id == %(reported)s
+        )
+        """, {"reported": kwargs["user_id"], "reporter": kwargs["user"]["id"]}
+    )
+    count = cur.fetchone()
+    if count == 10:
+        cur.execute(
+            """
+            DELETE FROM user_table
+            WHERE id == %s
+            """, (kwargs["user_id"],)
+        )
+    cur.close()
+    conn.commit()

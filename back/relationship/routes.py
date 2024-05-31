@@ -4,7 +4,7 @@ from jwt_policy.jwt_policy import token_required
 from validators import uuid
 from error_status.error import ForbiddenError
 from chat.sql import insert_room
-from .dto import remove_like_dto
+from .dto import remove_like_dto, report_dto
 
 
 @token_required
@@ -68,3 +68,10 @@ def get_matches(**kwargs):
 @token_required
 def get_liked_not_matched(**kwargs):
     return relationship_sql.get_liked_by_user_id(**kwargs), 200
+
+
+@token_required
+@report_dto
+def report_user(**kwargs):
+    relationship_sql.report_user(**kwargs)
+    return [], 200

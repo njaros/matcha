@@ -130,6 +130,16 @@ def set_up_db():
 
         cur.execute(
             """
+            CREATE TABLE report (
+                reported_id uuid REFERENCES user_table(id) ON DELETE CASCADE,
+                reporter_id uuid REFERENCES user_table(id),
+                CONSTRAINT report_pk PRIMARY KEY(reported_id, reporter_id)
+            );
+            """
+        )
+
+        cur.execute(
+            """
             CREATE TABLE visits (
                 id serial PRIMARY KEY,
                 visitor_id uuid REFERENCES user_table(id) ON DELETE CASCADE,

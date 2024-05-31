@@ -1,7 +1,6 @@
 from jwt_policy.jwt_policy import token_required
 from . import sql
 from .dto import like_dislike_dto, filter_swipe_dto
-from flask_socketio import emit
 from extensions import socketio
 from tools.thingy import to_socket_uuid
 from flask import current_app
