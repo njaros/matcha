@@ -40,7 +40,7 @@ const Login = (props:{
                     updateGpsFixed(response.data.gpsfixed);
                     props.handleAccess(response.data.access_token);
                     props.handleLog(true);
-					const from = (location.state as any)?.from || "/swipe";
+					const from = (location.state as any)?.from || "/";
 					navigate(from);
 				}
 				else

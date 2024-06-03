@@ -53,10 +53,9 @@ export default function OtherProfile()
     const [ photoIdx, setPhotoIdx ] = useState<number>(0);
     const [ detail, setDetail ] = useState<boolean>(false);
     const [ nbPhotos, setNbPhotos ] = useState<number>(0);
-    const [ forceRerender, setForceRerender ] = useState<boolean>(true);
-    const userInfoRef = useRef<HTMLElement>();
-    const loveRef = useRef<HTMLElement>();
-    const buttonsRef = useRef<HTMLElement>();
+    const userInfoRef = useRef<HTMLDivElement>(null);
+    const loveRef = useRef<HTMLDivElement>(null);
+    const buttonsRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -176,9 +175,11 @@ export default function OtherProfile()
     function like(e:any) {
         Axios.post("swipe/like_user", {target_id: e.currentTarget.value}).then(
             () => {
-                let newUser = {...user};
-                newUser.loved = true;
-                setUser(newUser);
+                if (user) {
+                    let newUser = {...user};
+                    newUser.loved = true;
+                    setUser(newUser);
+                }
             }
         ).catch(
             err => {
@@ -190,9 +191,11 @@ export default function OtherProfile()
     function unlike(e:any) {
         Axios.post("relationship/remove_like", {user_id: e.currentTarget.value}).then(
             () => {
-                let newUser = {...user};
-                newUser.loved = false;
-                setUser(newUser);
+                if (user) {
+                    let newUser = {...user};
+                    newUser.loved = false;
+                    setUser(newUser);
+                }
             }
         ).catch(
             err => {
@@ -210,7 +213,7 @@ export default function OtherProfile()
                         <Icon boxSize={9} as={BiSolidUserDetail} />
                     </Button>
                     <ReportTrigger user_id={user.id} optionAction={() => navigate("/settings", {replace: true})} />
-                    {me.id != user.id && 
+                    {me && me.id != user.id && 
                     <>
                         {user.loved ?
                             <Button value={user.id} borderRadius="15px" onClick={unlike}>

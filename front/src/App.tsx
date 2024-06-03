@@ -6,7 +6,6 @@ import { Socket, io } from 'socket.io-client';
 import { storeConvBool, storeMe, storeMsgCount, storeRoomList, storeSocket, storeTimeout } from "./tools/Stores";
 import Login from "./components/LoginModule/Login";
 import Signup from "./components/SignUpModule/SignUp";
-import Home from "./components/HomeModule/Home";
 import Conversation from "./components/ConversationModule/Conversation";
 import Swipe from "./components/SwipeModule/Swipe";
 import { ChakraProvider, Box } from "@chakra-ui/react"
@@ -200,6 +199,7 @@ function App() {
 
 	return (
 		<Box
+			className="App"
 			display="flex"
 			flexDirection="column"
 			height="100%"
@@ -209,8 +209,8 @@ function App() {
 			<BrowserRouter>
 				<Routes>
 					<Route element={ <Layout logged={logged} handleLog={handleLog} handleAccess={handleAccess} /> }>
-						<Route path="/login" element={ logged ? <Navigate to="/swipe" /> : (<Login handleLog={handleLog} handleAccess={handleAccess} />) } />
-						<Route path="/signUp" element={ logged ? <Navigate to="/swipe" /> : (<Signup />) } />
+						<Route path="/login" element={ logged ? <Navigate to="/" /> : (<Login handleLog={handleLog} handleAccess={handleAccess} />) } />
+						<Route path="/signUp" element={ logged ? <Navigate to="/" /> : (<Signup />) } />
 						<Route element={ logged ? <Outlet /> : <Navigate to="/login" /> } >
 							<Route path="/settings" element={ <Outlet />}>
 								<Route path="/settings/" element={ <Settings /> } />
@@ -224,7 +224,7 @@ function App() {
 							</Route>
 							<Route path="/other_profile/:id" element={ <OtherProfile /> } />
 							<Route path="/conversation" element={ <Conversation />} />
-							<Route path="/swipe" element={ <Swipe/> } />
+							<Route path="/" element={ <Swipe/> } />
 						</Route>
 					</Route>
 				</Routes>

@@ -123,7 +123,7 @@ const Footer = (props: {
         >
         { props.logged ?
         <>
-            <IconNavBar url="/swipe" icon={MdFavorite} boxSize={headerIconSize} isTarget={isTarget("/swipe", location.pathname)} />
+            <IconNavBar url="/" icon={MdFavorite} boxSize={headerIconSize} isTarget={isTarget("/", location.pathname)} />
             <IconNavBar url="/conversation" icon={msgBool === false ? MdChat : MdChat} boxSize={headerIconSize} isTarget={isTarget("/conversation", location.pathname)} />
             <IconNavBar url="/settings" icon={MdSettings} boxSize={headerIconSize} isTarget={isTargetSettings(location.pathname)} />
             <button onClick={logout} style={{display: 'flex'}}><Icon color={"#57595D"} as={ImExit} boxSize={headerIconSize}/></button>
