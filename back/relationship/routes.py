@@ -6,52 +6,72 @@ from error_status.error import ForbiddenError
 from chat.sql import insert_room
 from .dto import remove_like_dto, report_dto
 from swipe_module.sql import dislike_user
+import base64
+from cryptography.fernet import Fernet
 
 
 @token_required
 def get_relationship_by_id(**kwargs):
-    rel = relationship_sql.get_relationship_by_id(uuid.isUuid(request.form.get('id')))
-    if kwargs['user']['id'] == str(rel['liker_id']) or kwargs['user']['id'] == str(rel['liked_id']):
+    rel = relationship_sql.get_relationship_by_id(
+        uuid.isUuid(request.form.get("id"))
+    )
+    if kwargs["user"]["id"] == str(rel["liker_id"]) or kwargs["user"][
+        "id"
+    ] == str(rel["liked_id"]):
         return rel
-    raise ForbiddenError('You cannot acces to this information.')
+    raise ForbiddenError("You cannot acces to this information.")
 
 
 @token_required
 def get_relationship_by_liker_id(**kwargs):
-    rel = relationship_sql.get_relationship_by_liker_id(uuid.isUuid(request.form.get('id')))
-    if str(rel['liker_id']) == kwargs['user']['id'] or str(rel['liked_id']) == kwargs['user']['id']:
+    rel = relationship_sql.get_relationship_by_liker_id(
+        uuid.isUuid(request.form.get("id"))
+    )
+    if (
+        str(rel["liker_id"]) == kwargs["user"]["id"]
+        or str(rel["liked_id"]) == kwargs["user"]["id"]
+    ):
         return rel
-    raise ForbiddenError('You cannot acces to this information.')
+    raise ForbiddenError("You cannot acces to this information.")
 
 
 @token_required
 def get_relationship_by_liked_id(**kwargs):
-    rel = relationship_sql.get_relationship_by_liked_id(uuid.isUuid(request.form.get('id')))
-    if str(rel['liker_id']) == kwargs['user']['id'] or str(rel['liked_id']) == kwargs['user']['id']:
+    rel = relationship_sql.get_relationship_by_liked_id(
+        uuid.isUuid(request.form.get("id"))
+    )
+    if (
+        str(rel["liker_id"]) == kwargs["user"]["id"]
+        or str(rel["liked_id"]) == kwargs["user"]["id"]
+    ):
         return rel
-    raise ForbiddenError('You cannot acces to this information.')
+    raise ForbiddenError("You cannot acces to this information.")
 
 
 @token_required
 def is_matched(**kwargs):
     data = {
-        "liker_id": uuid.isUuid(request.form['liker_id']),
-        "liked_id": uuid.isUuid(request.form['liked_id'])
+        "liker_id": uuid.isUuid(request.form["liker_id"]),
+        "liked_id": uuid.isUuid(request.form["liked_id"]),
     }
     is_matched = relationship_sql.is_matched(data)
-    if str(is_matched['liker_id']) == kwargs['user']['id'] or str(is_matched['liked_id']) == kwargs['user']['id']:
-        return 'success'
-    raise ForbiddenError('You cannot acces to this information.')
+    if (
+        str(is_matched["liker_id"]) == kwargs["user"]["id"]
+        or str(is_matched["liked_id"]) == kwargs["user"]["id"]
+    ):
+        return "success"
+    raise ForbiddenError("You cannot acces to this information.")
 
 
 @token_required
 def create_room_when_user_are_matched():
-    if is_matched() == 'success':
+    if is_matched() == "success":
         return insert_room(
             {
-                'user_id1': uuid.isUuid(request.form['liker_id']),
-                'user_id2': uuid.isUuid(request.form['liked_id'])
-            })
+                "user_id1": uuid.isUuid(request.form["liker_id"]),
+                "user_id2": uuid.isUuid(request.form["liked_id"]),
+            }
+        )
 
 
 @token_required
@@ -63,12 +83,26 @@ def remove_like(**kwargs):
 
 @token_required
 def get_matches(**kwargs):
-    return relationship_sql.get_matches_by_user_id(**kwargs), 200
+    hasher = Fernet(current_app.config["SECRET_PHOTO"])
+    list = relationship_sql.get_matches_by_user_id(**kwargs)
+    for elt in list:
+        if elt["binaries"] is not None:
+            elt["binaries"] = base64.b64encode(
+                hasher.decrypt(elt["binaries"])
+            ).decode("utf-8")
+    return list, 200
 
 
 @token_required
 def get_liked_not_matched(**kwargs):
-    return relationship_sql.get_liked_by_user_id(**kwargs), 200
+    hasher = Fernet(current_app.config["SECRET_PHOTO"])
+    list = relationship_sql.get_liked_by_user_id(**kwargs)
+    for elt in list:
+        if elt["binaries"] is not None:
+            elt["binaries"] = base64.b64encode(
+                hasher.decrypt(elt["binaries"])
+            ).decode("utf-8")
+    return list, 200
 
 
 @token_required

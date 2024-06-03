@@ -3,6 +3,8 @@ import { Flex, Image, Text } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
 import ReturnButton from "../ReturnButton";
 
+const lineSizes={base: "70px", sm: "95px", md: "115px", lg:"135px", xl: "160px"}
+
 export default function DisplayList(props: {list: IListUser[], enableDate: boolean}) {
     return (
     <Flex flex={1} overflow={"hidden"} flexDirection={"column"} w="80%" alignItems={"center"} justifyContent={"flex-end"}>
@@ -10,10 +12,12 @@ export default function DisplayList(props: {list: IListUser[], enableDate: boole
             {props.list.map(user => {
                 return (
                     <NavLink key={user.id} to={`/other_profile/${user.id}`}>
-                        <Flex display="flex" w="100%" flexDir={"row"} justifyContent={"flex-start"}>
-                            <Image  objectFit="contain"
+                        <Flex display="flex" alignItems={"center"} h={lineSizes} flexDir={"row"} justifyContent={"flex-start"}>
+                            <Image
+                                    fit="contain"
                                     src={user.photo}/>
-                            <Text margin="0 5%">{user.username}</Text>
+                            <Text   margin="0 5%"
+                                    >{user.username}</Text>
                             {props.enableDate && <Text>{user.at}</Text>}
                         </Flex>
                     </NavLink>
