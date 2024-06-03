@@ -12,7 +12,7 @@ from .dto import (
 )
 from error_status.error import BadRequestError
 from . import sql
-from user_module.sql import get_user_by_username
+from user_module.sql import get_user_by_email
 from tools import thingy
 from validators import uuid
 from db_init import insert_users_in_database, db_conn
@@ -119,9 +119,9 @@ def change_biography(**kwargs):
 @update_user_dto
 def update_user(**kwargs):
     notice = None
-    if kwargs["username"] is not None:
-        if get_user_by_username(kwargs["username"]) is not None:
-            notice = "username already taken"
+    if kwargs["email"] is not None:
+        if get_user_by_email(kwargs["email"]) is not None:
+            notice = "email already token"
             kwargs["username"] = None
             if thingy.notNoneLen(kwargs) < 3:
                 raise BadRequestError(notice + ", nothing to modify")

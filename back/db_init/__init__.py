@@ -28,6 +28,7 @@ def set_up_db():
                 username VARCHAR,
                 password VARCHAR,
                 email VARCHAR,
+                email_verified bool not null default false,
                 birthDate DATE,
                 gender VARCHAR,
                 preference VARCHAR,

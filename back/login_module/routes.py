@@ -10,8 +10,8 @@ from . import dto
 
 @dto.signup_dto
 def sign(**kwargs):
-    if user_ctx.get_user_by_username(kwargs["username"]) is not None:
-        raise (BadRequestError("user already exists"))
+    if user_ctx.get_user_by_email(kwargs["email"]) is not None:
+        raise (BadRequestError("email already exists"))
     kwargs["password"] = hashlib.sha256(
         kwargs["password"].encode("utf-8")
     ).hexdigest()
