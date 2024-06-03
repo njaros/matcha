@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import Axios from "../../tools/Caller";
 import { storeConvBool, storeMe, storeRoomList } from "../../tools/Stores";
 import ChannelList from "./channel";
-import MatchList from "./MatchList";
+// import MatchList from "./MatchList";
 
 function Conversation(){
     
@@ -40,7 +40,7 @@ function Conversation(){
 
     return (
     <Box flexGrow={1} w={'100%'} h={'100%'}>   
-        <MatchList />
+        {/* <MatchList /> */}
         <ChannelList />
     </Box>
     );

@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useLocation, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { ILoginInForm } from "../../Interfaces";
 import Axios from "../../tools/Caller";
 import { cookieMan } from "../../tools/CookieMan";
 import { storeGps } from "../../tools/Stores";
-import { Box, Spinner } from "@chakra-ui/react";
+import { Box, Button, Flex, Input, Link, Spinner, Text } from "@chakra-ui/react";
 
 const Login = (props:{
     handleLog: (newState: boolean) => void,
@@ -58,23 +58,74 @@ const Login = (props:{
     }
 
     return (
-        <Box flexGrow={1} className="login_page">
-            <h1>LOGIN PAGE</h1>
-            <form className="login_form" onSubmit={handleSubmit(loginSubmit)}>
-                <input className="username_input"
-                {...register("username", {required: true})}
-                type="text"
-                placeholder="Enter your username..." />
-                <input className="password_input"
-                {...register("password", {required: true})}
-                type="text"
-                placeholder="Enter your password..." />
-                {wrong && <div className="log_error">wrong username or password</div>}
-                {loading ?
+    <Flex 
+        flexDirection="column" 
+        alignItems="center" 
+        justifyContent="center"
+        flexGrow={1}
+        className="login_page"
+    >
+        <Text 
+            fontSize={'x-large'}
+            fontWeight={'bold'}
+            paddingBottom={'10px'}
+        >
+            Welcome
+        </Text>
+        <form className="login_form" onSubmit={handleSubmit(loginSubmit)}>
+            <Flex
+                flexDirection="column" 
+                
+            >
+                <Box paddingBottom={'5px'}>
+                    <Input
+                        w={'100%'}
+                        className="username_input"
+                        {...register("username", {required: true})}
+                        type="text"
+                        placeholder="Enter your username..." 
+                    />
+                </Box>
+                <Box paddingBottom={'5px'}>
+                    <Input
+                        w={'100%'} 
+                        className="password_input"
+                        {...register("password", {required: true})}
+                        type="password"
+                        placeholder="Enter your password..."
+                    />
+                </Box>
+            {wrong && <div className="log_error">wrong username or password</div>}
+            {loading ?
                 <Spinner color="purple" size="lg"/> :
-                <button className="submit_button" type="submit">SUBMIT</button>}
-            </form>
-        </Box>
+                <Button 
+                    className="submit_button" 
+                    type="submit"
+                    bg="#A659EC"
+                    
+                >
+                    Login
+                </Button>}
+            </Flex>
+        </form>
+        <Flex 
+            alignItems={'center'}
+            marginTop={'5px'}
+        >
+            <Text fontSize={'small'} >
+                Don't have an account ?{" "}
+            </Text>       
+            <NavLink to={'/signUp'}>
+                <Text 
+                    fontSize={'small'} 
+                    marginLeft={'5px'}
+                    textColor={'#A659EC'}
+                >
+                    Sign up
+                </Text>
+            </NavLink>
+        </Flex>
+    </Flex>
     )
 }
 

@@ -100,16 +100,19 @@ const Footer = (props: {
         }
     }, [logoutClicked])
     
-    useEffect(() =>  {
+    useEffect(() => {
+        let hasUnreadMessage = false;
+      
         roomList?.forEach(elt => {
-            if (msgCount[elt.id].count > 0){
-                setMsgBool(true)
-                return
-            }
-            setMsgBool(false)
-        })
-    }, [msgCount])
-
+          if (msgCount[elt.id]?.count > 0) {
+            hasUnreadMessage = true;
+            return;
+          }
+        });      
+        setMsgBool(hasUnreadMessage);
+      }, [msgCount]);
+      
+    console.log()
     return (
 
         <Box
@@ -125,19 +128,14 @@ const Footer = (props: {
         marginBottom={'10px'}
         padding={'0 10px '}
         >
-        { props.logged ?
+        { props.logged &&
         <>
             <IconNavBar url="/" icon={MdFavorite} boxSize={headerIconSize} isTarget={isTarget("/", location.pathname)} />
             <IconNavBar url="/conversation" icon={msgBool === false ? TbMessage : TbMessage2Heart} boxSize={headerIconSize} isTarget={isTarget("/conversation", location.pathname)} />
             <IconNavBar url="/settings" icon={MdSettings} boxSize={headerIconSize} isTarget={isTargetSettings(location.pathname)} />
             <button onClick={logout} style={{display: 'flex'}}><Icon color={"#57595D"} as={ImExit} boxSize={headerIconSize}/></button>
         </>
-        :
-        <Box className="signup_login" display="flex" justifyContent="center" fontSize={headerTextSize}>
-            {location.pathname == "/login" ?
-            <NavLink to="/signup">Not registered ? Sign Up !</NavLink> :
-            <NavLink to="/login">Already registered ? Log In !</NavLink>}
-        </Box>}
+        }
     </Box>
     );
 }
