@@ -3,6 +3,7 @@ import { storeGps, storeTimeout, storeConvBool, storeMsgCount, storeRoomList } f
 import { cookieMan } from "../../tools/CookieMan";
 import { As, Box, Icon, Text } from "@chakra-ui/react"
 import { MdFavorite, MdHome, MdSettings } from "react-icons/md"
+import { TbMessage, TbMessage2Heart } from "react-icons/tb";
 import { ImExit } from "react-icons/im"
 import { MdChat } from "react-icons/md";
 import { ChatIcon, SettingsIcon } from "@chakra-ui/icons"
@@ -101,8 +102,11 @@ const Footer = (props: {
     
     useEffect(() =>  {
         roomList?.forEach(elt => {
-            if (msgCount[elt.id].count > 0)
+            if (msgCount[elt.id].count > 0){
                 setMsgBool(true)
+                return
+            }
+            setMsgBool(false)
         })
     }, [msgCount])
 
@@ -124,7 +128,7 @@ const Footer = (props: {
         { props.logged ?
         <>
             <IconNavBar url="/" icon={MdFavorite} boxSize={headerIconSize} isTarget={isTarget("/", location.pathname)} />
-            <IconNavBar url="/conversation" icon={msgBool === false ? MdChat : MdChat} boxSize={headerIconSize} isTarget={isTarget("/conversation", location.pathname)} />
+            <IconNavBar url="/conversation" icon={msgBool === false ? TbMessage : TbMessage2Heart} boxSize={headerIconSize} isTarget={isTarget("/conversation", location.pathname)} />
             <IconNavBar url="/settings" icon={MdSettings} boxSize={headerIconSize} isTarget={isTargetSettings(location.pathname)} />
             <button onClick={logout} style={{display: 'flex'}}><Icon color={"#57595D"} as={ImExit} boxSize={headerIconSize}/></button>
         </>

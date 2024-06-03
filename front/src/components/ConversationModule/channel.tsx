@@ -30,6 +30,7 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setRoom
     const current_count = msgCount[props.conv.id]?.count 
     return (
         <Flex
+        alignItems={'center'}
         key={props.index}
         w={'100%'}
         bg='#f2f2f2'
