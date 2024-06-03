@@ -38,7 +38,7 @@ function parsePhotosFromBack(toParse: {id: string, binaries: string, mime_type: 
     }
     else parsed.push({
         id: "0",
-        htmlSrcImg: "default-avatar.png",
+        htmlSrcImg: "/default-avatar.png",
         main: true
     })
     return parsed;
