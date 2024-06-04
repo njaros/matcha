@@ -1,16 +1,15 @@
-import smtplib
-from email.message import EmailMessage
+import yagmail
+from flask import current_app as app
 
-s = smtplib.SMTP("smtp.matchamail.email", port=587)
 
 def send_verif_email(email: str):
-    msg = EmailMessage()
+    yag = yagmail.SMTP(app.config["MATCHA_MAIL"])
+    yag.send(
+        to=email,
+        subject="test",
+        contents="hello"
+    )
 
-    s = smtplib.SMTP("smtp.matchamail.email", port=587)
-    s.login()
 
-    msg["Subject"] = "Matcha Email Validation"
-    msg["From"] = "matcha <matcha@donotrespond.com>"
-    msg["To"] = email
-    s.send_message(msg)
-    s.quit()
+if __name__ == "__main__":
+    send_verif_email("nicolas.jaros@proton.me")

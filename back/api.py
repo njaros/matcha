@@ -1,8 +1,10 @@
 from flask import Flask
 from flask_cors import CORS
+from flask_mail import Mail, Message
 from cryptography.fernet import Fernet
 import os
 from extensions import socketio
+from mail_config import Config as Mail_config
 from werkzeug.exceptions import BadRequestKeyError
 from error_status.error import BadRequestError, \
     InternalServerError, \
@@ -23,7 +25,11 @@ from error_status.error import BadRequestError, \
 app = Flask(__name__)
 app.config['SECRET_ACCESS'] = os.environ.get('SECRET_ACCESS')
 app.config['SECRET_REFRESH'] = os.environ.get('SECRET_REFRESH')
+app.config['MAIL_ADDRESS'] = os.environ.get('MATCHA_MAIL')
+app.config['MAIL_ADDRESS_PASS'] = os.environ.get('MATCHA_MAIL_PASS')
+app.config['SECRET_EMAIL_TOKEN'] = os.environ.get('SECRET_EMAIL_TOKEN')
 app.config['MAX_CONTENT_LENGTH'] = 16000000
+app.config.from_object(Mail_config)
 app.config['UPLOAD_FOLDER'] = '/app/imgs/'
 app.config['IMG_EXT'] = set(['png', 'jpg', 'jpeg', 'gif'])
 if os.path.exists("/app/photo.key"):
@@ -37,7 +43,7 @@ file_key.close()
 app.config['SECRET_PHOTO'] = key
 
 CORS(app, origins='*')
-
+app.config['mail'] = Mail(app)
 
 # initialization of Flask-SocketIO
 

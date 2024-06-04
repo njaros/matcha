@@ -6,6 +6,7 @@ from user_module import sql as user_ctx
 from error_status.error import BadRequestError
 from tools import GPS_tools
 from . import dto
+from flask_mail import Message
 
 
 @dto.signup_dto
@@ -15,7 +16,11 @@ def sign(**kwargs):
     kwargs["password"] = hashlib.sha256(
         kwargs["password"].encode("utf-8")
     ).hexdigest()
+    current_app.logger.info(current_app.config["MAIL_USERNAME"])
     login_ctx.insert_new_user_in_database(kwargs)
+    msg = Message("pouet", recipients=kwargs["email"])
+    msg.body = "pouet"
+    current_app.config['mail'].send(msg)
     return [], 201
 
 
