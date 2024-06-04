@@ -11,11 +11,12 @@ export default function DisplayList(props: {list: IListUser[], enableDate: boole
         <Flex w="100%" marginBottom={"3%"} overflowY="auto" flexDirection="column" flex={1} justifyContent={"flex-start"}>
             {props.list.map((user, idx, array) => {
                 return (
-                    <Flex w="100%">
+                    <Flex w="100%" direction="column">
                         <NavLink key={user.id} to={`/other_profile/${user.id}`}>
                             <Flex display="flex" h={lineSizes} flexDir={"row"} justifyContent={"flex-start"}>
                                 <Image
                                         fit="contain"
+                                        borderRadius={"full"}
                                         src={user.photo}/>
                                 <Text   margin="0 5%"
                                         alignSelf={"center"}
@@ -23,7 +24,13 @@ export default function DisplayList(props: {list: IListUser[], enableDate: boole
                                 {props.enableDate && <Text  alignSelf={"center"}>{user.at}</Text>}
                         </Flex>
                     </NavLink>
-                        {idx < array.length -1 && <Divider w="100%" margin="2% 0"></Divider>}
+                    {idx < array.length -1 && <Divider  
+                                                        placeSelf={"center"}
+                                                        w="80%"
+                                                        borderWidth={"2px"}
+                                                        borderRadius={"2px"}
+                                                        borderColor="black"
+                                                        margin={("3% 0")}/>}
                     </Flex>
                 )
             })}
