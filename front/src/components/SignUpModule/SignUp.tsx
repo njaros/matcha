@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import DatePicker from "react-datepicker"
 import { NavLink, useNavigate } from "react-router-dom";
 import { ISignUpForm } from "../../Interfaces";
-import { Box, Select, Text, Flex, Input, Stack } from "@chakra-ui/react"
+import { Box, Select, Text, Flex, Input, Stack, Button } from "@chakra-ui/react"
 import Axios from "../../tools/Caller";
 import "react-datepicker/dist/react-datepicker.css";
 import { TbEscalator } from "react-icons/tb";
@@ -51,22 +51,32 @@ const Signup: React.FC = () => {
 		)
 	}
 
+	const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const dateValue = event.target.value;
+		const date = new Date(dateValue);
+		setBirthDate(date);
+	  };
+
 	return (
 		<Flex 
 			flexDir={'column'} 
 			alignItems={'center'}
 			justifyContent="center"
-			paddingTop={'15px'}
+			h={'100%'}
+			w={'100%'}
+			// backgroundImage={"url('../../assets/images/rm222-mind-20.jpg')"}
+			// backgroundRepeat={'no-repeat'}
+			// backgroundPosition={'top'}
+			// backgroundSize={'cover'}
 		>
 			
 			<Text
-				marginTop={'20px'}
 				fontSize={'x-large'} 
 				fontWeight={'bold'}
 			>
 				Create your account
 			</Text>
-			<Flex paddingBottom={'20px'}>
+			<Flex paddingBottom={'30px'}>
 				<Text 
 					fontSize={'small'}
 					paddingRight={'5px'}
@@ -85,49 +95,62 @@ const Signup: React.FC = () => {
 				</NavLink>
 			</Flex>
 			<form className="signup_form" onSubmit={handleSubmit(signupSubmit)}>
-				<Stack w={'100%'} spacing={5}>
-					<Text paddingLeft={'10px'}>Username</Text>
-					<Box w={'100%'}>
-						<Input
-							className="username_input"
-							{...register("username", {required: true})}
-							type="text"
-							placeholder="John doe" 
-						/>
-					</Box>
-					<Input 
+				<Stack spacing={2} >
+					<Input
+						borderRadius={'full'}
+						className="username_input"
+						{...register("username", {required: true})}
+						type="text"
+						placeholder="Your username" 
+					/>
+					<Input
+						borderRadius={'full'}
 						className="email_input"
 						{...register("email", {required: true})}
 						type="text"
-						placeholder="Enter your email..." />
-					<Input 
+						placeholder="Your mail" 
+					/>
+					<Input
+						borderRadius={'full'}
 						className="password_input"
 						{...register("password", {required: true})}
 						type="password"
-						placeholder="Enter your password..." />
+						placeholder="Your password" 
+					/>
 					<Select
-					placeholder="Your gender"
-					size='lg'
-					{...register("gender", {required: true})}>
-						<option value="man">man</option>
-						<option value="woman">woman</option>
-						<option value="non-binary">non-binary</option>
+						borderRadius={'full'}
+						placeholder="Select your gender"
+						{...register("gender", {required: true})}>
+							<option value="man">man</option>
+							<option value="woman">woman</option>
 					</Select>
 					<Select
-					placeholder="Your preference"
-					size='lg'
-					{...register("preference", {required: true})}>
-						<option value="man">man</option>
-						<option value="woman">woman</option>
-						<option value="non-binary">non-binary</option>
-						<option value="man-woman">man or woman</option>
-						<option value="man-nb">man or non-binary</option>
-						<option value="woman-nb">woman or non-binary</option>
-						<option value="all">no preference</option>
+						borderRadius={'full'}
+						placeholder="Select your preference"
+						{...register("preference", {required: true})}>
+							<option value="man">man</option>
+							<option value="woman">woman</option>
+							<option value="all">all</option>
 					</Select>
-					<DatePicker selected={birthDate} onChange={(date: Date)=>{setBirthDate(date)}} dateFormat="dd/MM/yyyy" />
-					<button className="submit_button" type="submit">SUBMIT</button>
+					<Input 
+						aria-label="Date"
+						title="dawdwa" 
+						type="date" 
+						onChange={handleDateChange}
+						borderRadius={'full'}
+					/>
+					<Button 
+						className="submit_button"
+						type="submit"
+						bg="#A659EC"
+						textColor={'white'}
+						borderRadius={'full'}
+						w={'300px'} //pq ca change la taille pour tout ?
+					>
+						Create account
+					</Button>
 				</Stack>
+			
 			
 			</form>
 			{ errorMsg != "" && <p> {errorMsg} </p> }

@@ -139,7 +139,8 @@ function ChannelList(){
                 hidden={convBool === true}
             >
                 <Text 
-                    fontWeight={'bold'} 
+                    fontSize={'x-large'}
+                    fontWeight={'bold'}
                     marginLeft={'10px'} 
                     marginBottom={'10px'}
                 >

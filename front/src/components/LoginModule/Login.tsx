@@ -5,7 +5,7 @@ import { ILoginInForm } from "../../Interfaces";
 import Axios from "../../tools/Caller";
 import { cookieMan } from "../../tools/CookieMan";
 import { storeGps } from "../../tools/Stores";
-import { Box, Button, Flex, Input, Link, Spinner, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Input, Link, Spinner, Stack, Text } from "@chakra-ui/react";
 
 const Login = (props:{
     handleLog: (newState: boolean) => void,
@@ -62,22 +62,36 @@ const Login = (props:{
         flexDirection="column" 
         alignItems="center" 
         justifyContent="center"
-        flexGrow={1}
+        w={'100%'}
+        h={'100%'}
         className="login_page"
+
+        
     >
-        <Text 
+        <Flex         
+            flexDirection="column"        
+            backgroundImage={"url('../../assets/images/62335-cropped.jpg')"}
+        
+            backgroundPosition="top"
+            backgroundRepeat="no-repeat"
+            backgroundSize="contain" 
+        >
+            <Text
+            textAlign={'center'}
             fontSize={'x-large'}
             fontWeight={'bold'}
+            paddingTop={'220px'}
             paddingBottom={'10px'}
         >
-            Welcome
+            Welcome back !
         </Text>
         <form className="login_form" onSubmit={handleSubmit(loginSubmit)}>
             <Flex
                 flexDirection="column" 
                 
             >
-                <Box paddingBottom={'5px'}>
+                <Stack spacing={1}>
+                    <Box paddingBottom={'5px'}>
                     <Input
                         w={'100%'}
                         className="username_input"
@@ -95,6 +109,8 @@ const Login = (props:{
                         placeholder="Enter your password..."
                     />
                 </Box>
+                </Stack>
+                
             {wrong && <div className="log_error">wrong username or password</div>}
             {loading ?
                 <Spinner color="purple" size="lg"/> :
@@ -109,10 +125,12 @@ const Login = (props:{
             </Flex>
         </form>
         <Flex 
-            alignItems={'center'}
             marginTop={'5px'}
+            justifyContent={'center'}
         >
-            <Text fontSize={'small'} >
+            <Text 
+                fontSize={'small'} 
+            >
                 Don't have an account ?{" "}
             </Text>       
             <NavLink to={'/signUp'}>
@@ -125,6 +143,8 @@ const Login = (props:{
                 </Text>
             </NavLink>
         </Flex>
+        </Flex>
+        
     </Flex>
     )
 }
