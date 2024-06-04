@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form";
 import DatePicker from "react-datepicker"
 import { NavLink, useNavigate } from "react-router-dom";
 import { ISignUpForm } from "../../Interfaces";
-import { Box, Select, Text, Flex, Input } from "@chakra-ui/react"
+import { Box, Select, Text, Flex, Input, Stack } from "@chakra-ui/react"
 import Axios from "../../tools/Caller";
 import "react-datepicker/dist/react-datepicker.css";
 import { TbEscalator } from "react-icons/tb";
@@ -85,9 +85,9 @@ const Signup: React.FC = () => {
 				</NavLink>
 			</Flex>
 			<form className="signup_form" onSubmit={handleSubmit(signupSubmit)}>
-				<Box w={'90%'}>
+				<Stack w={'100%'} spacing={5}>
 					<Text paddingLeft={'10px'}>Username</Text>
-					<Box padding={'0px 10px 10px'}>
+					<Box w={'100%'}>
 						<Input
 							className="username_input"
 							{...register("username", {required: true})}
@@ -127,11 +127,11 @@ const Signup: React.FC = () => {
 					</Select>
 					<DatePicker selected={birthDate} onChange={(date: Date)=>{setBirthDate(date)}} dateFormat="dd/MM/yyyy" />
 					<button className="submit_button" type="submit">SUBMIT</button>
-				</Box>
+				</Stack>
 			
 			</form>
 			{ errorMsg != "" && <p> {errorMsg} </p> }
 		</Flex>)
 }
 
-export default Signup;
+export default Signup
