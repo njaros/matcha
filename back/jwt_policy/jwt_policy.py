@@ -1,7 +1,7 @@
 from functools import wraps
 import jwt
 from datetime import datetime, timezone, timedelta
-from error_status.error import BadRequestError, InternalServerError
+from error_status.error import BadRequestError
 from flask import request, current_app as app, make_response
 from .sql import get_user_by_id
 from validators import str

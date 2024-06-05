@@ -8,7 +8,8 @@ from flask import current_app
 def insert_new_user_in_database(sign_data):
     cur = conn.cursor()
     cur.execute(
-        "INSERT INTO user_table (id, \
+        """
+        INSERT INTO user_table (id, \
                     username, \
                     password, \
                     email, \
@@ -17,7 +18,9 @@ def insert_new_user_in_database(sign_data):
                     preference, \
                     biography, \
                     rank)\
-                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);",
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+        RETURNING id;
+        """,
         (
             uuid.uuid1(),
             sign_data.get("username"),
@@ -31,7 +34,9 @@ def insert_new_user_in_database(sign_data):
         ),
     )
     conn.commit()
+    id = cur.fetchone()
     cur.close()
+    return id
 
 
 def login_user_in_database(kwargs):
