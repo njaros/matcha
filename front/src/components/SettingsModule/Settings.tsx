@@ -28,7 +28,13 @@ const Settings = () => {
     }
 
     return (
-        <Flex flex={1} margin="15px" flexDirection={"column"} w={"95%"}>
+        <Flex 
+            flex={1} 
+            margin="15px" 
+            flexDirection={"column"} 
+            w={"95%"}
+            overflowX={'auto'}
+        >
             <Text 
                 fontSize={'xx-large'}
                 fontWeight={'bold'}
@@ -67,6 +73,7 @@ const Settings = () => {
                     {/* <Flex>
                         <NavLinkSettings path={"/settings/hobbies"} name={"hobbies"}/>
                     </Flex> */}
+                
                     <Flex
                         padding={'10px 10px'} 
                         alignItems={'center'}

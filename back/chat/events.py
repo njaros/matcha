@@ -58,3 +58,11 @@ def send_message(data):
         'room': room_id,
         'send_at': send_at
     }, room=f"room-{room_id}")
+
+@socketio.on('offer')
+def handle_offer(data):
+    emit('offer', data, room=f"room-{data['to']}", skip_sid=request.sid)
+
+@socketio.on('answer')
+def handle_answer(data):
+    emit('answer', data, room=f"room-{data['to']}", skip_sid=request.sid)
