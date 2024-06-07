@@ -49,7 +49,7 @@ const Login = (props:{
 				}
         })
         .catch(error => {
-            console.log(error);
+            console.warn(error);
             setWrong(true);
         })
         .finally(() => {

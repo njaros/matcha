@@ -60,10 +60,9 @@ const Profile = () => {
     const InputUser = (props: {readonly: boolean, val: string, title: "email" | "username" | "birthdate" | "gender" | "biography" | "preference"}) => {
         return (
             <Box display="flex" flexDirection="row" justifyContent="flex-start" alignItems="center">
-                <Text width="30%" marginRight="5%" textOverflow="ellipsis" overflow="hidden" whiteSpace="nowrap">Your {props.title}</Text>
                 {props.readonly ?
-                <Input margin="4px" readOnly value={props.val}/> :
-                <Input margin="4px" {...register(props.title)} />
+                <Input margin="4px" borderRadius={"full"} bgColor={"blue"} readOnly value={props.val}/> :
+                <Input margin="4px" borderRadius={"full"} {...register(props.title)} />
                 }
             </Box>
         )
@@ -71,11 +70,10 @@ const Profile = () => {
 
     const InputUserBiography = (props: {readonly: boolean, val: string}) => {
         return (
-            <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
-                <Text width="30%" marginRight="5%" textOverflow="ellipsis" overflow="hidden" whiteSpace="nowrap">Your Biography</Text>
+            <Box display="flex" width={"100%"} flexDirection="column" justifyContent="center" alignItems="center">
                 {props.readonly ?
-                <Textarea readOnly defaultValue={props.val}/> :
-                <Textarea {...register("biography")}/>
+                <Textarea readOnly bgColor={"red"} borderRadius={"25px"} defaultValue={props.val}/> :
+                <Textarea borderRadius={"5%"} {...register("biography")}/>
                 }
             </Box>
         )
@@ -111,12 +109,15 @@ const Profile = () => {
     }
 
     return (
-        <Box    display="flex" flex={1} flexDirection="column">
+        <Box    display="flex" flex={1} width={"85%"} justifyContent={"flex-end"} flexDirection="column">
             {user?
             <form onSubmit={handleSubmit(profileSubmit)}>
-                <FormControl    display="flex" flexDirection="column">
-                    <Box display="flex" flexDirection="column" margin = "5%">
-                        <Center marginBottom="5%">ACCOUNT INFO</Center>
+                <FormControl    alignItems={"center"} display="flex" flexDirection="column">
+                    <Box display="flex" alignItems={"center"} flexDirection="column" margin = "5%">
+                        <Center marginBottom="5%" fontSize={"x-large"} fontWeight={"bold"}>
+                            {readOnly ? "Your account info"
+                            : "Modify your info"}
+                        </Center>
                         <InputUser readonly={readOnly} val={user.username} title="username"/>
                         <InputUser readonly={readOnly} val={user.email} title="email"/>
                         <InputUser readonly={readOnly} val={user.birthdate} title="birthdate"/>
@@ -125,10 +126,10 @@ const Profile = () => {
                         <InputUserBiography readonly={readOnly} val={user.biography}/>
                     </Box>
                     {readOnly?
-                    <Button onClick={toggleReadonly}>Modify profile</Button> :
-                    <Box display="flex" >
-                        <Button width="80%" onClick={toggleReadonly}>Cancel</Button>
-                        <Button marginLeft="5%" width="15%" type="submit">Send</Button>
+                    <Button w="75%" onClick={toggleReadonly}>Modify profile</Button> :
+                    <Box display="flex" w="75%" flexDirection={"row"}>
+                        <Button marginRight="5%" flex={1} type="submit">Send</Button>
+                        <Button onClick={toggleReadonly}>Cancel</Button>
                     </Box>
                     }
                 </FormControl>
