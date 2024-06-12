@@ -1,28 +1,30 @@
-import { Routes, Route, BrowserRouter, Navigate, Outlet } from "react-router-dom";
-import Layout from "./components/LayoutModules/Layout";
-import { tokenReader, getToken} from "./tools/TokenReader";
-import { useEffect, useState } from "react";
-import { Socket, io } from 'socket.io-client';
-import { storeConvBool, storeMe, storeMsgCount, storeRoomList, storeSocket, storeTimeout } from "./tools/Stores";
-import Login from "./components/LoginModule/Login";
-import Signup from "./components/SignUpModule/SignUp";
-import Conversation from "./components/ConversationModule/Conversation";
-import Swipe from "./components/SwipeModule/Swipe";
-import { ChakraProvider, Box } from "@chakra-ui/react"
-import Axios from "./tools/Caller";
-import { cookieMan } from "./tools/CookieMan";
+import { Box } from "@chakra-ui/react";
 import { JwtPayload } from "jsonwebtoken";
-import Settings from "./components/SettingsModule/Settings";
-import Photo from "./components/SettingsModule/Photo";
-import Profile from "./components/SettingsModule/Profile";
-import Geoloc from "./components/SettingsModule/FilterModule/Geoloc";
+import { useEffect, useState } from "react";
+import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
+import { io } from 'socket.io-client';
+import Conversation from "./components/ConversationModule/Conversation";
+import Layout from "./components/LayoutModules/Layout";
+import Login from "./components/LoginModule/Login";
 import Filter from "./components/SettingsModule/FilterModule/Filter";
 import Hobbies from "./components/SettingsModule/Hobbies";
 import OtherProfile from "./components/SettingsModule/OtherProfile";
-import MatchList from "./components/SettingsModule/UserLists/MatchList";
+import Photo from "./components/SettingsModule/Photo";
+import Profile from "./components/SettingsModule/Profile";
+import Settings from "./components/SettingsModule/Settings";
 import LikeList from "./components/SettingsModule/UserLists/LikeList";
+import MatchList from "./components/SettingsModule/UserLists/MatchList";
 import VisitorList from "./components/SettingsModule/UserLists/VisitorList";
-import { RoomList } from "./tools/interface";
+import Signup from "./components/SignUpModule/SignUp";
+import Swipe from "./components/SwipeModule/Swipe";
+import Axios from "./tools/Caller";
+import { cookieMan } from "./tools/CookieMan";
+import { storeMe, storeMsgCount, storeRoomList, storeSocket, storeTimeout } from "./tools/Stores";
+import { getToken, tokenReader } from "./tools/TokenReader";
+import ChannelList from "./components/ConversationModule/channel";
+import Chatbox from "./components/ConversationModule/Chatbox";
+import VoiceChat from "./components/ConversationModule/Call";
+import { useLocalCameraStream } from "./components/ConversationModule/Call";
 
 function App() {
 
@@ -34,7 +36,6 @@ function App() {
 	const [ me, updateMe ] = storeMe(state => [state.me, state.updateMe])
 	const updateMsgCount = storeMsgCount(state => state.updateMsgCount)
     const roomList = storeRoomList(state => state.roomList)
-
 
 	const getUserId = () => {
 		setUserId(tokenReader.getAttrAsString(getToken(), "user_id"))
@@ -223,7 +224,9 @@ function App() {
 								<Route path="/settings/hobbies" element= { <Hobbies /> } />
 							</Route>
 							<Route path="/other_profile/:id" element={ <OtherProfile /> } />
-							<Route path="/conversation" element={ <Conversation />} />
+							<Route path="/channel" element={ <ChannelList />} />
+							<Route path="/chatbox" element={ <Chatbox />} />
+							<Route path="/chatbox/call/:roomName" element={ <VoiceChat />} />
 							<Route path="/" element={ <Swipe/> } />
 						</Route>
 					</Route>

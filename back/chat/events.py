@@ -6,6 +6,56 @@ from chat.sql import get_room_with_message, increment_unread_msg_count, set_unre
 from validators import str, uuid, int
 from socket_app.events import connected_clients
 
+
+@socketio.on('join_video_chat_room')
+def join_video_chat_room(roomName):
+    room_id = roomName
+    room = socketio.server.manager.rooms['/'].get(room_id, set())
+
+    number_of_people_in_room = len(room)
+    app.logger.debug('number_of_people_in_room: %d', number_of_people_in_room)
+    if number_of_people_in_room > 1 :
+        app.logger.debug('FROM too many people')
+        emit('too_many_people', room=f"video-room-{room_id}", skip_sid=request.sid)
+        return
+    
+    if number_of_people_in_room == 1 :
+        app.logger.debug('FROM number of people in room')
+        emit('another_person_ready', room=f"video-room-{room_id}", skip_sid=request.sid)
+    
+    join_room(f'video-room-{room_id}')
+    app.logger.debug('FROM JOIN VIDEO CHAT ROOM')
+
+
+@socketio.on('send_connection_offer')
+async def send_connection_offer(data):
+    offer = data.get('offer')
+    roomName = data.get('roomName')
+    emit('send_connection_offer', 
+         {offer, roomName}, 
+         room=f"video-room-{roomName}",
+         skip_sid=request.sid)
+    app.logger.debug('FROM SEND CONNECTION OFFER')
+
+@socketio.on('answer')
+async def answer(data):
+    answer = data.get('answer')
+    roomName = data.get('roomName')
+    emit('send_connection_offer', 
+        {answer, roomName},
+        room=f"video-room-{roomName}", 
+        skip_sid=request.sid)
+    app.logger.debug('FROM ANSWER')
+
+
+@socketio.on('send_candidate')
+async def send_candidate(data):
+    candidate = data.get('candidate')
+    roomName = data.get('roomName')
+    emit('send_candidate', {candidate, roomName}, room=f"video-room-{roomName}", skip_sid=request.sid)
+    app.logger.debug('FROM SEND CANDIDATE')
+
+
 @socketio.on('join_chat_room')
 def join_chat_room(room_id):
     user = connected_clients[request.sid]
@@ -58,11 +108,3 @@ def send_message(data):
         'room': room_id,
         'send_at': send_at
     }, room=f"room-{room_id}")
-
-@socketio.on('offer')
-def handle_offer(data):
-    emit('offer', data, room=f"room-{data['to']}", skip_sid=request.sid)
-
-@socketio.on('answer')
-def handle_answer(data):
-    emit('answer', data, room=f"room-{data['to']}", skip_sid=request.sid)

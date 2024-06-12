@@ -1,5 +1,5 @@
 // import { Avatar, Box, Flex, Text } from "@chakra-ui/react"
-// import { storeConvBool, storeMe, storeMessageList, storeMsgCount, storeRoomList, storeSocket } from "../../tools/Stores"
+// import { storeDisplayNavBool, storeMe, storeMessageList, storeMsgCount, storeRoomList, storeSocket } from "../../tools/Stores"
 // import { useEffect, useState } from "react"
 // import { MatchesList, Room_info } from "../../tools/interface"
 // import Axios from "../../tools/Caller"
@@ -30,7 +30,7 @@
 // function MatchList(){
 
 //     const [matchList, setMatchList] = useState<MatchesList[]>([])
-//     const [convBool, updateConvBool] = storeConvBool(state => [state.convBool, state.updateConvBool])
+//     const [DisplayNavBool, updateDisplayNavBool] = storeDisplayNavBool(state => [state.DisplayNavBool, state.updateDisplayNavBool])
 //     const socket = storeSocket(state => state.socket)
 //     const [msgList, setMsgList] = storeMessageList(state => [state.messageList, state.updateMessageList])
 //     const [room, setRoom] = useState<Room_info>()
@@ -41,7 +41,7 @@
 
 //     const join_room = async (room_id: string) => {
 //         socket?.emit('join_chat_room', room_id)
-//         updateConvBool(!convBool)
+//         updateDisplayNavBool(!DisplayNavBool)
 //     }
 
 //     const setMessageList = async (conv: Room_info) => {
@@ -60,7 +60,7 @@
 //             alignItems="center"
 //             paddingTop={'10px'}
 //             h={'25%'}
-//             hidden={convBool}
+//             hidden={DisplayNavBool}
 //         >
 //             <Flex
 //                 borderRadius={'5px'}

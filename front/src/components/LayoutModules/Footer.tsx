@@ -1,5 +1,5 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { storeGps, storeTimeout, storeConvBool, storeMsgCount, storeRoomList } from "../../tools/Stores";
+import { storeGps, storeTimeout, storeDisplayNavBool, storeMsgCount, storeRoomList, storeRoomInfo } from "../../tools/Stores";
 import { cookieMan } from "../../tools/CookieMan";
 import { As, Box, Icon, Text } from "@chakra-ui/react"
 import { MdFavorite, MdHome, MdSettings } from "react-icons/md"
@@ -44,10 +44,11 @@ const Footer = (props: {
     const location = useLocation();
     const { gps, updateGps } = storeGps();
     const [ logoutClicked, setLogoutClicked] = useState<boolean>(false);
-    const convBool = storeConvBool(state => state.convBool)
+    const DisplayNavBool = storeDisplayNavBool(state => state.DisplayNavBool)
     const msgCount = storeMsgCount(state => state.msgCount)
     const roomList = storeRoomList(state => state.roomList)
     const [msgBool, setMsgBool] = useState<boolean>(false)
+    const room = storeRoomInfo(state => state.roomInfo)
 
     const logout = () => {
         if (refreshTokenTimeoutId != undefined)
@@ -111,12 +112,16 @@ const Footer = (props: {
         });      
         setMsgBool(hasUnreadMessage);
       }, [msgCount]);
-      
-    console.log()
+
+    const route= ['/chatbox', `/chatbox/call/${room.id}`]
+    const hidesOnRoute = route.includes(location.pathname)
+    // console.log(location.pathname)
+    // if (shouldHide)
+    //   return null
+
     return (
 
-        <Box
-        hidden={convBool}
+        !hidesOnRoute && <Box
         className="iconUserLogged"
         display="flex"
         width={'60%'}
@@ -131,7 +136,7 @@ const Footer = (props: {
         { props.logged &&
         <>
             <IconNavBar url="/" icon={MdFavorite} boxSize={headerIconSize} isTarget={isTarget("/", location.pathname)} />
-            <IconNavBar url="/conversation" icon={msgBool === false ? TbMessage : TbMessage2Heart} boxSize={headerIconSize} isTarget={isTarget("/conversation", location.pathname)} />
+            <IconNavBar url="/channel" icon={msgBool === false ? TbMessage : TbMessage2Heart} boxSize={headerIconSize} isTarget={isTarget("/channel", location.pathname)} />
             <IconNavBar url="/settings" icon={MdSettings} boxSize={headerIconSize} isTarget={isTargetSettings(location.pathname)} />
             <button onClick={logout} style={{display: 'flex'}}><Icon color={"#57595D"} as={ImExit} boxSize={headerIconSize}/></button>
         </>
