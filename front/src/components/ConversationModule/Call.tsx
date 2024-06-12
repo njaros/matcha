@@ -1,6 +1,6 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Button, Flex } from "@chakra-ui/react";
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { storeSocket } from "../../tools/Stores";
 
 interface Props {
@@ -31,11 +31,10 @@ const VideoFeed: FunctionComponent<Props> = ({
     )
 }
 
-
-
 function useOfferSending(peerConnection: RTCPeerConnection){
     const { roomName } = useParams()
     const socket = storeSocket(state => state.socket)
+    console.log('from offer sending')
     const sendOffer = useCallback(async () => {
         const offer = await peerConnection.createOffer()
         await peerConnection.setLocalDescription(offer)
@@ -58,6 +57,7 @@ function useOffersListening(peerConnection: RTCPeerConnection){
             await peerConnection.setRemoteDescription(offer)
             const answer = await peerConnection.createAnswer()
             await peerConnection.setLocalDescription(answer)
+            console.log('test')
 
             socket?.emit('answer', {answer, roomName})
         }, [roomName]
@@ -140,10 +140,28 @@ function usePeerConnection(localStream: MediaStream){
     }
 }
 
+function useHangup(){
+    const navigate = useNavigate()
+    const { roomName } = useParams()
+    const socket = storeSocket(state => state.socket)
+    const hangup = (pc: RTCPeerConnection, localStream: MediaStream) => {
+        if (pc) {
+            pc.close();
+        }
+        if (localStream) {
+            localStream.getTracks().forEach((track) => track.stop());
+        }
+        socket?.emit('leave_video_chat_room', roomName)        
+        navigate(-1);
+    };
+
+    return { hangup };
+}
+
 export function useLocalCameraStream(){
     const [localStream, setLocalStream] = useState<MediaStream | null>(null);
     useEffect(() => {
-        navigator.mediaDevices.getUserMedia({video: true, audio: true})
+        navigator.mediaDevices.getUserMedia({video: true/*, audio: true*/})
             .then((localStream) => {
                 setLocalStream(localStream)
             })
@@ -154,8 +172,13 @@ export function useLocalCameraStream(){
 }
 
 const VideoChatRoom: React.FC<VideoChatRoomProps> = ({ localStream }) => {
-  const { peerConnection, guestStream } = usePeerConnection(localStream);
-  useChatConnection(peerConnection);
+    const { peerConnection, guestStream } = usePeerConnection(localStream)
+    const { hangup } = useHangup()
+    useChatConnection(peerConnection);
+
+    const handleHangupClick = () => {
+        hangup(peerConnection, localStream);
+    };
 
     return (
         <>
@@ -169,14 +192,18 @@ const VideoChatRoom: React.FC<VideoChatRoomProps> = ({ localStream }) => {
                     bg={'green'}
                     h={'50%'}
                 >
-                    <VideoFeed mediaStream={localStream} isMuted={true}/>
-                </Box>
-                <Box
-                bg={'blue'}
-                h={'50%'}
-                >
                     {guestStream && ( <VideoFeed mediaStream={guestStream} isMuted={true}/>)}
                 </Box>
+                <Box bg={'blue'} h={'50%'}>
+                    <VideoFeed mediaStream={localStream} isMuted={true} />
+                    <Button
+                        onClick={handleHangupClick}
+                        >
+                        Hang Up
+                    </Button>
+                </Box>
+                
+                  
             </Flex>
         </>
     )
