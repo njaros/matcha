@@ -27,8 +27,6 @@ from error_status.error import BadRequestError, \
 app = Flask(__name__)
 app.config['SECRET_ACCESS'] = os.environ.get('SECRET_ACCESS')
 app.config['SECRET_REFRESH'] = os.environ.get('SECRET_REFRESH')
-app.config['MAIL_ADDRESS'] = os.environ.get('MATCHA_MAIL')
-app.config['MAIL_ADDRESS_PASS'] = os.environ.get('MATCHA_MAIL_PASS')
 app.config['SECRET_EMAIL_TOKEN'] = os.environ.get('SECRET_EMAIL_TOKEN')
 app.config['MAX_CONTENT_LENGTH'] = 16000000
 app.config.from_object(Mail_config)
