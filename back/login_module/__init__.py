@@ -1,6 +1,6 @@
 from flask import Blueprint
 from flask_cors import CORS
-from .routes import login, sign
+from .routes import login, sign, mail_register
 from error_status.error import *
 
 
@@ -14,3 +14,6 @@ CORS(
 
 app.add_url_rule("/login", "login", login, methods=["POST"])
 app.add_url_rule("/sign", "sign", sign, methods=["POST"])
+app.add_url_rule(
+    "/mail_register/<token>", "mail_register", mail_register, methods=["GET"]
+)

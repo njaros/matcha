@@ -1,8 +1,8 @@
-from flask import current_app as app
+from flask import request, current_app as app
 from datetime import datetime, timezone, timedelta
 from flask_mail import Message
+import socket
 import jwt
-import os
 
 
 def send_email_register_token(**kwargs):
@@ -17,9 +17,10 @@ def send_email_register_token(**kwargs):
         app.config["SECRET_EMAIL_TOKEN"],
         algorithm="HS256",
     )
-    url_to_send = f"{os.environ.get('SERVER_URL')}/{token}"
+    url_to_send = f"{request.host_url}mail_register/{token}"
+    # url_to_send = f"http://{socket.gethostbyname(socket.gethostname())}:5066/mail_register/{token}"
     msg.html = f"""
-                <h1>click this registrator link to activate your account</h1>
-                <p>{url_to_send}</p>
+                <h1>activate your account</h1>
+                <a href={url_to_send}>click here to activate your account</a>
                 """
     app.config["mail"].send(msg)

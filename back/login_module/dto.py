@@ -1,6 +1,9 @@
 from validators import str, date, gps
 from functools import wraps
-from flask import request, current_app
+from flask import request, current_app as app
+from jwt_policy.sql import get_user_by_id
+import jwt
+from error_status.error import BadRequestError
 
 
 def signup_dto(f):
@@ -61,6 +64,24 @@ def login_dto(f):
             )
             if kwargs["longitude"] is None:
                 kwargs["latitude"] = None
+        return f(*args, **kwargs)
+
+    return decorated
+
+
+def mail_register_dto(f):
+    @wraps(f)
+    def decorated(token, *args, **kwargs):
+        try:
+            data = jwt.decode(
+                token, app.config["SECRET_EMAIL_TOKEN"], algorithms=["HS256"]
+            )
+            expDate = data.get("exp")
+            if expDate is None:
+                raise BadRequestError("token expiration date is expired")
+            kwargs["user"] = get_user_by_id(data["user_id"])
+        except jwt.exceptions.InvalidTokenError:
+            raise BadRequestError("Invalid Authentication token")
         return f(*args, **kwargs)
 
     return decorated

@@ -1,5 +1,6 @@
 from db_init import db_conn as conn
 import uuid
+from error_status.error import ForbiddenError
 import copy
 from psycopg.rows import dict_row
 from flask import current_app
@@ -65,6 +66,8 @@ def login_user_in_database(kwargs):
         cur.close()
         return None
     kwargs["user"] = user
+    if user["email_verified"] is False:
+        raise ForbiddenError("your email isn't verified, check your emails")
     conn.commit()
     cur.close()
 
@@ -84,6 +87,20 @@ def update_gps_loc_by_id(**kwargs):
             kwargs["user"]["longitude"],
             kwargs["user"]["id"],
         ),
+    )
+    conn.commit()
+    cur.close()
+
+
+def activate_mail_account(**kwargs):
+    cur = conn.cursor()
+    cur.execute(
+        """
+        UPDATE user_table
+        SET email_verified = true
+        WHERE id = %s;
+        """,
+        (kwargs["user"]["id"],)
     )
     conn.commit()
     cur.close()

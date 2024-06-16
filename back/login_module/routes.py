@@ -59,3 +59,9 @@ def login(**kwargs):
         return response
     else:
         raise (BadRequestError("Wrong username or password"))
+
+
+@dto.mail_register_dto
+def mail_register(**kwargs):
+    login_ctx.activate_mail_account(**kwargs)
+    return "<h1>Yeah ! your account is activate</h1>", 200
