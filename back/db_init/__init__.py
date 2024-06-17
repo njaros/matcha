@@ -187,34 +187,76 @@ def set_up_db():
         cur.execute(
             """
             INSERT INTO user_table \
-            (id, username, password, email, birthDate, \
+            (id, username, password, email, email_verified, birthDate, \
             gender, preference, biography, rank, latitude, \
             longitude, gpsfixed)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """, (uuid.uuid1(), 'jeremy', hashlib.sha256("mdp".encode("utf-8")).hexdigest(), 'jeremy@jeremy.fr', '2000-11-20',
-                  'man', 'all', '', 10, 48.866667, 2.333333, False)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """,
+            (
+                uuid.uuid1(),
+                "jeremy",
+                hashlib.sha256("mdp".encode("utf-8")).hexdigest(),
+                "jeremy@jeremy.fr",
+                True,
+                "2000-11-20",
+                "man",
+                "all",
+                "",
+                10,
+                48.866667,
+                2.333333,
+                False,
+            ),
         )
 
         cur.execute(
             """
             INSERT INTO user_table \
-            (id, username, password, email, birthDate, \
+            (id, username, password, email, email_verified, birthDate, \
             gender, preference, biography, rank, latitude, \
             longitude, gpsfixed)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """, (uuid.uuid1(), 'nico',  hashlib.sha256("mdp".encode("utf-8")).hexdigest(), 'nico@nico.fr', '2000-11-20',
-                  'man', 'all', '', 10, 48.866667, 2.333333, False)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """,
+            (
+                uuid.uuid1(),
+                "nico",
+                hashlib.sha256("mdp".encode("utf-8")).hexdigest(),
+                "nico@nico.fr",
+                True,
+                "2000-11-20",
+                "man",
+                "all",
+                "",
+                10,
+                48.866667,
+                2.333333,
+                False,
+            ),
         )
 
         cur.execute(
             """
             INSERT INTO user_table \
-            (id, username, password, email, birthDate, \
+            (id, username, password, email, email_verified, birthDate, \
             gender, preference, biography, rank, latitude, \
             longitude, gpsfixed)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-            """, (uuid.uuid1(), 'max', hashlib.sha256("mdp".encode("utf-8")).hexdigest(), 'max@max.fr', '2000-11-20',
-                  'man', 'all', '', 10, 48.866667, 2.333333, False)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """,
+            (
+                uuid.uuid1(),
+                "max",
+                hashlib.sha256("mdp".encode("utf-8")).hexdigest(),
+                "max@max.fr",
+                True,
+                "2000-11-20",
+                "man",
+                "all",
+                "",
+                10,
+                48.866667,
+                2.333333,
+                False,
+            ),
         )
 
         # USER TEST INSERTION

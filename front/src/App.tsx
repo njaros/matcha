@@ -25,6 +25,7 @@ import ChannelList from "./components/ConversationModule/channel";
 import Chatbox from "./components/ConversationModule/Chatbox";
 import VoiceChat from "./components/ConversationModule/Call";
 import { useLocalCameraStream } from "./components/ConversationModule/Call";
+import Forgot from "./components/LoginModule/Forgot";
 
 function App() {
 
@@ -212,6 +213,7 @@ function App() {
 					<Route element={ <Layout logged={logged} handleLog={handleLog} handleAccess={handleAccess} /> }>
 						<Route path="/login" element={ logged ? <Navigate to="/" /> : (<Login handleLog={handleLog} handleAccess={handleAccess} />) } />
 						<Route path="/signUp" element={ logged ? <Navigate to="/" /> : (<Signup />) } />
+						<Route path="/forgot" element={ logged ? <Navigate to="/" /> : (<Forgot />) } />
 						<Route element={ logged ? <Outlet /> : <Navigate to="/login" /> } >
 							<Route path="/settings" element={ <Outlet />}>
 								<Route path="/settings/" element={ <Settings /> } />

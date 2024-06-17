@@ -6,7 +6,7 @@ from user_module import sql as user_ctx
 from error_status.error import BadRequestError
 from tools import GPS_tools
 from . import dto
-from tools.email_tools import send_email_register_token
+from tools.email_tools import send_email_register_token, send_reset_password
 
 
 @dto.signup_dto
@@ -65,3 +65,18 @@ def login(**kwargs):
 def mail_register(**kwargs):
     login_ctx.activate_mail_account(**kwargs)
     return "<h1>Yeah ! your account is activate</h1>", 200
+
+
+@dto.reset_password_dto
+def reset_password(**kwargs):
+    send_reset_password(**kwargs)
+    return "email sent", 200
+
+
+@dto.confirm_reset_password_dto
+def confirm_reset_password(**kwargs):
+    kwargs["new_pass"] = hashlib.sha256(
+        kwargs["new_pass"].encode("utf-8")
+    ).hexdigest()
+    login_ctx.update_password_by_email(**kwargs)
+    return "<h1>Yeah ! Your password has be successfully reset</h1>", 200

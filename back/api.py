@@ -28,6 +28,7 @@ app = Flask(__name__)
 app.config['SECRET_ACCESS'] = os.environ.get('SECRET_ACCESS')
 app.config['SECRET_REFRESH'] = os.environ.get('SECRET_REFRESH')
 app.config['SECRET_EMAIL_TOKEN'] = os.environ.get('SECRET_EMAIL_TOKEN')
+app.config['SECRET_RESET_PASSWORD'] = os.environ.get('SECRET_RESET_PASSWORD')
 app.config['MAX_CONTENT_LENGTH'] = 16000000
 app.config.from_object(Mail_config)
 app.config['UPLOAD_FOLDER'] = '/app/imgs/'

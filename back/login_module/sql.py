@@ -1,6 +1,6 @@
 from db_init import db_conn as conn
 import uuid
-from error_status.error import ForbiddenError
+from error_status.error import ForbiddenError, NotFoundError
 import copy
 from psycopg.rows import dict_row
 from flask import current_app
@@ -51,13 +51,13 @@ def login_user_in_database(kwargs):
             longitude = CASE WHEN gpsfixed = false THEN COALESCE(%s, longitude)
                             ELSE longitude
                             END
-        WHERE username = %s AND password = %s
+        WHERE email = %s AND password = %s
         RETURNING *;
         """,
         (
             kwargs.get("latitude"),
             kwargs.get("longitude"),
-            kwargs.get("username"),
+            kwargs.get("email"),
             kwargs.get("password"),
         ),
     )
@@ -67,7 +67,7 @@ def login_user_in_database(kwargs):
         return None
     kwargs["user"] = user
     if user["email_verified"] is False:
-        raise ForbiddenError("your email isn't verified, check your emails")
+        raise ForbiddenError("your email isn't verified")
     conn.commit()
     cur.close()
 
@@ -104,3 +104,47 @@ def activate_mail_account(**kwargs):
     )
     conn.commit()
     cur.close()
+
+
+def update_password_by_email(**kwargs):
+    cur = conn.cursor()
+    cur.execute(
+        """
+        UPDATE user_table
+        SET password = %s
+        WHERE email = %s;
+        """,
+        (kwargs["new_pass"], kwargs["email"],)
+    )
+    conn.commit()
+    cur.close()
+
+
+def update_password_by_id(**kwargs):
+    cur = conn.cursor()
+    cur.execute(
+        """
+        UPDATE user_table
+        SET password = %s
+        WHERE id = %s;
+        """,
+        (kwargs["new_pass"], kwargs["user"]["id"],)
+    )
+    conn.commit()
+    cur.close()
+
+
+def get_user_by_email(**kwargs):
+    cur = conn.cursor(row_factory=dict_row)
+    cur.execute(
+        """
+        SELECT *
+        FROM user_table
+        WHERE email = %s;
+        """,
+        (kwargs["email"],)
+    )
+    user = cur.fetchone()
+    if user is None:
+        raise NotFoundError("user not found")
+    return user

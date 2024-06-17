@@ -1,6 +1,6 @@
 export interface ILoginInForm
 {
-    username: string,
+    email: string,
     password: string,
 	latitude?: number,
 	longitude?: number
