@@ -52,6 +52,6 @@ password will be changed to</h2>
 in your settings</h2>
                 <h2>If you didn't asked for a password reset, ignore this \
 mail and we advise you to change your email in your profile.
-                <a href={url_to_send}>click here to reset yout password</a>
+                <a href={url_to_send}>click here to reset your password</a>
                 """
     app.config["mail"].send(msg)
