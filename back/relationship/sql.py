@@ -150,7 +150,7 @@ def get_matches_by_user_id(**kwargs):
         """,
         {"self_id": kwargs["user"]["id"]}
     )
-    list = cur.fetchmany()
+    list = cur.fetchall()
     cur.close()
     return list
 
@@ -171,7 +171,7 @@ def get_liked_by_user_id(**kwargs):
             ORDER BY username;
         """, (kwargs["user"]["id"],)
     )
-    list = cur.fetchall()
+    list = cur.fetchall() #modif by me
     cur.close()
     return list
 

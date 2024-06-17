@@ -1,10 +1,17 @@
-import { Text } from "@chakra-ui/react";
+import { Button, Icon, Text } from "@chakra-ui/react";
+import { IoChevronBack } from "react-icons/io5";
 import { NavLink } from "react-router-dom";
 
 export default function ReturnButton(props: {to: string}) {
     return (
         <NavLink to={props.to}>
-            <Text>Return to menu</Text>
+            <Button
+                borderRadius={'100%'}
+                padding={'0'}
+                size={'sm'}
+            >
+                <Icon as={IoChevronBack} />
+            </Button>
         </NavLink>
     )
 }

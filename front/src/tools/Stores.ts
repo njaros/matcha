@@ -1,6 +1,6 @@
 import { Socket, io } from "socket.io-client";
 import { create } from "zustand";
-import { Room, Me, RoomList, MessageData, msgCount } from "./interface";
+import { Room, Me, RoomList, MessageData, msgCount, Room_info } from "./interface";
 import { LatLng } from "leaflet";
 import { ISwipeFilter } from "../Interfaces"
 import { DateTools } from "./DateTools";
@@ -39,6 +39,10 @@ interface IstoreMe{
 	updateMe: (newMe: Me) => void
 }
 
+interface IstoreRoomInfo{
+	roomInfo: Room_info,
+	updateRoomInfo: (newRoomInfo: Room_info) => void
+}
 
 interface IstoreRoomList{
 	roomList: RoomList[] | undefined,
@@ -55,15 +59,26 @@ interface IFilter{
 	updateFilter: (newFilter: ISwipeFilter) => void
 }
 
-interface IConvBool {
-	convBool: boolean;
-	updateConvBool: (updateConvBool: boolean) => void
+interface IDisplayNavBool {
+	DisplayNavBool: boolean;
+	updateDisplayNavBool: (updateDisplayNavBool: boolean) => void
 }
 
 interface ImsgCount {
 	msgCount: {[room_id: string]: msgCount};
 	updateMsgCount: (room_id: string, newCount: number) => void
 }
+
+export const storeRoomInfo = create<IstoreRoomInfo>()((set) => ({
+	roomInfo: {
+		id: '',
+		name: '',
+		user_1: { user_id: '', photo: '', username: '' },
+		user_2: { user_id: '', photo: '', username: '' }
+	  },
+	updateRoomInfo: (newRoomInfo: Room_info) => set({roomInfo: newRoomInfo})
+
+}))
 
 export const storeMsgCount = create<ImsgCount>()((set) => ({
 	msgCount: {},
@@ -75,9 +90,9 @@ export const storeMsgCount = create<ImsgCount>()((set) => ({
 	}))
 }))
 
-export const storeConvBool = create<IConvBool>()((set) => ({
-	convBool: false,
-	updateConvBool: (newConvBool: boolean) => set({convBool: newConvBool})
+export const storeDisplayNavBool = create<IDisplayNavBool>()((set) => ({
+	DisplayNavBool: false,
+	updateDisplayNavBool: (newDisplayNavBool: boolean) => set({DisplayNavBool: newDisplayNavBool})
 }))
 
 export const storeMessageList = create<IstoreMessageList>()((set) => ({

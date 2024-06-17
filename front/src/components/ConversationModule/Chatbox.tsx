@@ -1,15 +1,14 @@
-import { Avatar, Box, Button, Flex, FormControl, Icon, Input, ListItem, OrderedList, Text, WrapItem } from "@chakra-ui/react"
-import React, { useEffect, useRef, useState } from "react"
-import { MessageData, Room_info } from "../../tools/interface"
-import { useForm } from "react-hook-form";
-import Axios from "../../tools/Caller";
-import { storeMe, storeMessageList, storeSocket, storeConvBool, storeMsgCount } from "../../tools/Stores";
-import { decode } from 'html-entities';
 import { ArrowRightIcon } from "@chakra-ui/icons";
-import { Link } from "react-router-dom";
-import ChannelList from "./channel";
-import { MdOutlineKeyboardReturn } from "react-icons/md";
+import { Avatar, Button, Flex, FormControl, Icon, Input, Text, WrapItem } from "@chakra-ui/react";
+import { decode } from 'html-entities';
+import { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 import { IoChevronBack } from "react-icons/io5";
+import SimplePeer from 'simple-peer';
+import Axios from "../../tools/Caller";
+import { storeDisplayNavBool, storeMe, storeMessageList, storeMsgCount, storeRoomInfo, storeSocket } from "../../tools/Stores";
+import { MessageData, Room_info } from "../../tools/interface";
+import { useNavigate } from "react-router-dom";
 
 
 export function timeOfDay(timestampz: string | Date){
@@ -33,14 +32,15 @@ export function timeOfDay(timestampz: string | Date){
     return (date)
 }
 
-function Chatbox(props: {room: Room_info | undefined}){
+function Chatbox(){
     
     const scrollToBottomRef = useRef<HTMLDivElement>(null);
     const socket = storeSocket(state => state.socket)
     const me = storeMe(state => state.me)
     const msgList = storeMessageList(state => state.messageList)
-    const [convBool, updateConvBool] = storeConvBool(state => [state.convBool, state.updateConvBool])
-    const [msgCount, updateMsgCount] = storeMsgCount(state => [state.msgCount, state.updateMsgCount])
+    const room = storeRoomInfo(state => state.roomInfo)
+    const updateMsgCount = storeMsgCount(state => state.updateMsgCount)
+    const navigate = useNavigate()
     const [messageList, setMessageList] = useState<MessageData[]>([])
     const { 
         register, 
@@ -55,7 +55,7 @@ function Chatbox(props: {room: Room_info | undefined}){
 
     const sendMessage = async (message: string) => {
         try{
-            const res = await Axios.post("/chat/add_message", {'content': message, 'room_id': props.room?.id})
+            const res = await Axios.post("/chat/add_message", {'content': message, 'room_id': room?.id})
             const senderData : MessageData = res.data
             socket?.emit("send_message", senderData)
             setMessageList((list) => [...list, senderData])
@@ -70,7 +70,7 @@ function Chatbox(props: {room: Room_info | undefined}){
     useEffect(() => {
         socket?.on("receive_message", (data: any) => {
             console.log('from receive_message')
-            if (data.room === props.room?.id)
+            if (data.room === room?.id)
             {
                 setMessageList((list) => [...list, data])
             }
@@ -78,7 +78,7 @@ function Chatbox(props: {room: Room_info | undefined}){
         return (() => {
             socket?.off("receive_message")
         })
-    }, [props.room])
+    }, [room])
 
     const onSubmit = async (data: {message: string}) => {
         if (data.message.length > 0 &&  /^\s*$/.test(data.message) === false)
@@ -94,11 +94,11 @@ function Chatbox(props: {room: Room_info | undefined}){
     }, [messageList])
 
     const backToChannel = async () => {
-        updateConvBool(!convBool)
+        navigate(-1)
         try {
-            await Axios.post('/chat/set_unread_msg_count_to_0', {'room_id': props.room?.id})
+            await Axios.post('/chat/set_unread_msg_count_to_0', {'room_id': room?.id})
             
-            updateMsgCount(props.room!.id, 0)
+            updateMsgCount(room?.id, 0)
         }
         catch(err){
             if (err)
@@ -111,7 +111,6 @@ function Chatbox(props: {room: Room_info | undefined}){
             width={'100%'}
             bg={'white'}
             flexDir={'column'}
-            hidden={convBool === false}
             >
             <Flex
                 h={'100%'}
@@ -135,8 +134,9 @@ function Chatbox(props: {room: Room_info | undefined}){
                     >
                         <Icon as={IoChevronBack} />
                     </Button>
-                    <Avatar marginLeft={'15px'} src={me?.id === props.room?.user_1.user_id ? props.room?.user_2.photo : props.room?.user_1.photo} />
-                    <Text marginLeft={'10px'} flex={1}>{props.room?.name}</Text>
+                    <Avatar marginLeft={'15px'} src={me?.id === room?.user_1.user_id ? room?.user_2.photo : room?.user_1.photo} />
+                    <Text marginLeft={'10px'} flex={1}>{room?.name}</Text>
+                    <Button onClick={() => navigate('/chatbox/call/' + room?.id)}>voice call</Button>
                 </Flex>
                 <Flex
                     width={'100%'}

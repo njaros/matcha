@@ -1,10 +1,68 @@
 from extensions import socketio
 from flask import request, current_app as app, jsonify
-from flask_socketio import join_room, emit
+from flask_socketio import join_room, emit, leave_room
 from socket_app.events import connected_clients
 from chat.sql import get_room_with_message, increment_unread_msg_count, set_unread_msg_count_to_0
 from validators import str, uuid, int
 from socket_app.events import connected_clients
+
+@socketio.on('join_video_chat_room')
+def join_video_chat_room(roomName):
+    room_id = roomName
+    room = socketio.server.manager.rooms.get('/', {}).get(f'video-room-{room_id}', set())
+    number_of_people_in_room = len(room)
+
+    app.logger.debug('number_of_people_in_room: %d', number_of_people_in_room)
+    
+    # if number_of_people_in_room >= 2:
+    #     app.logger.debug('FROM too many people')
+    #     emit('too_many_people', room=request.sid)
+    #     return
+    
+    if number_of_people_in_room == 1:
+        app.logger.debug('FROM number of people in room')
+        emit('another_person_ready', room=f"video-room-{room_id}")
+    
+    join_room(f'video-room-{room_id}')
+    app.logger.debug('FROM JOIN VIDEO CHAT ROOM')
+
+
+@socketio.on('leave_video_chat_room')
+def leave_video_chat_room(roomName):
+    room_id = roomName
+    leave_room(f'video-room-{room_id}')
+    app.logger.debug('FROM LEAVE VIDEO CHAT ROOM')
+
+
+@socketio.on('send_connection_offer')
+def send_connection_offer(data):
+    offer = data.get('offer')
+    roomName = data.get('roomName')
+    emit('send_connection_offer', 
+         {"offer": offer, "roomName": roomName}, 
+         room=f"video-room-{roomName}",
+         skip_sid=request.sid)
+    app.logger.debug('FROM SEND CONNECTION OFFER')
+
+
+@socketio.on('answer')
+def answer(data):
+    answer = data.get('answer')
+    roomName = data.get('roomName')
+    emit('send_connection_offer', 
+        {"answer": answer, "roomName": roomName},
+        room=f"video-room-{roomName}", 
+        skip_sid=request.sid)
+    app.logger.debug('FROM ANSWER')
+
+
+@socketio.on('send_candidate')
+def send_candidate(data):
+    candidate = data.get('candidate')
+    roomName = data.get('roomName')
+    emit('send_candidate', {"candidate": candidate, "roomName": roomName}, room=f"video-room-{roomName}", skip_sid=request.sid)
+    app.logger.debug('FROM SEND CANDIDATE')
+
 
 @socketio.on('join_chat_room')
 def join_chat_room(room_id):

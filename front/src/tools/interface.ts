@@ -65,3 +65,9 @@ export interface RoomList {
 export interface msgCount {
     count: number
 }
+
+export interface MatchesList{
+    id: string,
+    username: string,
+    photo: string
+}
