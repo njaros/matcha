@@ -40,6 +40,7 @@ const Signup: React.FC = () => {
 			error => {
 				if (error.response)
 				{
+					console.warn(error)
 					if (error.response.status == 400)
 						setErrorMsg(error.response.data.message);
 					else

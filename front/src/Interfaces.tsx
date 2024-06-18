@@ -1,6 +1,6 @@
 export interface ILoginInForm
 {
-    username: string,
+    email: string,
     password: string,
 	latitude?: number,
 	longitude?: number
@@ -13,6 +13,13 @@ export interface ISignUpForm
 	password: string,
 	gender: string,
 	preference: string
+}
+
+export interface IChangePass
+{
+	currentPassword: string,
+	newPassword: string,
+	newPasswordRepeat: string
 }
 
 export interface IPhoto

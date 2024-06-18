@@ -1,6 +1,10 @@
 from validators import str, date, gps
 from functools import wraps
-from flask import request, current_app
+from flask import request, current_app as app
+from jwt_policy.sql import get_user_by_id
+from .sql import get_user_by_email
+import jwt
+from error_status.error import BadRequestError
 
 
 def signup_dto(f):
@@ -45,9 +49,9 @@ def signup_dto(f):
 def login_dto(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        kwargs["username"] = str.isString(
-            request.json["username"],
-            {"maxlen": 20, "minlen": 3, "no_sp_char": True},
+        kwargs["email"] = str.isString(
+            request.json["email"],
+            {"maxlen": 50, "minlen": 3, "no_sp_char": True},
         )
         kwargs["password"] = str.isString(request.json["password"])
         kwargs["latitude"] = gps.isLatitude(
@@ -61,6 +65,59 @@ def login_dto(f):
             )
             if kwargs["longitude"] is None:
                 kwargs["latitude"] = None
+        return f(*args, **kwargs)
+
+    return decorated
+
+
+def mail_register_dto(f):
+    @wraps(f)
+    def decorated(token, *args, **kwargs):
+        try:
+            data = jwt.decode(
+                token, app.config["SECRET_EMAIL_TOKEN"], algorithms=["HS256"]
+            )
+            expDate = data.get("exp")
+            if expDate is None:
+                raise BadRequestError("token expiration date is expired")
+            kwargs["user"] = get_user_by_id(data["user_id"])
+        except jwt.exceptions.InvalidTokenError:
+            raise BadRequestError("Invalid Authentication token")
+        return f(*args, **kwargs)
+
+    return decorated
+
+
+def reset_password_dto(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        kwargs["email"] = str.isString(
+            request.json["email"],
+            {"maxlen": 50, "minlen": 3, "no_sp_char": True},
+        )
+        get_user_by_email(**kwargs)
+        return f(*args, **kwargs)
+
+    return decorated
+
+
+def confirm_reset_password_dto(f):
+    @wraps(f)
+    def decorated(token, *args, **kwargs):
+        try:
+            data = jwt.decode(
+                token,
+                app.config["SECRET_RESET_PASSWORD"],
+                algorithms=["HS256"],
+            )
+            app.logger.info("pouet")
+            expDate = data.get("exp")
+            if expDate is None:
+                raise BadRequestError("token expiration date is expired")
+            kwargs["email"] = data["email"]
+            kwargs["new_pass"] = data["new_pass"]
+        except jwt.exceptions.InvalidTokenError:
+            raise BadRequestError("Invalid Authentication token")
         return f(*args, **kwargs)
 
     return decorated

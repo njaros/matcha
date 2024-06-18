@@ -12,7 +12,8 @@ from .routes import (
     get_hobbies,
     get_self_hobbies,
     add_hobby,
-    del_hobby
+    del_hobby,
+    change_password
 )
 from flask_cors import CORS
 
@@ -62,4 +63,7 @@ app.add_url_rule(
 )
 app.add_url_rule(
     "/profile/get_hobbies", "get_hobbies", get_hobbies, methods=["GET"]
+)
+app.add_url_rule(
+    "/profile/change_password", "change_password", change_password, methods=["POST"]
 )

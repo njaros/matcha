@@ -11,6 +11,7 @@ Werkzeug==2.2.2
 psycopg[binary]
 gunicorn==20.1.0
 flask-socketio
+flask_Mail
 Flask[async]
 gunicorn==20.1.0
 pyjwt

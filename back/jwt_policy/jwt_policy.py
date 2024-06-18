@@ -1,7 +1,7 @@
 from functools import wraps
 import jwt
 from datetime import datetime, timezone, timedelta
-from error_status.error import BadRequestError, InternalServerError
+from error_status.error import BadRequestError
 from flask import request, current_app as app, make_response
 from .sql import get_user_by_id
 from validators import str
@@ -38,7 +38,8 @@ def token_required(f):
             if expDate is None:
                 raise BadRequestError("token expiration date is expired")
             kwargs["user"] = get_user_by_id(data["user_id"])
-        except jwt.exceptions.InvalidTokenError:
+        except jwt.exceptions.InvalidTokenError as e:
+            app.logger.info(f"error: {e}")
             raise BadRequestError("Invalid Authentication token")
         return f(*args, **kwargs)
     return decorated

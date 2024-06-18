@@ -72,3 +72,13 @@ def handle_value_error(error):
     response = jsonify({"message": f"wrong parameter value: {error.args[0]}"})
     response.status_code = 400
     return response
+
+
+def handle_recipient_error(error):
+    response = jsonify(
+        {
+            "message:": f"not valid RFC 5321 address: {list(error.args[0].keys())[0]}"
+        }
+    )
+    response.status_code = 400
+    return response

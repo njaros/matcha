@@ -1,6 +1,8 @@
 import random
 import uuid
 import hashlib
+from threading import Lock
+
 
 names = (
     "Poulet",
@@ -122,6 +124,38 @@ genders = ("man", "woman")
 preference = ("man", "woman", "all")
 
 
+class RandomiserSingleton(type):
+    _instances = {}
+    _lock: Lock = Lock()
+
+    def __call__(cls, *args, **kwargs):
+        with cls._lock:
+            if cls not in cls._instances:
+                cls._instances[cls] = super(RandomiserSingleton, cls).__call__(
+                    *args, **kwargs
+                )
+        return cls._instances[cls]
+
+
+class Randomiser(metaclass=RandomiserSingleton):
+
+    created = {}
+    names_len = len(names)
+    adj_len = len(adjectives)
+
+    def randomise(self):
+        rand_name = random.randint(0, self.names_len - 1)
+        rand_adj = random.randint(0, self.adj_len - 1)
+        if self.created.get((rand_name, rand_adj)) is None:
+            self.created[(rand_name, rand_adj)] = 0
+        self.created[(rand_name, rand_adj)] += 1
+        name = names[rand_name] + adjectives[rand_adj]
+        occurence = self.created[(rand_name, rand_adj)]
+        if occurence > 1:
+            name += f"{occurence}"
+        return {"name": name, "email": f"{name}@mock.com"}
+
+
 def latitudeModulo(lat):
     sign = False
     if lat < 90 and lat > -90:
@@ -158,10 +192,6 @@ def longitudeModulo(lng):
     return lng
 
 
-def do_name(t1, t2):
-    return random.choice(t1) + random.choice(t2)
-
-
 def do_random_date():
     """yyyy-mm-dd"""
     data = (
@@ -193,11 +223,13 @@ def do_gps_near_point(latitude, longitude):
 
 def do_user_near_point(latitude, longitude):
     gps = do_gps_near_point(latitude, longitude)
+    name_email = Randomiser().randomise()
     return (
         uuid.uuid1(),
-        do_name(names, adjectives),
+        name_email["name"],
         hashlib.sha256("mdp".encode("utf-8")).hexdigest(),
-        "mock@email.com",
+        name_email["email"],
+        True,
         do_random_date(),
         random.choice(genders),
         random.choice(genders),
@@ -218,10 +250,10 @@ def insert_users_in_database(conn, n, lat, lng):
     users = [do_user_near_point(lat, lng) for i in range(0, n)]
     query = """
             INSERT INTO user_table \
-            (id, username, password, email, birthDate, \
+            (id, username, password, email, email_verified, birthDate, \
             gender, preference, biography, rank, latitude, \
             longitude, gpsfixed)
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
     cur.executemany(query, users)
     cur.close()

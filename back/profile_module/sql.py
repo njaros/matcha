@@ -416,3 +416,36 @@ def get_userid_with_hobbies_ids(**kwargs):
     user_ids = cur.fetchall()
     cur.close()
     return user_ids
+
+
+def verify_pass(**kwargs):
+    cur = conn.cursor()
+    cur.execute(
+        """
+        SELECT *
+        FROM user_table
+        WHERE id = %s AND password = %s
+        """,
+        (
+            kwargs["user"]["id"],
+            kwargs["currentPassword"]
+        )
+    )
+    user = cur.fetchone()
+    if user is None:
+        return False
+    return True
+
+
+def update_password_by_id(**kwargs):
+    cur = conn.cursor()
+    cur.execute(
+        """
+        UPDATE user_table
+        SET password = %s
+        WHERE id = %s;
+        """,
+        (kwargs["newPassword"], kwargs["user"]["id"],)
+    )
+    conn.commit()
+    cur.close()

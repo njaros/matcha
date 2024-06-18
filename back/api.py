@@ -1,8 +1,11 @@
 from flask import Flask
 from flask_cors import CORS
+from flask_mail import Mail
+from smtplib import SMTPRecipientsRefused
 from cryptography.fernet import Fernet
 import os
 from extensions import socketio
+from mail_config import Config as Mail_config
 from werkzeug.exceptions import BadRequestKeyError
 from error_status.error import BadRequestError, \
     InternalServerError, \
@@ -16,14 +19,18 @@ from error_status.error import BadRequestError, \
     handle_forbidden_error, \
     handle_miss_key_error_internal, \
     handle_value_error, \
-    handle_request_too_large_error
+    handle_request_too_large_error, \
+    handle_recipient_error
 
 # create primary Flask app
 
 app = Flask(__name__)
 app.config['SECRET_ACCESS'] = os.environ.get('SECRET_ACCESS')
 app.config['SECRET_REFRESH'] = os.environ.get('SECRET_REFRESH')
+app.config['SECRET_EMAIL_TOKEN'] = os.environ.get('SECRET_EMAIL_TOKEN')
+app.config['SECRET_RESET_PASSWORD'] = os.environ.get('SECRET_RESET_PASSWORD')
 app.config['MAX_CONTENT_LENGTH'] = 16000000
+app.config.from_object(Mail_config)
 app.config['UPLOAD_FOLDER'] = '/app/imgs/'
 app.config['IMG_EXT'] = set(['png', 'jpg', 'jpeg', 'gif'])
 if os.path.exists("/app/photo.key"):
@@ -37,7 +44,7 @@ file_key.close()
 app.config['SECRET_PHOTO'] = key
 
 CORS(app, origins='*')
-
+app.config['mail'] = Mail(app)
 
 # initialization of Flask-SocketIO
 
@@ -76,6 +83,7 @@ app.register_error_handler(BadRequestKeyError, handle_miss_key_error)
 app.register_error_handler(KeyError, handle_miss_key_error_internal)
 app.register_error_handler(ValueError, handle_value_error)
 app.register_error_handler(RequestTooLargeError, handle_request_too_large_error)
+app.register_error_handler(SMTPRecipientsRefused, handle_recipient_error)
 
 if __name__ == "__main__":
     port = int(os.environ.get('SERVER_PORT'))
