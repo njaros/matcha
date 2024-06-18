@@ -1,10 +1,4 @@
-import { Box, Divider, Flex, Icon, Stack, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from "@chakra-ui/react";
-import Profile from "./Profile";
-import Photo from "./Photo";
-import Geoloc from "./FilterModule/Geoloc";
-import { useState } from "react";
-import Hobbies from "./Hobbies";
-import Filter from "./FilterModule/Filter";
+import { Box, Flex, Icon, Stack, Text } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
 import { MdAddAPhoto } from "react-icons/md";
@@ -12,6 +6,7 @@ import { TbFilter } from "react-icons/tb";
 import { FaRegHeart } from "react-icons/fa";
 import { FaHeartPulse } from "react-icons/fa6";
 import { RiSpyFill } from "react-icons/ri";
+import { GiHouseKeys } from "react-icons/gi";
 
 const settingFontSize = { base: '16px', sm: '18px', md: '20px', lg: '22px', xl: '24px' };
 
@@ -89,8 +84,23 @@ const Settings = () => {
                             </Text>
                         </Box>
                     </Flex>
-                    <Flex>
-                        <NavLinkSettings path={"/settings/change_password"} name={"change password"}/>
+                    <Flex
+                        padding={'10px 10px'} 
+                        alignItems={'center'}>
+                    <Icon 
+                            as={GiHouseKeys}
+                            boxSize={'40px'}
+                            color={'#A659EC'}
+                        />
+                        <Box paddingLeft={'10px'} >
+                            <NavLinkSettings path={"/settings/change_password"} name={"Change password"}/>
+                        <Text 
+                                fontSize={'small'}
+                                opacity={'70%'}
+                            >
+                                Change your password
+                            </Text>
+                        </Box>
                     </Flex>
                 </Flex>
                 <Flex   

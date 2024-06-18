@@ -21,9 +21,10 @@ export default function ChangePassword() {
         else
         {
             setLoading(true);
-            Axios.post("change_password", data).then(
+            Axios.post("profile/change_password", data).then(
                 response => {
-
+                    console.log(response);
+                    setJobDone(true);
                 }
             ).catch(
                 err => {
@@ -59,7 +60,7 @@ export default function ChangePassword() {
                     fontWeight={'bold'}
                     paddingLeft={'5px'}
                 >
-                    Profile
+                    Change password
                 </Text>
             </Flex>
             <Flex
@@ -71,20 +72,13 @@ export default function ChangePassword() {
                     w={"100%"}
                     h={"100%"}>
                         <Image  src="/changePass.avif"
-                                width={"200px"}/>
-                        <Text
-                            textAlign={"center"}
-                            fontSize={'x-large'}
-                            fontWeight={"bold"}
-                            paddingBottom={"10px"}>
-                                Change your password
-                        </Text>
+                                width={"60%"}/>
                         {jobDone ? <Text margin="100px 0" fontWeight={"bold"} placeSelf={"center"}>Password updated</Text> :
-                <form className="login_form" onSubmit={handleSubmit(changePassSubmit)} style={{width: "80%"}}>
+                <form className="login_form" onSubmit={handleSubmit(changePassSubmit)} style={{width: "70%"}}>
                     <Flex
                         flexDirection="column"
                         >
-                        <Stack spacing={1}>
+                        <Stack spacing={2}>
                             <Box paddingBottom={'5px'}>
                             <Input
                                 w={'100%'}
@@ -124,13 +118,14 @@ export default function ChangePassword() {
                         {loading ?
                             <Spinner color="purple" size="lg" margin="15px 0"/> :
                             <Flex direction={"column"} margin="15px 0">
-                                <Button 
+                                <Button
+                                    borderRadius={"full"}
                                     className="submit_button" 
                                     type="submit"
                                     color={"white"}
                                     bg="#A659EC"
                                     >
-                                    Send
+                                    Update password
                                 </Button>
                             </Flex>}
                         

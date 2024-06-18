@@ -8,7 +8,8 @@ from .dto import (
     update_user_dto,
     set_pos_dto,
     add_hobby_dto,
-    del_hobby_dto
+    del_hobby_dto,
+    change_password_dto
 )
 from error_status.error import BadRequestError
 from . import sql
@@ -130,6 +131,13 @@ def update_user(**kwargs):
         raise BadRequestError("nothing to modify")
     updated_user = sql.update_user(**kwargs)
     return jsonify({"notice": notice, "updated_user": updated_user}), 200
+
+
+@token_required
+@change_password_dto
+def change_password(**kwargs):
+    sql.update_password_by_id(**kwargs)
+    return "password succesfully updated", 200
 
 
 # ------------------------GPS--------------------

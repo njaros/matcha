@@ -1,9 +1,10 @@
 from flask import request, current_app
 from functools import wraps
-from .sql import count_photos_by_user_id as count
-from error_status.error import BadRequestError
+from .sql import count_photos_by_user_id as count, verify_pass
+from error_status.error import BadRequestError, ForbiddenError
 from validators import str, date, int
 from tools import GPS_tools
+import hashlib
 
 
 def image_dto(f):
@@ -102,8 +103,17 @@ def update_user_dto(f):
 def change_password_dto(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        kwargs["password"] = str.isString(request.form["password"])
-        kwargs["newPassword"] = str.isString(request.form("newPassword"))
+        kwargs["currentPassword"] = hashlib.sha256(
+            str.isString(request.json["currentPassword"]).encode("utf-8")
+        ).hexdigest()
+        if verify_pass(**kwargs):
+            kwargs["newPassword"] = hashlib.sha256(
+                str.isString(request.json["newPassword"]).encode("utf-8")
+            ).hexdigest()
+            return f(*args, **kwargs)
+        raise ForbiddenError("Wrong password !!")
+
+    return decorated
 
 
 def set_pos_dto(f):
@@ -122,9 +132,7 @@ def add_hobby_dto(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         current_app.logger.info(request.json)
-        kwargs["hobbie_ids"] = (
-            int.isStrInt(request.json["id"], {"min": 0}),
-        )
+        kwargs["hobbie_ids"] = (int.isStrInt(request.json["id"], {"min": 0}),)
         current_app.logger.info(kwargs)
         return f(*args, **kwargs)
 
@@ -134,9 +142,7 @@ def add_hobby_dto(f):
 def del_hobby_dto(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        kwargs["hobbie_ids"] = (
-            int.isStrInt(request.json["id"], {"min": 0}),
-        )
+        kwargs["hobbie_ids"] = (int.isStrInt(request.json["id"], {"min": 0}),)
         return f(*args, **kwargs)
 
     return decorated

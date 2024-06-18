@@ -120,20 +120,6 @@ def update_password_by_email(**kwargs):
     cur.close()
 
 
-def update_password_by_id(**kwargs):
-    cur = conn.cursor()
-    cur.execute(
-        """
-        UPDATE user_table
-        SET password = %s
-        WHERE id = %s;
-        """,
-        (kwargs["new_pass"], kwargs["user"]["id"],)
-    )
-    conn.commit()
-    cur.close()
-
-
 def get_user_by_email(**kwargs):
     cur = conn.cursor(row_factory=dict_row)
     cur.execute(
