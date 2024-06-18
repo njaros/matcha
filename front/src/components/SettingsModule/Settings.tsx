@@ -70,10 +70,6 @@ const Settings = () => {
                             </Text>
                         </Box>
                     </Flex>
-                    {/* <Flex>
-                        <NavLinkSettings path={"/settings/hobbies"} name={"hobbies"}/>
-                    </Flex> */}
-                
                     <Flex
                         padding={'10px 10px'} 
                         alignItems={'center'}
@@ -92,6 +88,9 @@ const Settings = () => {
                                 Change your main photo, upload new one
                             </Text>
                         </Box>
+                    </Flex>
+                    <Flex>
+                        <NavLinkSettings path={"/settings/change_password"} name={"change password"}/>
                     </Flex>
                 </Flex>
                 <Flex   

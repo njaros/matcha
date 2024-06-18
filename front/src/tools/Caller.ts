@@ -1,5 +1,4 @@
 import axios from "axios";
-import { cookieMan } from "./CookieMan";
 import { tokenReader } from "./TokenReader";
 
 const ip = import.meta.env.VITE_IP;

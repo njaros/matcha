@@ -26,6 +26,7 @@ import Chatbox from "./components/ConversationModule/Chatbox";
 import VoiceChat from "./components/ConversationModule/Call";
 import { useLocalCameraStream } from "./components/ConversationModule/Call";
 import Forgot from "./components/LoginModule/Forgot";
+import ChangePassword from "./components/SettingsModule/ChangePassword";
 
 function App() {
 
@@ -215,10 +216,12 @@ function App() {
 						<Route path="/signUp" element={ logged ? <Navigate to="/" /> : (<Signup />) } />
 						<Route path="/forgot" element={ logged ? <Navigate to="/" /> : (<Forgot />) } />
 						<Route element={ logged ? <Outlet /> : <Navigate to="/login" /> } >
+							<Route path="/" element={ <Swipe/> } />
 							<Route path="/settings" element={ <Outlet />}>
 								<Route path="/settings/" element={ <Settings /> } />
 								<Route path="/settings/photos" element={ <Photo />} />
 								<Route path="/settings/profile" element={ <Profile />} />
+								<Route path="/settings/change_password" element={ <ChangePassword /> } />
 								<Route path="/settings/match_list" element={ <MatchList />}/>
 								<Route path="/settings/liked_list" element={ <LikeList /> } />
 								<Route path="/settings/visits_list" element={ <VisitorList/> } />
@@ -229,7 +232,6 @@ function App() {
 							<Route path="/channel" element={ <ChannelList />} />
 							<Route path="/chatbox" element={ <Chatbox />} />
 							<Route path="/chatbox/call/:roomName" element={ <VoiceChat />} />
-							<Route path="/" element={ <Swipe/> } />
 						</Route>
 					</Route>
 				</Routes>

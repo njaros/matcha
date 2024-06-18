@@ -28,7 +28,7 @@ const Login = (props:{
             data.latitude = gps.latitude;
             data.longitude = gps.longitude;
         }
-		Axios.post("login", data)
+		Axios.post("login", data, {withCredentials: true})
 			.then(response => {
 				console.log(response);
 				if (response.status == 200)

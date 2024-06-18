@@ -90,10 +90,6 @@ def update_user_dto(f):
                 "allowed": (
                     "man",
                     "woman",
-                    "non-binary",
-                    "man-woman",
-                    "man-nb",
-                    "woman-nb",
                     "all",
                 ),
             },
@@ -101,6 +97,13 @@ def update_user_dto(f):
         return f(*args, **kwargs)
 
     return decorated
+
+
+def change_password_dto(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        kwargs["password"] = str.isString(request.form["password"])
+        kwargs["newPassword"] = str.isString(request.form("newPassword"))
 
 
 def set_pos_dto(f):

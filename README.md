@@ -18,6 +18,6 @@ dating web site 42 project
 
 - is_email
 
-# TODOS-EMAIL [FRONT et BACK]
+# TODOS-PHOTO
 
-- forgot password ?
+- BACK: handle the case when user send a folder
