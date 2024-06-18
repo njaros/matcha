@@ -42,7 +42,7 @@ export function AgeRangeSlider(props: {
                     props.setAgeRange([val[0], val[1]]);
                 }}
                 >
-                <RangeSliderTrack backgroundColor="#F2F2F2">
+                <RangeSliderTrack backgroundColor="#edf2f7">
                     <RangeSliderFilledTrack backgroundColor="#A659EC" />
                 </RangeSliderTrack>
                 <RangeSliderThumb boxSize="10px" outline="solid 2px #A659EC"  index={0} />

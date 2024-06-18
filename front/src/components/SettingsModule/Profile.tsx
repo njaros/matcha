@@ -73,7 +73,8 @@ const Profile = () => {
                     {props.title}
                 </Text>
                 {props.readonly ?
-                <Input 
+                <Input
+                    variant={'filled'}
                     margin="4px" 
                     readOnly value={props.val}
                     borderRadius={'full'}
@@ -105,6 +106,7 @@ const Profile = () => {
                 {props.readonly ?
                 <Textarea
                     margin='4px'
+                    variant={'filled'}
                     readOnly 
                     defaultValue={props.val}
                     borderRadius={'20px'}

@@ -39,12 +39,13 @@ const Settings = () => {
                 fontSize={'xx-large'}
                 fontWeight={'bold'}
                 marginBottom={'15px'}
+                textColor={'black'}
             >
                 Parameters
             </Text>
             <Stack>
                 <Flex   
-                    bgColor={"#f2f2f2"}
+                    bgColor={"#edf2f7"}
                     flexDirection={"column"}
                     borderRadius="20px"
                 >
@@ -95,7 +96,7 @@ const Settings = () => {
                     </Flex>
                 </Flex>
                 <Flex   
-                    bgColor={"#f2f2f2"}
+                    bgColor={"#edf2f7"}
                     flexDirection={"column"}
                     borderRadius="20px"
                 >
@@ -122,7 +123,7 @@ const Settings = () => {
                     </Flex>
                 </Flex>
                 <Flex   
-                    bgColor={"#f2f2f2"}
+                    bgColor={"#edf2f7"}
                     flexDirection={"column"}
                     borderRadius="20px"
                 >

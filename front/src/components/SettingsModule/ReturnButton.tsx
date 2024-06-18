@@ -9,6 +9,7 @@ export default function ReturnButton(props: {to: string}) {
                 borderRadius={'100%'}
                 padding={'0'}
                 size={'sm'}
+                bgColor={'#edf2f'}
             >
                 <Icon as={IoChevronBack} />
             </Button>

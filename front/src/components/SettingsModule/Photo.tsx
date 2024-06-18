@@ -1,24 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { IPhoto } from "../../Interfaces";
 import Axios from "../../tools/Caller";
-import { Box, Button, Image, List, ListItem, Input } from "@chakra-ui/react";
+import { Box, Button, Image, List, ListItem, Input, Flex, Text, Stack, SimpleGrid, IconButton, Icon } from "@chakra-ui/react";
 import ReturnButton from "./ReturnButton";
+import { CiCirclePlus } from "react-icons/ci";
+import { FaCrown } from "react-icons/fa";
+import { ImCross } from "react-icons/im";
+import { MdDelete } from "react-icons/md";
+import { RiVipCrownFill } from "react-icons/ri";
+import { RiDeleteBin5Fill } from "react-icons/ri";
 
-function displayListAccepted(props: string[])
-{
-    const list = props.map((elt, key) => {
-        return <li key={key}>{elt}</li>
-    });
-    return (<ul>{list}</ul>);
-}
 
-function displayListDenied(props: {"filename": string, "reason": string}[])
-{
-    const list = props.map((elt, key) => {
-        return <li key={key}>{elt.filename}: {elt.reason}</li>
-    });
-    return (<ul>{list}</ul>);
-}
+
 
 const Photo = () => {
     const [files, setFiles] = useState<FileList | null>(null);
@@ -28,6 +21,42 @@ const Photo = () => {
     const [photos, setPhotos] = useState<IPhoto[]>([]);
     const [onMount, setOnMount] = useState<boolean>(true);
     const [boolReactBug, setBoolReactBug] = useState<boolean>(true);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    const onChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files || files.length === 0) 
+            return;
+        uploadFiles(files);
+      };
+    
+      const uploadFiles = (files: FileList) => {
+        if (photos.length >= 5){
+            console.error("You cannot have more than 5 photos")
+        }
+        const form = new FormData();
+        form.append("file[]", files[0]);
+        
+        Axios.post("profile/upload", form, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        })
+          .then(response => {
+            setAccepted(response.data.accepted);
+            setDenied(response.data.denied);
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      };
+    
+      const handleIconClick = () => {
+        if (inputRef.current) {
+          inputRef.current.click();
+        }
+      };
+    
 
     function getPhotos()
     {
@@ -80,52 +109,11 @@ const Photo = () => {
         }
     }, [accepted])
 
-    const onChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files.length > 0) {
-            setFiles(e.target.files);
-        }
-    }
-
-    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const form = new FormData();
-        if (!files)
-            return;
-        for (let i = 0; i < files.length; ++i)
-            form.append("file[]", files[i]);
-        try {
-            Axios.post("profile/upload", form, {
-                headers: {
-                    "Content-Type": "multipart/form-data"
-                }
-            }).then(
-                response => {
-                    setErrorMsg({"message": "", "section": ""});
-                    setAccepted(response.data.accepted);
-                    setDenied(response.data.denied);
-                }
-            ).catch(
-                error => {
-                    console.log(error);
-                    if (error.response != undefined)
-                    {
-                        if (error.response.status == 413)
-                            setErrorMsg({"message": "entity too large", "section": "upload photo"})
-                        else
-                            setErrorMsg({"message": error.response.data.message, "section": "upload photo"})
-                        setAccepted([]);
-                        setDenied([]);
-                    }
-                }
-            )
-        } catch (error) {
-            console.error(error);
-        }
-    }
+    
 
     const delPhotoHandler = (e: any) => {
         const form = new FormData();
-        const photoId = e.currentTarget.value;
+        const photoId = e;
         setAccepted([]);
         setDenied([]);
         form.append("photo_id", photoId);
@@ -157,7 +145,7 @@ const Photo = () => {
 
     const changeMainPhotoHandler = (e:any) => {
         const form = new FormData();
-        const photoId = e.currentTarget.value;
+        const photoId = e;
         form.append("photo_id", photoId);
         Axios.post("profile/change_main_photo", form)
         .then(response => {
@@ -185,34 +173,135 @@ const Photo = () => {
         setDenied([]);
     }
 
-    function displayListPhotos(props: IPhoto[])
-    {
-        const list = props.map((photo: IPhoto) => {
-            return <ListItem display="flex" flexDirection="row" margin="5%" className="photoCell" key={photo.id}>
-                        <Image src={photo.htmlSrcImg} width="100" height="100" alt={`Photo ${photo.id}`}/>
-                        <Box display="flex" flexDirection="column">
-                            <Button margin="4px" className="delButton" onClick={delPhotoHandler} value={photo.id}>X</Button>
-                            {!photo.main ? <Button margin="4px" className="mainButton" onClick={changeMainPhotoHandler} value={photo.id}>define to main photo</Button> : null}
-                        </Box>
-                    </ListItem>
-        });
-        return (<List className="photosList">{list}</List>);
+    const BoxPhoto = (props : {photo: any, main: boolean}) => {
+        return (
+            <Flex flexDirection={'column'}>
+                <Box 
+                    bg="#edf2f7" 
+                    h="300px" 
+                    w="170px" 
+                    borderRadius={'15px'} 
+                    border={'1px'} 
+                    borderColor={'grey'}
+                    display={'flex'}
+                    alignItems={'center'}
+                    justifyContent={'center'}
+                    >
+
+                    {props.photo ? (
+                    <>
+                        <Image 
+                            src={props.photo.htmlSrcImg} 
+                            alt="Photo" 
+                            objectFit="cover" 
+                            borderRadius="15px"
+                            top="0"
+                            left="0"
+                            width="100%"
+                            height="100%" 
+                        />
+                    </>
+                    ) : (
+                    <>
+                        <Input
+                            type="file"
+                            accept="image/"
+                            ref={inputRef}
+                            style={{ display: "none" }} // Cache l'input file
+                            onChange={onChangeFile}
+                        />
+                        <Icon
+                            onClick={handleIconClick}
+                            as={CiCirclePlus}
+                            boxSize={'35px'}
+                        />
+                    </>
+                    
+                    )}
+                    
+                </Box>
+                <Flex 
+                    justifyContent={'center'} 
+                    marginTop={'5px'}
+                    gap={'8px'}
+                >
+                    {props.photo ? 
+                        <Icon
+                            as={RiDeleteBin5Fill} 
+                            onClick={() => delPhotoHandler(props.photo.id)}/> 
+                        : 
+                        <Flex marginBottom={'16px'}/>
+                    }
+                    {props.photo && 
+                        <>
+                            {props.main ?  <Icon
+                                color={'gold'}
+                                as={RiVipCrownFill} 
+                            />
+                            :
+                            <Icon
+                                as={RiVipCrownFill} 
+                                onClick={() => changeMainPhotoHandler(props.photo.id)}
+                            />
+                            }
+                        </> 
+                        
+                    }
+                </Flex>
+            </Flex>
+        )
     }
 
     return (
-        <Box margin="5%" flex={1} display={"flex"} flexDirection={"column"}>
-                    <form onSubmit={onSubmit}>
-                        <Input type="file" name="file[]" onChange={onChangeFile} multiple required/>
-                        <Button type="submit">Envoi</Button>
-                        {errorMsg.section != "" ? <div className="errorMsg">error: {errorMsg.section}: {errorMsg.message}</div> : null}
-                        {accepted.length ? <div className="acceptedFiles">succesfully upload : {displayListAccepted(accepted)}</div> : null}
-                        {denied.length ? <div className="deniedFiles">failed to upload : {displayListDenied(denied)}</div> : null}
-                    </form>
-                    {displayListPhotos(photos)}
+        <Flex
+            flexDirection={'column'}
+            w={'100%'}
+            h={'100%'}
+            alignItems={'center'}
+            overflow={'hidden'}
+        >
+             <Flex 
+                flexDirection={'row'}
+                paddingLeft={'20px'}
+                marginTop={'10px'}
+                marginBottom={'10px'}
+                placeSelf={'flex-start'}
+            >
+                <Box alignSelf={'center'}>
                     <ReturnButton to="/settings"/>
-        </Box>
-    )
+                </Box>
+                <Text
+                    fontSize={'xx-large'}
+                    alignSelf={'center'}
+                    margin={'0px 5px'}
+                    fontWeight={'bold'}
+                    paddingLeft={'5px'}
+                    textColor={'black'}
+                >
+                    Photos
+                </Text>
+            </Flex>
+            <SimpleGrid
+                columns={{ base: 2, md: 3, lg: 4, xl: 5 }}
+                spacing={3}
+                w="100%"
+                h="100%"
+                alignItems="center"
+                justifyItems="center"
+                overflowY={'auto'}
+                marginTop={'15px'}
+                padding={'0px 10px'}
+            >
+                <BoxPhoto photo={photos[0]} main={true}/>                    
+                <BoxPhoto photo={photos[1]} main={false}/>                    
+                <BoxPhoto photo={photos[2]} main={false}/>                    
+                <BoxPhoto photo={photos[3]} main={false}/>
+                <BoxPhoto photo={photos[4]} main={false}/>                                      
 
+            </SimpleGrid>
+   
+        </Flex>
+    )
 }
 
-export default Photo;
+export default Photo;     

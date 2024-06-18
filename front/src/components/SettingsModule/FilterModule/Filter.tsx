@@ -77,7 +77,7 @@ export default function Filter(props: {focus: boolean}) {
                     padding={'15px'} 
                     width={"100%"} 
                     borderRadius={'15px'} 
-                    backgroundColor={'#f2f2f2'}
+                    backgroundColor={'#edf2f7'}
                 >
                     <AgeRangeSlider
                         setAgeRange={handlerAgeMinMax}
