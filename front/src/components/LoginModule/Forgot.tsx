@@ -13,13 +13,14 @@ const Forgot = () =>
 	const [wrong, setWrong] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [ errorMsg, setErrorMessage ] = useState<string>("");
+    const [ timeoutId, setTimeOutId ] = useState<NodeJS.Timeout>();
 
 	const forgotSubmit = (data: {email: string}) => {
         setLoading(true);
         Axios.post("reset_password", data).then(
             response => {
                 setJobDone(true)
-                setTimeout(() => navigate("/login"), 4000)
+                setTimeOutId(setTimeout(() => navigate("/login"), 4000))
             }
         ).catch(
             err => {
@@ -94,7 +95,7 @@ const Forgot = () =>
                 marginTop={'5px'}
                 justifyContent={'center'}
             >    
-                    <NavLink to={'/logIn'}>
+                    <NavLink onClick={() => clearTimeout(timeoutId)} to={'/logIn'}>
                         <Text 
                             fontSize={'md'} 
                             marginLeft={'5px'}

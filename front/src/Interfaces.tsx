@@ -15,6 +15,13 @@ export interface ISignUpForm
 	preference: string
 }
 
+export interface IChangePass
+{
+	currentPassword: string,
+	newPassword: string,
+	newPasswordRepeat: string
+}
+
 export interface IPhoto
 {
 	id: string,
