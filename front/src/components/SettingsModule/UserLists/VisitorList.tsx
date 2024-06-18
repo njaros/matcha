@@ -28,5 +28,5 @@ export default function VisitorList() {
         )
     }, [])
 
-    return <DisplayList list={userList} enableDate={true} />
+    return <DisplayList list={userList} enableDate={true} name="Visitors"/>
 }

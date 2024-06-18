@@ -1,4 +1,4 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { storeFilter } from "../../../tools/Stores";
 import { DateTools } from "../../../tools/DateTools";
 import { AgeRangeSlider } from "./AgeRangeSlider";
@@ -37,13 +37,48 @@ export default function Filter(props: {focus: boolean}) {
     }
 
     return (
-        <Flex   flex={1} flexDirection={"column"} overflow={"hidden"} alignItems={"center"} justifyContent={"flex-end"}>
-            <Flex   flex={1}
-                    overflowY={"auto"}
-                    marginTop="10px" width="80%"
-                    flexDirection="column" alignItems="center" >
+        <Flex  
+            flex={1} 
+            flexDirection={"column"} 
+            alignItems={"center"} 
+            justifyContent={"flex-end"}
+            overflow={'hidden'}
+        >
+            <Flex 
+                flexDirection={'row'}
+                paddingLeft={'20px'}
+                marginTop={'10px'}
+                marginBottom={'10px'}
+                placeSelf={'flex-start'}
+            >
+                <Box alignSelf={'center'}>
+                    <ReturnButton to="/settings"/>
+                </Box>
+                <Text
+                    fontSize={'xx-large'}
+                    alignSelf={'center'}
+                    margin={'0px 5px'}
+                    fontWeight={'bold'}
+                    paddingLeft={'5px'}
+                >
+                    Filter
+                </Text>
+            </Flex>
+            <Flex   
+                flex={1}
+                overflowY={'auto'}
+                marginTop="10px"
+                width="80%"
+                flexDirection="column" 
+                alignItems="center"
+            >
                 <Geoloc focus={props.focus}/>
-                <Box padding={'15px'} width={"100%"} borderRadius={'15px'} backgroundColor={'#f2f2f2'}>
+                <Box 
+                    padding={'15px'} 
+                    width={"100%"} 
+                    borderRadius={'15px'} 
+                    backgroundColor={'#f2f2f2'}
+                >
                     <AgeRangeSlider
                         setAgeRange={handlerAgeMinMax}
                         defaultValue={
@@ -66,7 +101,6 @@ export default function Filter(props: {focus: boolean}) {
                     defaultValue={filter.hobby_ids}
                     />
             </Flex>
-            <ReturnButton to="/settings" />
         </Flex>
     )
 }

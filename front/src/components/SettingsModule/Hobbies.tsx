@@ -55,7 +55,9 @@ const Hobbies = () => {
             return(
                     <Button key={elt.id}
                             colorScheme={elt.belong? "purple_palet": "gray"}
-                            boxShadow="base"
+                            margin={'1%'}
+                            padding={'7px 12px'}
+                            borderRadius={'full'}
                             value={elt.id}
                             onClick={elt.belong? handleClickOff: handleClickOn}>
                         {elt.name}
@@ -70,16 +72,28 @@ const Hobbies = () => {
     }, [])
 
     return (
-        <Box flex={1} overflowY={"auto"} display="flex" flexDirection="column" bg="white" boxShadow="base" padding="10%" borderRadius="5%">
-            <Box alignSelf="center" marginBottom = "15%" fontSize="lg">
-                Select your Hobbies !
+        <Box 
+            flex={1} 
+            display="flex"
+            flexDirection="column" 
+            bg="white" 
+            padding="10%" 
+            borderRadius="5%"
+        >
+            <Box 
+                marginBottom = "10%" 
+                fontSize="xx-large"
+                fontWeight={'bold'}
+            >
+                Your Hobbies 
             </Box>
-            {hobbies.length != 0 && <Box    display={"flex"}
-                                            flexWrap={"wrap"}
-                                            flexDirection={"row"}>
-                <Hobbies_Boxes />
+            {hobbies.length != 0 && 
+                <Box    
+                    display={"flex"}
+                    flexWrap={"wrap"}
+                    flexDirection={"row"}>
+                    <Hobbies_Boxes />
             </Box>}
-            <ReturnButton to="/settings"/>
         </Box>
     )
 }

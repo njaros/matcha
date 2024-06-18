@@ -144,7 +144,7 @@ const Settings = () => {
                                 fontSize={'small'} 
                                 opacity={'70%'}
                             >
-                                See who like you, unlike if you change your mind
+                                Revisit your like, unlike if you change your mind
                             </Text>
                         </Box>
                     </Flex>

@@ -28,5 +28,5 @@ export default function MatchList() {
         )
     }, [])
 
-    return <DisplayList list={userList} enableDate={false} />
+    return <DisplayList list={userList} enableDate={false} name="Matches"/>
 }
