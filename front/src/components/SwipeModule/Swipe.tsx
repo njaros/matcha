@@ -258,7 +258,7 @@ const Swipe = () => {
                         fontWeight="bold"
                         margin="5%"
                         color="white">
-                    Nobody around you belong to your wishes...
+                    Nobody around you belongs to your wishes...
                 </Text>
             </Box>
         }

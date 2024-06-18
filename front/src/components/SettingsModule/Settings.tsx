@@ -71,7 +71,7 @@ const Settings = () => {
             <Stack
                 overflowY={"auto"}>
                 <Flex   
-                    bgColor={"#f2f2f2"}
+                    bgColor={"#edf2f7"}
                     flexDirection={"column"}
                     borderRadius="20px"
                 >
@@ -92,7 +92,7 @@ const Settings = () => {
                         icon={GiHouseKeys}/>
                 </Flex>
                 <Flex   
-                    bgColor={"#f2f2f2"}
+                    bgColor={"#edf2f7"}
                     flexDirection={"column"}
                     borderRadius="20px"
                 >
@@ -103,7 +103,7 @@ const Settings = () => {
                         icon={TbFilter}/>
                 </Flex>
                 <Flex   
-                    bgColor={"#f2f2f2"}
+                    bgColor={"#edf2f7"}
                     flexDirection={"column"}
                     borderRadius="20px"
                 >

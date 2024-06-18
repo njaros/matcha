@@ -168,7 +168,7 @@ const Geoloc = (props: {focus: boolean}) => {
                     padding={'7px 15px'}
                     borderRadius="15px"
                     fontSize={commentaryFontSize}
-                    backgroundColor={'#F2F2F2'}
+                    backgroundColor={'#edf2f7'}
                     onClick={triggerMap}>
                     <Box>
                         <Text  fontWeight={'normal'} fontSize={'small'} color={'#6C6565'} opacity={'80%'}>

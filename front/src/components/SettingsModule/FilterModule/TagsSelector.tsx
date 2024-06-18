@@ -53,7 +53,7 @@ export default function TagsSelector(props: any) {
                             margin="1%"
                             borderRadius="20px"
                             color={hobby.selected ? "white" : "black"}
-                            bgColor={hobby.selected ? "#A659EC" : "#f2f2f2"}
+                            bgColor={hobby.selected ? "#A659EC" : "#edf2f7"}
                             transition="background-color 0.2s ease-in-out, color 0.2s ease-in-out"
                         >
                             {hobby.name}

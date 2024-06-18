@@ -1,4 +1,4 @@
-import { Avatar, Box, Flex, Icon, Text } from "@chakra-ui/react";
+import { Avatar, Box, Flex, Icon, Image, Text } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { BsArrowReturnRight } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
@@ -31,7 +31,7 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
             socket?.off('last_message')
         })
     }, [])
-    const current_count = msgCount[props.conv.id]?.count 
+    const current_count = msgCount[props.conv.id]?.count
     return (
         <Flex
             alignItems={'center'}
@@ -149,7 +149,6 @@ function ChannelList(){
             scrollToBottomRef.current.scrollTop = scrollToBottomRef.current.scrollHeight;
           }
     }, [roomList])
-
     return (
         <Flex 
             h={'100%'}
@@ -161,16 +160,27 @@ function ChannelList(){
                 h={'100%'}
                 w={'100%'}
                 flexDirection="column"
-                marginTop={'5%'}
+
             >
                 <Text 
-                    fontSize={'x-large'}
+                    fontSize={'xx-large'}
                     fontWeight={'bold'}
                     marginLeft={'10px'} 
                     marginBottom={'10px'}
                 >
                     Conversation
                 </Text>
+                {!roomList && 
+                    <Image
+                        src="../../assets/images/main-tenant-numero-0.png"
+                        objectFit="contain"
+                        backgroundPosition="top"
+                        backgroundRepeat="no-repeat"
+                        margin={'auto'}
+                        width={{ base: "100%", sm: "80%", md: "60%", lg: "50%", xl: "40%"}} // Ajuste la largeur en fonction de la taille de l'écran
+                        height="auto" // Maintient le ratio d'aspect de l'image                
+                    ></Image>
+                }
                 <Flex
                     width={'100%'}
                     h={'100%'}

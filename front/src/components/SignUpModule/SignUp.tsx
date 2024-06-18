@@ -65,10 +65,6 @@ const Signup: React.FC = () => {
 			justifyContent="center"
 			h={'100%'}
 			w={'100%'}
-			// backgroundImage={"url('../../assets/images/rm222-mind-20.jpg')"}
-			// backgroundRepeat={'no-repeat'}
-			// backgroundPosition={'top'}
-			// backgroundSize={'cover'}
 		>
 			
 			<Text

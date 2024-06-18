@@ -1,8 +1,8 @@
+import { Box, Button, Flex, FormControl, Input, Select, Stack, Text, Textarea } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import Axios from "../../tools/Caller";
-import { IUser } from "../../Interfaces";
-import { Box, Textarea, List, ListItem, Image, Button, FormControl, Input, Text, Center } from "@chakra-ui/react"
 import { useForm } from "react-hook-form";
+import { IUser } from "../../Interfaces";
+import Axios from "../../tools/Caller";
 import ReturnButton from "./ReturnButton";
 import Hobbies from "./Hobbies";
 
@@ -59,11 +59,30 @@ const Profile = () => {
 
     const InputUser = (props: {readonly: boolean, val: string, title: "email" | "username" | "birthdate" | "gender" | "biography" | "preference"}) => {
         return (
-            <Box display="flex" flexDirection="row" justifyContent="flex-start" alignItems="center">
-                <Text width="30%" marginRight="5%" textOverflow="ellipsis" overflow="hidden" whiteSpace="nowrap">Your {props.title}</Text>
+            <Box 
+                display="flex" 
+                flexDirection="column" 
+                justifyContent="flex-start" 
+                alignItems="center"
+                w={'80%'}
+            >
+                <Text
+                    fontWeight={'bold'}
+                    width="100%" 
+                >
+                    {props.title}
+                </Text>
                 {props.readonly ?
-                <Input margin="4px" readOnly value={props.val}/> :
-                <Input margin="4px" {...register(props.title)} />
+                <Input
+                    variant={'filled'}
+                    margin="4px" 
+                    readOnly value={props.val}
+                    borderRadius={'full'}
+                /> :
+                <Input 
+                    margin="4px" {...register(props.title)} 
+                    borderRadius={'full'}    
+                />
                 }
             </Box>
         )
@@ -71,11 +90,31 @@ const Profile = () => {
 
     const InputUserBiography = (props: {readonly: boolean, val: string}) => {
         return (
-            <Box display="flex" flexDirection="column" justifyContent="center" alignItems="center">
-                <Text width="30%" marginRight="5%" textOverflow="ellipsis" overflow="hidden" whiteSpace="nowrap">Your Biography</Text>
+            <Box 
+                display="flex" 
+                flexDirection="column" 
+                justifyContent="center" 
+                alignItems="center"
+                w={'80%'}    
+            >
+                <Text 
+                    width="100%"
+                    fontWeight={'bold'}
+                >
+                    Biography
+                </Text>
                 {props.readonly ?
-                <Textarea readOnly defaultValue={props.val}/> :
-                <Textarea {...register("biography")}/>
+                <Textarea
+                    margin='4px'
+                    variant={'filled'}
+                    readOnly 
+                    defaultValue={props.val}
+                    borderRadius={'20px'}
+                /> :
+                <Textarea
+                    borderRadius={'20px'}
+                    {...register("biography")}
+                />
                 }
             </Box>
         )
@@ -111,30 +150,161 @@ const Profile = () => {
     }
 
     return (
-        <Box    display="flex" flex={1} flexDirection="column">
-            {user?
-            <form onSubmit={handleSubmit(profileSubmit)}>
-                <FormControl    display="flex" flexDirection="column">
-                    <Box display="flex" flexDirection="column" margin = "5%">
-                        <Center marginBottom="5%">ACCOUNT INFO</Center>
-                        <InputUser readonly={readOnly} val={user.username} title="username"/>
-                        <InputUser readonly={readOnly} val={user.email} title="email"/>
-                        <InputUser readonly={readOnly} val={user.birthdate} title="birthdate"/>
-                        <InputUser readonly={readOnly} val={user.gender} title="gender"/>
-                        <InputUser readonly={readOnly} val={user.preference} title="preference"/>
-                        <InputUserBiography readonly={readOnly} val={user.biography}/>
-                    </Box>
-                    {readOnly?
-                    <Button onClick={toggleReadonly}>Modify profile</Button> :
-                    <Box display="flex" >
-                        <Button width="80%" onClick={toggleReadonly}>Cancel</Button>
-                        <Button marginLeft="5%" width="15%" type="submit">Send</Button>
-                    </Box>
-                    }
-                </FormControl>
-            </form>
-            : null}
-            <ReturnButton to="/settings"/>
+        <Box 
+            display="flex" 
+            w={'100%'} 
+            h={'100%'} 
+            flexDirection="column"
+            overflow={'hidden'}
+        >
+            <Flex 
+                flexDirection={'row'}
+                paddingLeft={'10px'}
+                marginTop={'10px'}
+                marginBottom={'20px'}
+            >
+                <Box alignSelf={'center'}>
+                    <ReturnButton to="/settings"/>
+                </Box>
+                <Text
+                    fontSize={'xx-large'}
+                    alignSelf={'center'}
+                    margin={'0px 5px'}
+                    fontWeight={'bold'}
+                    paddingLeft={'5px'}
+                >
+                    Profile
+                </Text>
+            </Flex>
+            <Flex overflowY={'auto'} flexDirection={'column'}> 
+                {user ?
+                <form onSubmit={handleSubmit(profileSubmit)}>
+                    <FormControl
+                        display="flex" 
+                        flexDirection="column"
+                    >
+                        <Box 
+                            display="flex" 
+                            flexDirection="column"  
+                            w={'100%'} 
+                            alignItems={'center'}
+                        >
+                            <InputUser 
+                                readonly={readOnly} 
+                                val={user.username} 
+                                title="username"
+                            />
+                            <InputUser 
+                                readonly={readOnly} 
+                                val={user.email} 
+                                title="email"
+                            />
+                            {!readOnly ? 
+                                <Box 
+                                    flexDirection="column" 
+                                    justifyContent="center" 
+                                    alignItems="center"
+                                    display="flex" 
+                                    w="80%"
+                                    >
+                                    <Text placeSelf={'flex-start'}>preference</Text>
+                                    <Select 
+                                        borderRadius={'full'}
+                                        margin={'4px'}
+                                        {...register("preference", {required: true})}>
+                                            <option value="man">man</option>
+                                            <option value="woman">woman</option>
+                                            <option value="all">all</option> 
+                                    </Select>
+                                </Box> : 
+                                <InputUser 
+                                    readonly={readOnly} 
+                                    val={user.preference} 
+                                    title="preference"
+                                /> 
+                            }
+                            {!readOnly ? 
+                                <Box 
+                                    flexDirection="column" 
+                                    justifyContent="center" 
+                                    alignItems="center"
+                                    display="flex" 
+                                    w="80%"
+                                    >
+                                    <Text placeSelf={'flex-start'}>gender</Text>
+                                    <Select
+                                        margin={'4px'}
+                                        borderRadius={'full'}
+                                        {...register("gender", {required: true})}>
+                                            <option value="man">man</option>
+                                            <option value="woman">woman</option>
+                                    </Select>
+                                </Box> : 
+                                <InputUser 
+                                    readonly={readOnly} 
+                                    val={user.gender} 
+                                    title="gender"
+                                /> 
+                            }
+                            
+                            <InputUserBiography 
+                                readonly={readOnly} 
+                                val={user.biography}
+                            />
+                        </Box>
+                        <Box 
+                            placeSelf={'center'} 
+                            w={'45%'}
+                            paddingTop={'20px'}
+                        >
+                            {readOnly?
+                            <Button 
+                                onClick={toggleReadonly}
+                                w={'100%'}
+                                placeSelf={'center'}
+                                textColor={'white'}
+                                bg="#A659EC"
+                                borderRadius={'full'}
+                            >
+                                Modify profile
+                            </Button> :
+                            <Box 
+                                display="flex"
+                                justifyContent={'center'} 
+                            >
+                                <Stack
+                                    flexDirection={'column'}
+                                    w={'100%'}
+                                    spacing={2}
+                                >
+                                    <Button 
+                                    width="100%" 
+                                    onClick={toggleReadonly}
+                                    textColor={'white'}
+                                    bg="#A659EC"
+                                    borderRadius={'full'}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    width="100%" 
+                                    type="submit"
+                                    textColor={'white'}
+                                    bg="#A659EC"
+                                    borderRadius={'full'}
+                                >
+                                    Send
+                                </Button>
+                                </Stack>
+                            </Box>
+                            }
+
+                        </Box>
+                    </FormControl>
+                </form>
+                : null}
+                <Hobbies></Hobbies>
+            </Flex>
         </Box>
     );
 }

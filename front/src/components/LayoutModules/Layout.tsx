@@ -20,6 +20,7 @@ const Layout = (props: {
                 width="100%"
                 gap={'10px'}
                 bg={'white'}
+                textColor={'black'}
                 >
             <Outlet />
             <Footer logged={props.logged} handleLog={props.handleLog} handleAccess={props.handleAccess} />
