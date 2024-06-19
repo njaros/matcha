@@ -1,15 +1,54 @@
 from flask import request, current_app as app
 from datetime import datetime, timezone, timedelta
 from flask_mail import Message
+import smtplib
+from email.mime.text import MIMEText
+from threading import Lock
+import os
 import socket
 import random
 import jwt
 
 
+class MailerSingleton:
+    _instances = {}
+    _lock: Lock = Lock()
+
+    def __call__(cls, *args, **kwargs):
+        with cls._lock():
+            if cls not in cls._instances:
+                cls._instances[cls] = super(MailerSingleton, cls).__call__(
+                    *args, **kwargs
+                )
+        return cls._instances[cls]
+
+
+class Mailer(metaclass=MailerSingleton):
+
+    smtp_server = "smtp.google.com"
+    smtp_port = 587
+    smtp_username = os.environ.get("MAIL_NAME_ACC")
+    smtp_password = os.environ.get("MAIL_APP_PASSWORD")
+    sender_email = "doNotRespond@matcha.com"
+    server = smtplib.SMTP(smtp_server, smtp_port)
+    server.starttls()
+    server.login(smtp_username, smtp_password)
+    url_to_send = f"{request.host_url}mail_register/{token}"
+    # url_to_send = f"http://{socket.gethostbyname(socket.gethostname())}:5066/mail_register/{token}"
+
+    def send_email_register_token(**kwargs):
+        token = jwt.encode(
+            {
+                "user_id": kwargs["id"],
+                "exp": datetime.now(tz=timezone.utc) + timedelta(weeks=10000),
+            },
+            app.config["SECRET_EMAIL_TOKEN"],
+            algorithm="HS256",
+        )
+
+
 def send_email_register_token(**kwargs):
-    msg = Message(
-        "registration validation link", recipients=(kwargs["email"],)
-    )
+    msg = Message("registration validation link", recipients=(kwargs["email"],))
     token = jwt.encode(
         {
             "user_id": kwargs["id"],
@@ -28,9 +67,7 @@ def send_email_register_token(**kwargs):
 
 
 def send_reset_password(**kwargs):
-    msg = Message(
-        "reset password", recipients=(kwargs["email"],)
-    )
+    msg = Message("reset password", recipients=(kwargs["email"],))
     new_pass = str(random.randint(100000, 999999))
     token = jwt.encode(
         {
