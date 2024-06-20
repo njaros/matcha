@@ -44,7 +44,7 @@ file_key.close()
 app.config['SECRET_PHOTO'] = key
 
 CORS(app, origins='*')
-app.config['mail'] = Mail(app)
+# app.config['mail'] = Mail(app)
 
 # initialization of Flask-SocketIO
 

@@ -6,7 +6,7 @@ from user_module import sql as user_ctx
 from error_status.error import BadRequestError
 from tools import GPS_tools
 from . import dto
-from tools.email_tools import send_email_register_token, send_reset_password
+from tools.email_tools import Mailer, send_email_register_token, send_reset_password
 
 
 @dto.signup_dto
@@ -17,7 +17,7 @@ def sign(**kwargs):
         kwargs["password"].encode("utf-8")
     ).hexdigest()
     kwargs["id"] = login_ctx.insert_new_user_in_database(kwargs)[0].hex
-    send_email_register_token(**kwargs)
+    Mailer().send_email_register_token(**kwargs)
     return [], 201
 
 
@@ -69,7 +69,7 @@ def mail_register(**kwargs):
 
 @dto.reset_password_dto
 def reset_password(**kwargs):
-    send_reset_password(**kwargs)
+    Mailer().send_reset_password(**kwargs)
     return "email sent", 200
 
 
