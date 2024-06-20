@@ -21,3 +21,7 @@ dating web site 42 project
 # TODOS-PHOTO
 
 - BACK: handle the case when user send a folder
+
+# TODO-UPDATE USER
+
+- assurer l'unucite des email a l'update !!

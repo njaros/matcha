@@ -64,6 +64,7 @@ names = (
     "Magichienne",
     "Informatichien",
     "Informatichienne",
+    "Cassoulet",
     "Quoi",
 )
 
