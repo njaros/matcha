@@ -64,7 +64,7 @@ def login(**kwargs):
     else:
         response = make_response()
         response.status = 404
-        response.data = "wrong user or password"
+        response.data = "wrong email or password"
         return response
 
 

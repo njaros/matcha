@@ -52,11 +52,11 @@ const Login = (props:{
 				}
         })
         .catch(error => {
-            console.log("error = ", error)
-            if (error.response.status == 400)
-                setErrorMessage("Wrong email or password")
-            else
+            console.warn(error)
+            if (error.response)
                 setErrorMessage(error.response.data)
+            else
+                setErrorMessage("Unhandled error")
             setWrong(true);
         })
         .finally(() => {
