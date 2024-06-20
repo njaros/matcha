@@ -7,7 +7,7 @@ dating web site 42 project
 
 # BUGS
 
-- 
+- bien catch l'erreur quand login mauvais (uncaught TypeError)
 
 # TODOS-SWIPE
 
@@ -18,8 +18,9 @@ dating web site 42 project
 
 - is_email
 
-# TODOS-PHOTO
+# TODOS-CHAT
 
+- fix last message
 - BACK: handle the case when user send a folder
 
 # TODO-UPDATE USER

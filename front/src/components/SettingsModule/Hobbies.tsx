@@ -77,7 +77,7 @@ const Hobbies = () => {
             display="flex"
             flexDirection="column" 
             bg="white" 
-            padding="10%" 
+            padding="4% 10%" 
             borderRadius="5%"
         >
             <Box 
