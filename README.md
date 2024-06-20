@@ -21,3 +21,8 @@ dating web site 42 project
 # TODOS-CHAT
 
 - fix last message
+- BACK: handle the case when user send a folder
+
+# TODO-UPDATE USER
+
+- assurer l'unucite des email a l'update !!
