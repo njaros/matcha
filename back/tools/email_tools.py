@@ -11,12 +11,12 @@ import random
 import jwt
 
 
-class MailerSingleton:
+class MailerSingleton(type):
     _instances = {}
     _lock: Lock = Lock()
 
     def __call__(cls, *args, **kwargs):
-        with cls._lock():
+        with cls._lock:
             if cls not in cls._instances:
                 cls._instances[cls] = super(MailerSingleton, cls).__call__(
                     *args, **kwargs
@@ -26,16 +26,18 @@ class MailerSingleton:
 
 class Mailer(metaclass=MailerSingleton):
 
-    smtp_server = "smtp.google.com"
+    smtp_server = "smtp.gmail.com"
     smtp_port = 587
     smtp_username = os.environ.get("MAIL_NAME_ACC")
     smtp_password = os.environ.get("MAIL_APP_PASSWORD")
-    sender_email = "doNotRespond@matcha.com"
+    sender_email = f"Matcha Mailer <{smtp_username}>"
     server = smtplib.SMTP(smtp_server, smtp_port)
     server.starttls()
     server.login(smtp_username, smtp_password)
 
     def send_email(self, subject, body_text, body_html, receiver):
+        if not self.is_connected():
+            self.server.connect()
         msg = MIMEMultipart("alternative")
         msg["From"] = self.sender_email
         msg["To"] = receiver
@@ -88,6 +90,13 @@ mail and we advise you to change your email in your profile.
                     <a href={url_to_send}>click here to reset your password</a>
                     """
         self.send_email("reset password", "", html, kwargs["email"])
+
+    def is_connected(self):
+        try:
+            status = self.server.noop()[0]
+            return status == 250
+        except Exception:
+            return False
 
 
 def send_email_register_token(**kwargs):
