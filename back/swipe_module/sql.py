@@ -10,7 +10,26 @@ base_swipe_request = """
                 username,
                 birthDate,
                 gender,
-                rank,
+                CASE    WHEN rank <> 0 THEN rank
+                                    WHEN (
+                                        SELECT COUNT(*)
+                                        FROM relationship
+                                        WHERE liker_id = id
+                                        ) < 10 THEN 0
+                                    ELSE CEIL( 10 *
+                                        (SELECT COUNT(*)
+                                        FROM relationship
+                                        WHERE liked_id = id)
+                                        / (
+                                        (SELECT COUNT(*)
+                                        FROM relationship
+                                        WHERE liker_id = id)
+                                        +
+                                        (SELECT COUNT (*)
+                                        FROM relationship
+                                        WHERE liked_id = id)
+                                        ))
+                        END AS true_rank,
                 ACOS(
                     SIND(%(self_latitude)s) * SIND(latitude)
                     + COSD(%(self_latitude)s)
@@ -36,7 +55,6 @@ base_swipe_request = """
                     WHERE liker_id = %(user)s
                 ) AND id NOT IN ( %(user)s )
                 AND birthDate BETWEEN %(date_min)s AND %(date_max)s
-                AND ABS(rank - %(user_rank)s) < %(ranking_gap)s
                 AND (
                     %(hobby_ids_len)s = 0
                     OR (
@@ -53,6 +71,28 @@ base_swipe_request = """
         FROM prefiltered
         WHERE
             distance < %(distance_max)s
+            AND ABS(
+                true_rank - CASE    WHEN %(user_rank)s <> 0 THEN %(user_rank)s
+                                    WHEN (
+                                            SELECT COUNT (*)
+                                            FROM relationship
+                                            WHERE liker_id = %(user)s
+                                            ) < 10 THEN 0
+                                    ELSE CEIL(  10 *
+                                        (SELECT COUNT(*)
+                                        FROM relationship
+                                        WHERE liked_id = %(user)s)
+                                        / (
+                                        (SELECT COUNT (*)
+                                        FROM relationship
+                                        WHERE liker_id = %(user)s)
+                                        +
+                                        (SELECT COUNT (*)
+                                        FROM relationship
+                                        WHERE liked_id = %(user)s)
+                                        ))
+                                    END
+                    ) < %(ranking_gap)s
         """
 
 
