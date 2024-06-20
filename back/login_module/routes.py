@@ -26,7 +26,11 @@ def login(**kwargs):
     kwargs["password"] = hashlib.sha256(
         kwargs["password"].encode("utf-8")
     ).hexdigest()
-    login_ctx.login_user_in_database(kwargs)
+    if login_ctx.login_user_in_database(kwargs) == 1:
+        response = make_response()
+        response.status = 403
+        response.data = "Account not mail validated"
+        return response
     if kwargs["user"] is not None:
         current_app.logger.info(kwargs)
         if (kwargs["latitude"] is None) and (
@@ -58,7 +62,10 @@ def login(**kwargs):
         response.status = 200
         return response
     else:
-        raise (BadRequestError("Wrong username or password"))
+        response = make_response()
+        response.status = 404
+        response.data = "wrong user or password"
+        return response
 
 
 @dto.mail_register_dto

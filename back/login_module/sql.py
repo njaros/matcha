@@ -62,14 +62,15 @@ def login_user_in_database(kwargs):
         ),
     )
     user = cur.fetchone()
+    kwargs["user"] = user
     if user is None:
         cur.close()
         return None
-    kwargs["user"] = user
     if user["email_verified"] is False:
-        raise ForbiddenError("your email isn't verified")
+        return 1
     conn.commit()
     cur.close()
+    return 0
 
 
 def update_gps_loc_by_id(**kwargs):
