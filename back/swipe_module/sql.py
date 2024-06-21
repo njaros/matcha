@@ -98,19 +98,19 @@ base_swipe_request = """
 
 def set_request_dict(**kwargs):
     return {
-            "user": kwargs["user"]["id"],
-            "self_latitude": kwargs["user"]["latitude"],
-            "self_longitude": kwargs["user"]["longitude"],
-            "gender": kwargs["user"]["gender"],
-            "preference": kwargs["user"]["preference"],
-            "date_min": kwargs["date_min"],
-            "date_max": kwargs["date_max"],
-            "distance_max": kwargs["distance_max"],
-            "user_rank": kwargs["user"]["rank"],
-            "ranking_gap": kwargs["ranking_gap"],
-            "hobby_ids": kwargs["hobby_ids"],
-            "hobby_ids_len": len(kwargs["hobby_ids"]),
-        }
+        "user": kwargs["user"]["id"],
+        "self_latitude": kwargs["user"]["latitude"],
+        "self_longitude": kwargs["user"]["longitude"],
+        "gender": kwargs["user"]["gender"],
+        "preference": kwargs["user"]["preference"],
+        "date_min": kwargs["date_min"],
+        "date_max": kwargs["date_max"],
+        "distance_max": kwargs["distance_max"],
+        "user_rank": kwargs["user"]["rank"],
+        "ranking_gap": kwargs["ranking_gap"],
+        "hobby_ids": kwargs["hobby_ids"],
+        "hobby_ids_len": len(kwargs["hobby_ids"]),
+    }
 
 
 def get_swipe_list_no_sort(**kwargs):
@@ -127,22 +127,16 @@ def get_swipe_list_no_sort(**kwargs):
 def get_swipe_list_age_sort(**kwargs):
     request = base_swipe_request + " ORDER BY birthDate DESC"
     cur = conn.cursor(row_factory=dict_row)
-    cur.execute(
-        request,
-        set_request_dict(**kwargs)
-    )
+    cur.execute(request, set_request_dict(**kwargs))
     swipe_list = cur.fetchall()
     cur.close()
     return swipe_list
 
 
 def get_swipe_list_ranking_sort(**kwargs):
-    request = base_swipe_request + " ORDER BY rank DESC"
+    request = base_swipe_request + " ORDER BY true_rank DESC"
     cur = conn.cursor(row_factory=dict_row)
-    cur.execute(
-        request,
-        set_request_dict(**kwargs)
-    )
+    cur.execute(request, set_request_dict(**kwargs))
     swipe_list = cur.fetchall()
     cur.close()
     return swipe_list
@@ -151,17 +145,16 @@ def get_swipe_list_ranking_sort(**kwargs):
 def get_swipe_list_distance_sort(**kwargs):
     request = base_swipe_request + " ORDER BY distance"
     cur = conn.cursor(row_factory=dict_row)
-    cur.execute(
-        request,
-        set_request_dict(**kwargs)
-    )
+    cur.execute(request, set_request_dict(**kwargs))
     swipe_list = cur.fetchall()
     cur.close()
     return swipe_list
 
 
 def get_swipe_list_tags_sort(**kwargs):
-    request = base_swipe_request + """
+    request = (
+        base_swipe_request
+        + """
         ORDER BY (
             SELECT COUNT(*)
             FROM user_hobbie
@@ -176,11 +169,9 @@ def get_swipe_list_tags_sort(**kwargs):
             )
         ) DESC
         """
-    cur = conn.cursor(row_factory=dict_row)
-    cur.execute(
-        request,
-        set_request_dict(**kwargs)
     )
+    cur = conn.cursor(row_factory=dict_row)
+    cur.execute(request, set_request_dict(**kwargs))
     swipe_list = cur.fetchall()
     cur.close()
     return swipe_list
