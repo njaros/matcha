@@ -37,7 +37,7 @@ class Mailer(metaclass=MailerSingleton):
 
     def send_email(self, subject, body_text, body_html, receiver):
         if not self.is_connected():
-            self.server.connect()
+            self.reconnect()
         msg = MIMEMultipart("alternative")
         msg["From"] = self.sender_email
         msg["To"] = receiver
@@ -94,9 +94,18 @@ mail and we advise you to change your email in your profile.
     def is_connected(self):
         try:
             status = self.server.noop()[0]
-            return status == 250
-        except Exception:
+            if status == 250:
+                app.logger.info("mailer: still connected :)")
+                return True
+            app.logger.info("mailer: status != 250")
             return False
+        except Exception as e:
+            app.logger.info(f"mailer: {e.__class__.__name__}: {e.args[0]}")
+            return False
+
+    def reconnect(self):
+        self.server.connect(self.smtp_server, self.smtp_port)
+        self.server.login(self.smtp_username, self.smtp_password)
 
 
 def send_email_register_token(**kwargs):

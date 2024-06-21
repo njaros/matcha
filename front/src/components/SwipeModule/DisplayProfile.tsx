@@ -81,24 +81,23 @@ export default function DisplayProfile(props: {
     }
 
     function Biography() {
-        if (props.user.biography != "")
-            return (
-                <Box    display="flex"
-                        bgColor="white"
-                        flexDirection="column"
-                        alignItems="center"
-                        border="gray"
-                        borderStyle="ridge"
-                        borderRadius="15px"
-                        margin="3%"
-                        padding="0 3%">
-                    <Text textDecoration="underline" fontWeight="bold" marginTop="3%">About me</Text>
-                    <Text>{props.user.biography}</Text>
-                    <HobbiesDisplay />
-                    <Text alignSelf="center" margin="1% 5%" fontWeight="bold">My ranking: {props.user.rank}</Text>
-                    <Text margin="1% 5%" alignSelf="center" fontWeight="bold">My gender: {props.user.gender}</Text>
-                </Box>
-            )
+        return (
+            <Box    display="flex"
+                    bgColor="white"
+                    flexDirection="column"
+                    alignItems="center"
+                    border="gray"
+                    borderStyle="ridge"
+                    borderRadius="15px"
+                    margin="3%"
+                    padding="0 3%">
+                <Text textDecoration="underline" fontWeight="bold" marginTop="3%">About me</Text>
+                <Text>{props.user.biography}</Text>
+                <HobbiesDisplay />
+                <Text alignSelf="center" margin="1% 5%" fontWeight="bold">My ranking: {props.user.rank}</Text>
+                <Text margin="1% 5%" alignSelf="center" fontWeight="bold">My gender: {props.user.gender}</Text>
+            </Box>
+        )
     }
 
     function detailHandler() {
