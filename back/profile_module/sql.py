@@ -49,6 +49,9 @@ def insert_photos(**kwargs):
     cur.close()
 
 
+
+
+
 def count_photos_by_user_id(user_id):
     cur = conn.cursor(row_factory=dict_row)
     cur.execute(
