@@ -2,6 +2,7 @@ from db_init import db_conn as conn
 from psycopg.rows import dict_row
 from chat import sql as chat_sql
 import uuid
+from flask import current_app as app
 
 base_swipe_request = """
         WITH prefiltered AS (
@@ -92,7 +93,7 @@ base_swipe_request = """
                                         WHERE liked_id = %(user)s)
                                         ))
                                     END
-                    ) < %(ranking_gap)s
+                    ) <= %(ranking_gap)s
         """
 
 
@@ -114,6 +115,7 @@ def set_request_dict(**kwargs):
 
 
 def get_swipe_list_no_sort(**kwargs):
+    app.logger.info(kwargs)
     cur = conn.cursor(row_factory=dict_row)
     cur.execute(
         base_swipe_request,

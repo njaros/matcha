@@ -7,7 +7,8 @@ dating web site 42 project
 
 # BUGS
 
-- bien catch l'erreur quand login mauvais (uncaught TypeError)
+- lorsque pas de bio, impossible de lire les details d'un user dans swipe_module
+- dans match-list, les users sont dupliques pour chaque photos qu'ils ont
 
 # TODOS-SWIPE
 
