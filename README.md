@@ -9,6 +9,10 @@ dating web site 42 project
 
 - dans match-list, les users sont dupliques pour chaque photos qu'ils ont
 
+# TODOS-REPORT
+
+- dans l'action de report dans les listes du profile, faire retourner a la liste
+
 # TODOS-VALIDATORS
 
 - is_email

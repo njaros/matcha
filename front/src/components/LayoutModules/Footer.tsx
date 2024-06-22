@@ -8,6 +8,7 @@ import { ImExit } from "react-icons/im"
 import { MdChat } from "react-icons/md";
 import { ChatIcon, SettingsIcon } from "@chakra-ui/icons"
 import { useEffect, useState } from "react";
+import Notification from "./Notification";
 
 const headerTextSize = {base: "14px", sm: "16px", md: "19px", lg: "22px", xl: "25px"}
 const headerIconSize = {base: 8, sm: 10, md: 12, lg: 14, xl: 16}
@@ -139,6 +140,7 @@ const Footer = (props: {
             <IconNavBar url="/channel" icon={msgBool === false ? TbMessage : TbMessage2Heart} boxSize={headerIconSize} isTarget={isTarget("/channel", location.pathname)} />
             <IconNavBar url="/settings" icon={MdSettings} boxSize={headerIconSize} isTarget={isTargetSettings(location.pathname)} />
             <button onClick={logout} style={{display: 'flex'}}><Icon color={"#57595D"} as={ImExit} boxSize={headerIconSize}/></button>
+            <Notification />
         </>
         }
     </Box>
