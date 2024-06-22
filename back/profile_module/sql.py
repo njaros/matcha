@@ -1,4 +1,3 @@
-from db_init import db_conn as conn
 from cryptography.fernet import Fernet
 import base64
 import uuid
@@ -16,7 +15,7 @@ def insert_photos(**kwargs):
         VALUES(%s, %s, %s, %s, %s);
         """
     start = 0
-    cur = conn.cursor()
+    cur = app.config["conn"].cursor()
     if kwargs["photo_count"] == 0:
         start += 1
         cur.executemany(
@@ -45,12 +44,12 @@ def insert_photos(**kwargs):
             for elt in kwargs["accepted"][start:]
         ],
     )
-    conn.commit()
+    app.config["conn"].commit()
     cur.close()
 
 
 def count_photos_by_user_id(user_id):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(
         """
                 SELECT COUNT(*) AS count
@@ -65,7 +64,7 @@ def count_photos_by_user_id(user_id):
 
 
 def get_photos_by_user_id(user_id):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(
         """
                 SELECT *
@@ -83,7 +82,7 @@ def get_photos_by_user_id(user_id):
 
 
 def get_main_photo_by_user_id(user_id):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     query = """
             SELECT
                 id,
@@ -97,15 +96,13 @@ def get_main_photo_by_user_id(user_id):
     if res is None:
         return None
     hasher = Fernet(app.config["SECRET_PHOTO"])
-    res["binaries"] = base64.b64encode(hasher.decrypt(res["binaries"])).decode(
-        "utf-8"
-    )
+    res["binaries"] = base64.b64encode(hasher.decrypt(res["binaries"])).decode("utf-8")
     cur.close()
     return res
 
 
 def delete_photo_by_id(photo_id):
-    cur = conn.cursor()
+    cur = app.config["conn"].cursor()
     cur.execute(
         """
                 DELETE FROM photos
@@ -115,13 +112,13 @@ def delete_photo_by_id(photo_id):
         (photo_id,),
     )
     res = cur.fetchone()
-    conn.commit()
+    app.config["conn"].commit()
     cur.close()
     return res
 
 
 def get_photos_by_id(photo_id):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(
         """
                 SELECT
@@ -143,7 +140,7 @@ def get_photos_by_id(photo_id):
 
 
 def set_a_main_photo(user_id):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(
         """
                 UPDATE photos
@@ -159,7 +156,7 @@ def set_a_main_photo(user_id):
         (user_id,),
     )
     main_id = cur.fetchone()
-    conn.commit()
+    app.config["conn"].commit()
     cur.close()
     if main_id is None:
         return None
@@ -167,7 +164,7 @@ def set_a_main_photo(user_id):
 
 
 def change_main_photo_by_ids(current_main_id, future_main_id):
-    cur = conn.cursor()
+    cur = app.config["conn"].cursor()
     cur.execute(
         """
                 UPDATE photos
@@ -184,7 +181,7 @@ def change_main_photo_by_ids(current_main_id, future_main_id):
                 """,
         (future_main_id,),
     )
-    conn.commit()
+    app.config["conn"].commit()
     cur.close()
 
 
@@ -192,7 +189,7 @@ def change_main_photo_by_ids(current_main_id, future_main_id):
 
 
 def change_user_biography_by_id(**kwargs):
-    cur = conn.cursor()
+    cur = app.config["conn"].cursor()
     cur.execute(
         """
                 UPDATE user_table
@@ -201,12 +198,12 @@ def change_user_biography_by_id(**kwargs):
                 """,
         (kwargs["biography"], kwargs["user"]["id"]),
     )
-    conn.commit()
+    app.config["conn"].commit()
     cur.close()
 
 
 def get_user_biography_by_id(**kwargs):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(
         """
                 SELECT biography
@@ -226,7 +223,7 @@ def get_user_biography_by_id(**kwargs):
 
 
 def update_user(**kwargs):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(
         """
                 UPDATE user_table
@@ -255,7 +252,7 @@ def update_user(**kwargs):
         ),
     )
     user_updated = cur.fetchone()
-    conn.commit()
+    app.config["conn"].commit()
     cur.close()
     return user_updated
 
@@ -264,7 +261,7 @@ def update_user(**kwargs):
 
 
 def update_gps(**kwargs):
-    cur = conn.cursor()
+    cur = app.config["conn"].cursor()
     cur.execute(
         """
                 UPDATE user_table
@@ -278,12 +275,12 @@ def update_gps(**kwargs):
             kwargs["user"]["id"],
         ),
     )
-    conn.commit()
+    app.config["conn"].commit()
     cur.close()
 
 
 def lock_gps(**kwargs):
-    cur = conn.cursor()
+    cur = app.config["conn"].cursor()
     cur.execute(
         """
                 UPDATE user_table
@@ -292,12 +289,12 @@ def lock_gps(**kwargs):
         """,
         (kwargs["user"]["id"],),
     )
-    conn.commit()
+    app.config["conn"].commit()
     cur.close()
 
 
 def unlock_gps(**kwargs):
-    cur = conn.cursor()
+    cur = app.config["conn"].cursor()
     cur.execute(
         """
                 UPDATE user_table
@@ -306,7 +303,7 @@ def unlock_gps(**kwargs):
         """,
         (kwargs["user"]["id"],),
     )
-    conn.commit()
+    app.config["conn"].commit()
     cur.close()
 
 
@@ -314,7 +311,7 @@ def unlock_gps(**kwargs):
 
 
 def get_user_hobbies_yn(**kwargs):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(
         """
         SELECT  id, name,
@@ -335,7 +332,7 @@ def get_user_hobbies_yn(**kwargs):
 
 
 def get_user_hobbies(**kwargs):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(
         """
         SELECT  name
@@ -354,7 +351,7 @@ def get_user_hobbies(**kwargs):
 
 
 def get_hobbies():
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(
         """
         SELECT *
@@ -367,7 +364,7 @@ def get_hobbies():
 
 
 def add_user_hobbies(**kwargs):
-    cur = conn.cursor()
+    cur = app.config["conn"].cursor()
     query = """
             INSERT INTO user_hobbie (user_id, hobbie_id)
             VALUES (%s, %s)
@@ -375,34 +372,28 @@ def add_user_hobbies(**kwargs):
             """
     cur.executemany(
         query,
-        [
-            (kwargs["user"]["id"], hobbie_id)
-            for hobbie_id in kwargs["hobbie_ids"]
-        ],
+        [(kwargs["user"]["id"], hobbie_id) for hobbie_id in kwargs["hobbie_ids"]],
     )
-    conn.commit()
+    app.config["conn"].commit()
     cur.close()
 
 
 def delete_user_hobbies(**kwargs):
-    cur = conn.cursor()
+    cur = app.config["conn"].cursor()
     query = """
             DELETE FROM user_hobbie
             WHERE user_id = %s AND hobbie_id = %s;
             """
     cur.executemany(
         query,
-        [
-            (kwargs["user"]["id"], hobbie_id)
-            for hobbie_id in kwargs["hobbie_ids"]
-        ],
+        [(kwargs["user"]["id"], hobbie_id) for hobbie_id in kwargs["hobbie_ids"]],
     )
-    conn.commit()
+    app.config["conn"].commit()
     cur.close()
 
 
 def get_userid_with_hobbies_ids(**kwargs):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(
         """
                 SELECT  user_id
@@ -419,17 +410,14 @@ def get_userid_with_hobbies_ids(**kwargs):
 
 
 def verify_pass(**kwargs):
-    cur = conn.cursor()
+    cur = app.config["conn"].cursor()
     cur.execute(
         """
         SELECT *
         FROM user_table
         WHERE id = %s AND password = %s
         """,
-        (
-            kwargs["user"]["id"],
-            kwargs["currentPassword"]
-        )
+        (kwargs["user"]["id"], kwargs["currentPassword"]),
     )
     user = cur.fetchone()
     if user is None:
@@ -438,14 +426,17 @@ def verify_pass(**kwargs):
 
 
 def update_password_by_id(**kwargs):
-    cur = conn.cursor()
+    cur = app.config["conn"].cursor()
     cur.execute(
         """
         UPDATE user_table
         SET password = %s
         WHERE id = %s;
         """,
-        (kwargs["newPassword"], kwargs["user"]["id"],)
+        (
+            kwargs["newPassword"],
+            kwargs["user"]["id"],
+        ),
     )
-    conn.commit()
+    app.config["conn"].commit()
     cur.close()

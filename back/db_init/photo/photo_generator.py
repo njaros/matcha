@@ -62,7 +62,7 @@ def generate_photos(url, folder_path):
         res_json = json.loads(url_res)
         file_name = res_json['name']
         if file_name in list_photos:
-            generate_photos()
+            generate_photos(url, folder_path)
             print('Doublon detected, regenerating photos')
         else: 
             list_photos.add(file_name)

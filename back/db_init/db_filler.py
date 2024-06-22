@@ -2,7 +2,10 @@ import random
 import uuid
 import hashlib
 from threading import Lock
-
+import os
+from tools.date_tools import years_old
+from flask import current_app as app
+from cryptography.fernet import Fernet
 
 names = (
     "Poulet",
@@ -246,6 +249,79 @@ commodo consequat.""",
     )
 
 
+
+used_photos = set()
+
+def random_photo_picker(folder_path):
+    if not os.path.isdir(folder_path):
+        print(f"{folder_path} does not exist")
+        return
+    files = os.listdir(folder_path)
+    photo = random.choice(files)
+    if photo in used_photos:
+        random_photo_picker(folder_path)
+    used_photos.add(photo)
+    return photo
+
+
+def sql_insert_bot_photos(data, conn):
+    file_path = data["folder"] + "/" + data["photo"]
+    user_id = data["user_id"]
+    MIME_TYPE = "image/jpeg"
+    with open(file_path, 'rb') as file:
+        binaries = file.read()
+    hasher = Fernet(app.config["SECRET_PHOTO"])
+    query = """
+        INSERT INTO photos
+        (id, mime_type, binaries, main, user_id)
+        VALUES(%s, %s, %s, %s, %s);
+        """
+    cur = conn.cursor()
+    cur.execute(
+        query,(
+                uuid.uuid1(),
+                MIME_TYPE,
+                hasher.encrypt(binaries),
+                False,
+                user_id,
+        )
+    )
+    conn.commit()
+    cur.close()
+
+def insert_bot_photos(conn, users):
+
+    age_gender_folders = {
+        "man": {
+            (18, 25): "db_init/photo/male/19_25",
+            (26, 35): "db_init/photo/male/26_35",
+            (36, 50): "db_init/photo/male/35_50",
+            (50, float('inf')): "db_init/photo/male/50_plus"
+        },
+        "woman": {
+            (18, 25): "db_init/photo/female/19_25",
+            (26, 35): "db_init/photo/female/26_35",
+            (36, 50): "db_init/photo/female/35_50",
+            (50, float('inf')): "db_init/photo/female/50_plus"
+        }
+    }
+    for user in users:
+        age = years_old(user[5])
+        gender = user[6]
+        if gender in age_gender_folders:
+            for age_range, folder in age_gender_folders[gender].items():
+                if age_range[0] <= age <= age_range[1]:
+                    sql_insert_bot_photos(
+                        {
+                            "photo": random_photo_picker(folder), 
+                            "user_id": user[0], 
+                            "folder": folder
+                        }, 
+                        conn
+                    )
+                    break
+
+
 def insert_users_in_database(conn, n, lat, lng):
     cur = conn.cursor()
     users = [do_user_near_point(lat, lng) for i in range(0, n)]
@@ -257,5 +333,6 @@ def insert_users_in_database(conn, n, lat, lng):
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """
     cur.executemany(query, users)
+    insert_bot_photos(conn, users)
     cur.close()
     conn.commit()

@@ -1,11 +1,10 @@
-from db_init import db_conn as conn
 from error_status.error import NotFoundError
 from flask import current_app as app
 from psycopg.rows import dict_row
 
 
 def get_user_by_username(username):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     query = """
             SELECT
                 user_table.id AS id,
@@ -48,7 +47,7 @@ def get_user_by_username(username):
 
 
 def get_user_by_email(email):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     query = """
             SELECT
                 user_table.id AS id,
@@ -91,7 +90,7 @@ def get_user_by_email(email):
 
 
 def get_user_by_id(id):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     query = """
             SELECT
                 user_table.id AS id,
@@ -133,7 +132,7 @@ def get_user_by_id(id):
 
 
 def get_user_profile(**kwargs):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     app.logger.info(kwargs)
     cur.execute(
         """
@@ -201,7 +200,7 @@ def get_user_profile(**kwargs):
 
 
 def get_user_with_room(user_id):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     query = """
             SELECT
                 user_table.id AS user_id,
@@ -232,7 +231,7 @@ def get_user_with_room(user_id):
 
 def get_user_with_room_and_message(user_id):
 
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     query = """
             SELECT
                 user_table.id AS user_id,
@@ -282,7 +281,7 @@ def get_user_with_room_and_message(user_id):
 
 
 def visite_profile(**kwargs):
-    cur = conn.cursor()
+    cur = app.config["conn"].cursor()
     cur.execute(
         """
             INSERT INTO visits (visitor_id, visited_id)
@@ -291,12 +290,12 @@ def visite_profile(**kwargs):
         {"visitor": kwargs["user"]["id"], "visited": kwargs["user_id"]},
     )
     cur.close()
-    conn.commit()
+    app.config["conn"].commit()
 
 
 def get_visited_me_history(**kwargs):
     """Returns list of users who visited my profile"""
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(
         """
             SELECT  user_table.id AS id,
@@ -320,7 +319,7 @@ def get_visited_me_history(**kwargs):
 
 def get_my_visits_history(**kwargs):
     """Returns list of users whose profile I visited"""
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(
         """
             SELECT  user_table.id AS id,

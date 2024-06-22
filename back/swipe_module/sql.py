@@ -1,8 +1,7 @@
-from db_init import db_conn as conn
+from flask import current_app as app
 from psycopg.rows import dict_row
 from chat import sql as chat_sql
 import uuid
-from flask import current_app as app
 
 base_swipe_request = """
         WITH prefiltered AS (
@@ -115,8 +114,7 @@ def set_request_dict(**kwargs):
 
 
 def get_swipe_list_no_sort(**kwargs):
-    app.logger.info(kwargs)
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(
         base_swipe_request,
         set_request_dict(**kwargs),
@@ -128,7 +126,7 @@ def get_swipe_list_no_sort(**kwargs):
 
 def get_swipe_list_age_sort(**kwargs):
     request = base_swipe_request + " ORDER BY birthDate DESC"
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(request, set_request_dict(**kwargs))
     swipe_list = cur.fetchall()
     cur.close()
@@ -136,8 +134,8 @@ def get_swipe_list_age_sort(**kwargs):
 
 
 def get_swipe_list_ranking_sort(**kwargs):
-    request = base_swipe_request + " ORDER BY true_rank DESC"
-    cur = conn.cursor(row_factory=dict_row)
+    request = base_swipe_request + " ORDER BY rank DESC"
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(request, set_request_dict(**kwargs))
     swipe_list = cur.fetchall()
     cur.close()
@@ -146,7 +144,7 @@ def get_swipe_list_ranking_sort(**kwargs):
 
 def get_swipe_list_distance_sort(**kwargs):
     request = base_swipe_request + " ORDER BY distance"
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(request, set_request_dict(**kwargs))
     swipe_list = cur.fetchall()
     cur.close()
@@ -172,7 +170,7 @@ def get_swipe_list_tags_sort(**kwargs):
         ) DESC
         """
     )
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(request, set_request_dict(**kwargs))
     swipe_list = cur.fetchall()
     cur.close()
@@ -180,7 +178,7 @@ def get_swipe_list_tags_sort(**kwargs):
 
 
 def like_user(**kwargs):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     user = kwargs["user"]["id"]
     target = kwargs["target_id"]
     new_room = None
@@ -234,13 +232,13 @@ def like_user(**kwargs):
                 "user_id2": target,
             }
         )
-    conn.commit()
+    app.config["conn"].commit()
     cur.close()
     return new_room
 
 
 def dislike_user(**kwargs):
-    cur = conn.cursor()
+    cur = app.config["conn"].cursor()
     user = kwargs["user"]["id"]
     target = kwargs["target_id"]
     cur.execute(
@@ -271,4 +269,4 @@ def dislike_user(**kwargs):
         (user, target, target, user),
     )
     cur.close()
-    conn.commit()
+    app.config["conn"].commit()

@@ -1,4 +1,5 @@
 from flask import Flask
+from db_init.set_up_db import set_up_db
 from flask_cors import CORS
 from flask_mail import Mail
 from smtplib import SMTPRecipientsRefused
@@ -51,6 +52,11 @@ app.config["mail"] = Mail(app)
 # initialization of Flask-SocketIO
 
 socketio.init_app(app)
+
+# instanciate the db connector
+
+with app.app_context():
+    app.config["conn"] = set_up_db()
 
 # import and save sub-app
 
