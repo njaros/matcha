@@ -9,14 +9,14 @@ from .dto import (
     set_pos_dto,
     add_hobby_dto,
     del_hobby_dto,
-    change_password_dto
+    change_password_dto,
 )
 from error_status.error import BadRequestError
 from . import sql
 from user_module.sql import get_user_by_email
 from tools import thingy
 from validators import uuid
-from db_init import insert_users_in_database, db_conn
+from db_init.db_filler import insert_users_in_database
 
 
 # ------------------PHOTO-----------------
@@ -62,8 +62,7 @@ def get_photos(**kwargs):
 
 @token_required
 def get_main_photo(**kwaargs):
-    main_photo = sql.get_main_photo_by_user_id(
-        uuid.isUuid(request.json['user_id']))
+    main_photo = sql.get_main_photo_by_user_id(uuid.isUuid(request.json["user_id"]))
     return main_photo
 
 
@@ -147,9 +146,9 @@ def change_password(**kwargs):
 @set_pos_dto
 def set_pos(**kwargs):
     sql.update_gps(**kwargs)
-    insert_users_in_database(db_conn, 50,
-                             kwargs["gps"].latitude,
-                             kwargs["gps"].longitude)
+    insert_users_in_database(
+        app.config["conn"], 50, kwargs["gps"].latitude, kwargs["gps"].longitude
+    )
     return [], 200
 
 
