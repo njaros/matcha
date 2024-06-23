@@ -29,9 +29,7 @@ def get_user_with_room(**kwargs):
 
 @token_required
 def get_user_with_room_and_message(**kwargs):
-    return user_sql_request.get_user_with_room_and_message(
-        UUID(kwargs["user"]["id"])
-    )
+    return user_sql_request.get_user_with_room_and_message(UUID(kwargs["user"]["id"]))
 
 
 @token_required
@@ -74,14 +72,19 @@ def base_get_user_profile(**kwargs):
 def get_user_profile_from_swipe(**kwargs):
     user_profile = base_get_user_profile(**kwargs)
     user_sql_request.visite_profile(**kwargs)
+    current_app.logger.info(f"user={str(user_profile['id'])}")
+    emit(
+        "viewed",
+        {"id": str(kwargs["user"]["id"])},
+        room=f"user-{str(user_profile['id'])}",
+        namespace="/",
+    )
     return user_profile, 200
 
 
 @token_required
 @dto.user_profile_dto
 def get_user_profile(**kwargs):
-    emit("test", room=f"user-{to_socket_uuid(kwargs['user']['id'])}",
-         namespace=None)
     return base_get_user_profile(**kwargs), 200
 
 

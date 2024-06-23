@@ -8,6 +8,8 @@ dating web site 42 project
 # BUGS
 
 - dans match-list, les users sont dupliques pour chaque photos qu'ils ont
+- lorsqu on unlike un match avec lequel on a des message en conversation : DETAIL:  Key (id)=(71e7ad98-3148-11ef-8cdc-0242ac120003) is still referenced from table "unread_msg". => il manque des ON DELETE CASCADE a la creation de la table
+- lorsqu on unlike un match, la conv apparait encore => soucis de store
 
 # TODOS-REPORT
 
@@ -20,6 +22,10 @@ dating web site 42 project
 # TODOS-CHAT
 
 - fix last message
+
+# TODOS-SOCKET
+
+- a la deconnection via le bouton, il faut deconnecter la socket
 
 # ERROR_LOGS_SERVER
 

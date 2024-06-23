@@ -2,6 +2,7 @@ from jwt_policy.jwt_policy import token_required
 from . import sql
 from .dto import like_dislike_dto, filter_swipe_dto
 from extensions import socketio
+from flask_socketio import emit
 from tools.thingy import to_socket_uuid
 from flask import current_app
 
@@ -10,10 +11,19 @@ from flask import current_app
 @like_dislike_dto
 def like_user(**kwargs):
     new_room = sql.like_user(**kwargs)
-    current_app.logger.info(to_socket_uuid(kwargs["target_id"]))
-    socketio.emit('send_like',
-                  room=f"user-{to_socket_uuid(kwargs['target_id'])}")
+    current_app.logger.info(f"user-{kwargs['target_id']}")
+    # current_app.logger.info(rooms(None, None))
+    emit('liked',
+         {"id": str(kwargs["user"]["id"])},
+         room=f"user-{kwargs['target_id']}",
+         namespace='/'
+         )
     if new_room is not None:
+        emit('match',
+             {"id": str(kwargs["user"]["id"])},
+             room=f"user-{kwargs['target_id']}",
+             namespace='/'
+             )
         return new_room
     return [], 200
 
