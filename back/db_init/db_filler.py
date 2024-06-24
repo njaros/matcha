@@ -1,127 +1,128 @@
 import random
 import uuid
 import hashlib
-from threading import Lock
 import os
+import json
+from threading import Lock
 from tools.date_tools import years_old
 from flask import current_app as app
 from cryptography.fernet import Fernet
 
-names = (
-    "Poulet",
-    "Poule",
-    "Canard",
-    "Saucisse",
-    "Crocodile",
-    "Pantoufle",
-    "Adidas",
-    "Pasteque",
-    "Gaufre",
-    "Crepe",
-    "Poil",
-    "Monsieur",
-    "Madame",
-    "Yelle",
-    "Pioche",
-    "Batman",
-    "Spiderman",
-    "Chaussette",
-    "Pikachu",
-    "Pokemon",
-    "Pokefion",
-    "Roi",
-    "Renne",
-    "Reine",
-    "Oiseau",
-    "Pastis",
-    "Jambon",
-    "Roturier",
-    "Roturiere",
-    "Genou",
-    "Coude",
-    "Tournevis",
-    "Marteau",
-    "Arbre",
-    "Peche",
-    "Pipi",
-    "Caca",
-    "Kiki",
-    "Kekette",
-    "Pouet",
-    "Pouette",
-    "Dragon",
-    "Heros",
-    "Heroine",
-    "Capitaine",
-    "Renard",
-    "Renarde",
-    "Oie",
-    "Amoureux",
-    "Amoureuse",
-    "Connard",
-    "Connasse",
-    "Prout",
-    "leJ",
-    "Proutte",
-    "Magichien",
-    "Magichienne",
-    "Informatichien",
-    "Informatichienne",
-    "Cassoulet",
-    "Quoi",
-)
+# names = (
+#     "Poulet",
+#     "Poule",
+#     "Canard",
+#     "Saucisse",
+#     "Crocodile",
+#     "Pantoufle",
+#     "Adidas",
+#     "Pasteque",
+#     "Gaufre",
+#     "Crepe",
+#     "Poil",
+#     "Monsieur",
+#     "Madame",
+#     "Yelle",
+#     "Pioche",
+#     "Batman",
+#     "Spiderman",
+#     "Chaussette",
+#     "Pikachu",
+#     "Pokemon",
+#     "Pokefion",
+#     "Roi",
+#     "Renne",
+#     "Reine",
+#     "Oiseau",
+#     "Pastis",
+#     "Jambon",
+#     "Roturier",
+#     "Roturiere",
+#     "Genou",
+#     "Coude",
+#     "Tournevis",
+#     "Marteau",
+#     "Arbre",
+#     "Peche",
+#     "Pipi",
+#     "Caca",
+#     "Kiki",
+#     "Kekette",
+#     "Pouet",
+#     "Pouette",
+#     "Dragon",
+#     "Heros",
+#     "Heroine",
+#     "Capitaine",
+#     "Renard",
+#     "Renarde",
+#     "Oie",
+#     "Amoureux",
+#     "Amoureuse",
+#     "Connard",
+#     "Connasse",
+#     "Prout",
+#     "leJ",
+#     "Proutte",
+#     "Magichien",
+#     "Magichienne",
+#     "Informatichien",
+#     "Informatichienne",
+#     "Cassoulet",
+#     "Quoi",
+# )
 
-adjectives = (
-    "Sale",
-    "Propre",
-    "Menteur",
-    "Jeune",
-    "Vieux",
-    "Charmeur",
-    "Moche",
-    "Vilain",
-    "LeS",
-    "Boiteux",
-    "Insensible",
-    "Sensible",
-    "Musicien",
-    "Pretentieux",
-    "Modeste",
-    "Heureux",
-    "Malheureux",
-    "Penible",
-    "Simple",
-    "Complique",
-    "Cheveulu",
-    "Poilu",
-    "Aiguise",
-    "Pointu",
-    "Blagueur",
-    "Ennuyeux",
-    "Mourant",
-    "Deprime",
-    "Joyeux",
-    "Feur",
-    "Grand",
-    "Petit",
-    "Immense",
-    "Grossier",
-    "Jovial",
-    "Souriant",
-    "Grimacant",
-    "Abandonne",
-    "Seul",
-    "Nul",
-    "Qualitatif",
-    "Mignon",
-    "Barbant",
-    "Barbu",
-    "Chauve",
-    "Cocu",
-    "Mechant",
-    "Gentil",
-    "Feignant",
-)
+# adjectives = (
+#     "Sale",
+#     "Propre",
+#     "Menteur",
+#     "Jeune",
+#     "Vieux",
+#     "Charmeur",
+#     "Moche",
+#     "Vilain",
+#     "LeS",
+#     "Boiteux",
+#     "Insensible",
+#     "Sensible",
+#     "Musicien",
+#     "Pretentieux",
+#     "Modeste",
+#     "Heureux",
+#     "Malheureux",
+#     "Penible",
+#     "Simple",
+#     "Complique",
+#     "Cheveulu",
+#     "Poilu",
+#     "Aiguise",
+#     "Pointu",
+#     "Blagueur",
+#     "Ennuyeux",
+#     "Mourant",
+#     "Deprime",
+#     "Joyeux",
+#     "Feur",
+#     "Grand",
+#     "Petit",
+#     "Immense",
+#     "Grossier",
+#     "Jovial",
+#     "Souriant",
+#     "Grimacant",
+#     "Abandonne",
+#     "Seul",
+#     "Nul",
+#     "Qualitatif",
+#     "Mignon",
+#     "Barbant",
+#     "Barbu",
+#     "Chauve",
+#     "Cocu",
+#     "Mechant",
+#     "Gentil",
+#     "Feignant",
+# )
 
 genders = ("man", "woman")
 
@@ -144,20 +145,43 @@ class RandomiserSingleton(type):
 class Randomiser(metaclass=RandomiserSingleton):
 
     created = {}
-    names_len = len(names)
-    adj_len = len(adjectives)
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(base_dir, 'data.json')
+    with open(file_path, 'r') as file:
+        file_content = file.read()
+        data = json.loads(file_content)
+    results = data['d']['results']
+    man_names = [
+        entry['ENFANT_PRENOM']
+        for entry in results
+        if 'ENFANT_PRENOM' in entry
+        and entry['ENFANT_SEXE'] in 'M'
+    ]
+    woman_names = [
+        entry['ENFANT_PRENOM']
+        for entry in results
+        if 'ENFANT_PRENOM' in entry
+        and entry['ENFANT_SEXE'] in 'F'
+    ]
 
-    def randomise(self):
-        rand_name = random.randint(0, self.names_len - 1)
-        rand_adj = random.randint(0, self.adj_len - 1)
-        if self.created.get((rand_name, rand_adj)) is None:
-            self.created[(rand_name, rand_adj)] = 0
-        self.created[(rand_name, rand_adj)] += 1
-        name = names[rand_name] + adjectives[rand_adj]
-        occurence = self.created[(rand_name, rand_adj)]
+    def randomise(self, gender):
+        if gender == 'woman':
+            names = self.woman_names
+        else:
+            names = self.man_names
+        count = len(names)
+        rand_name = random.randint(0, count - 1)
+        if gender not in self.created:
+            self.created[gender] = {}
+        if rand_name not in self.created[gender]:
+            self.created[gender][rand_name] = 0
+        self.created[gender][rand_name] += 1
+        occurence = self.created[gender][rand_name]
+        name = names[rand_name]
+        email_name = name
         if occurence > 1:
-            name += f"{occurence}"
-        return {"name": name, "email": f"{name}@mock.com"}
+            email_name += f"{occurence}"
+        return {"name": name, "email": f"{email_name}@mock.com"}
 
 
 def latitudeModulo(lat):
@@ -227,7 +251,8 @@ def do_gps_near_point(latitude, longitude):
 
 def do_user_near_point(latitude, longitude):
     gps = do_gps_near_point(latitude, longitude)
-    name_email = Randomiser().randomise()
+    gender = random.choice(genders)
+    name_email = Randomiser().randomise(gender)
     return (
         uuid.uuid1(),
         name_email["name"],
@@ -235,13 +260,13 @@ def do_user_near_point(latitude, longitude):
         name_email["email"],
         True,
         do_random_date(),
-        random.choice(genders),
-        random.choice(genders),
+        gender,
+        random.choice(preference),
         """Lorem ipsum dolor sit amet, consectetur adipiscing elit,\
-sed do eiusmod\
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim\
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea\
-commodo consequat.""",
+    sed do eiusmod\
+    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim\
+    veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea\
+    commodo consequat.""",
         random.randint(0, 10),
         gps["latitude"],
         gps["longitude"],
@@ -270,6 +295,7 @@ def sql_insert_bot_photos(data, conn):
     MIME_TYPE = "image/jpeg"
     with open(file_path, 'rb') as file:
         binaries = file.read()
+        file.close()
     hasher = Fernet(app.config["SECRET_PHOTO"])
     query = """
         INSERT INTO photos
@@ -282,7 +308,7 @@ def sql_insert_bot_photos(data, conn):
                 uuid.uuid1(),
                 MIME_TYPE,
                 hasher.encrypt(binaries),
-                False,
+                True,
                 user_id,
         )
     )
@@ -334,5 +360,6 @@ def insert_users_in_database(conn, n, lat, lng):
             """
     cur.executemany(query, users)
     insert_bot_photos(conn, users)
+    used_photos.clear()
     cur.close()
     conn.commit()

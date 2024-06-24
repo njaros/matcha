@@ -59,7 +59,8 @@ export default function DisplayList(props: {list: IListUser[], enableDate: boole
         >
             {props.list.map((user, index) => {
                 return (
-                    <Flex 
+                    <Flex
+                        key = {index} 
                         flexDirection={'column'}
                     >
                         <NavLink key={user.id} to={`/other_profile/${user.id}`}>
