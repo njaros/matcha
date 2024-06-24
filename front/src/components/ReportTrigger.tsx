@@ -22,6 +22,21 @@ export default function ReportTrigger(props: {user_id: string, optionAction: any
       )
     }
 
+    function blockHandler() {
+      Axios.post("swipe/dislike_user", {target_id: props.user_id}).then(
+        () => {
+          if (props.optionAction != null)
+            props.optionAction();
+        }
+      ).catch(
+        err => {
+          console.warn(err);
+        }
+      ).finally(
+        () => onClose()
+      )
+    }
+
     return (
         <Popover    isOpen={isOpen}
                     onOpen={onOpen}
@@ -45,7 +60,8 @@ export default function ReportTrigger(props: {user_id: string, optionAction: any
         <PopoverCloseButton />
         <PopoverBody>
           If you judge that this user is causing trouble for any raison,
-          you can send a report. This will contribute to the sanity of the website.
+          you can send a report. This will contribute to the sanity of the website.<br/>
+          Or you can just block him.<br/> In both cases you will never see this person again.
         </PopoverBody>
         <PopoverFooter
           border='0'
@@ -56,6 +72,7 @@ export default function ReportTrigger(props: {user_id: string, optionAction: any
         >
           <ButtonGroup size='sm'>
             <Button colorScheme='green' onClick={reportHandler}>Send Report</Button>
+            <Button colorScheme='red' onClick={blockHandler}>Block</Button>
             <Button colorScheme='blue' onClick={onClose} ref={initialFocusRef}>
               Cancel
             </Button>
