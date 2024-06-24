@@ -10,7 +10,6 @@ WORKDIR /app
  
 # install the dependencies and packages in the requirements file
 RUN apk add build-base & \
-	pip install --upgrade pip & \
 	pip install -r requirements.txt
  
 # copy every content from the local file to the image

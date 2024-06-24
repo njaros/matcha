@@ -7,9 +7,7 @@ import jwt
 
 
 def send_email_register_token(**kwargs):
-    msg = Message(
-        "registration validation link", recipients=(kwargs["email"],)
-    )
+    msg = Message("registration validation link", recipients=(kwargs["email"],))
     token = jwt.encode(
         {
             "user_id": kwargs["id"],
@@ -28,9 +26,7 @@ def send_email_register_token(**kwargs):
 
 
 def send_reset_password(**kwargs):
-    msg = Message(
-        "reset password", recipients=(kwargs["email"],)
-    )
+    msg = Message("reset password", recipients=(kwargs["email"],))
     new_pass = str(random.randint(100000, 999999))
     token = jwt.encode(
         {

@@ -3,7 +3,6 @@ import { JwtPayload } from "jsonwebtoken";
 import { useEffect, useState } from "react";
 import { BrowserRouter, Navigate, Outlet, Route, Routes } from "react-router-dom";
 import { io } from 'socket.io-client';
-import Conversation from "./components/ConversationModule/Conversation";
 import Layout from "./components/LayoutModules/Layout";
 import Login from "./components/LoginModule/Login";
 import Filter from "./components/SettingsModule/FilterModule/Filter";

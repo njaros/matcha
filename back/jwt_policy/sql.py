@@ -1,11 +1,10 @@
-from db_init import db_conn as conn
 from error_status.error import NotFoundError
 from psycopg.rows import dict_row
-from flask import current_app
+from flask import current_app as app
 
 
 def get_user_by_id(user_id):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     query = """
             SELECT
                 user_table.id AS id,

@@ -109,6 +109,7 @@ const Swipe = () => {
         setLoading(true);
         Axios.post("/swipe/get_swipe_list", {...filter, sort: sort}).then(
             response => {
+                console.log(response);
                 const newSwipeList = [];
                 for (let i = 0; i < response.data.length; ++i)
                     newSwipeList.push(response.data[i].id);
@@ -134,10 +135,8 @@ const Swipe = () => {
     useEffect(() => {
         if (socket) {
             socket.on("send_like", () => {
-                console.log("from send_like");
                 toast({title: "hello", description: "someone like U"})
             });
-            console.log("swipe socket listener created")
         }
 
         return (() => {

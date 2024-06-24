@@ -1,4 +1,5 @@
 from flask import Flask
+from db_init.set_up_db import set_up_db
 from flask_cors import CORS
 from flask_mail import Mail
 from smtplib import SMTPRecipientsRefused
@@ -7,32 +8,34 @@ import os
 from extensions import socketio
 from mail_config import Config as Mail_config
 from werkzeug.exceptions import BadRequestKeyError
-from error_status.error import BadRequestError, \
-    InternalServerError, \
-    NotFoundError, \
-    ForbiddenError, \
-    RequestTooLargeError, \
-    handle_miss_key_error, \
-    handle_bad_request_error, \
-    handle_internal_server_error, \
-    handle_not_found_error, \
-    handle_forbidden_error, \
-    handle_miss_key_error_internal, \
-    handle_value_error, \
-    handle_request_too_large_error, \
-    handle_recipient_error
+from error_status.error import (
+    BadRequestError,
+    InternalServerError,
+    NotFoundError,
+    ForbiddenError,
+    RequestTooLargeError,
+    handle_miss_key_error,
+    handle_bad_request_error,
+    handle_internal_server_error,
+    handle_not_found_error,
+    handle_forbidden_error,
+    handle_miss_key_error_internal,
+    handle_value_error,
+    handle_request_too_large_error,
+    handle_recipient_error,
+)
 
 # create primary Flask app
 
 app = Flask(__name__)
-app.config['SECRET_ACCESS'] = os.environ.get('SECRET_ACCESS')
-app.config['SECRET_REFRESH'] = os.environ.get('SECRET_REFRESH')
-app.config['SECRET_EMAIL_TOKEN'] = os.environ.get('SECRET_EMAIL_TOKEN')
-app.config['SECRET_RESET_PASSWORD'] = os.environ.get('SECRET_RESET_PASSWORD')
-app.config['MAX_CONTENT_LENGTH'] = 16000000
+app.config["SECRET_ACCESS"] = os.environ.get("SECRET_ACCESS")
+app.config["SECRET_REFRESH"] = os.environ.get("SECRET_REFRESH")
+app.config["SECRET_EMAIL_TOKEN"] = os.environ.get("SECRET_EMAIL_TOKEN")
+app.config["SECRET_RESET_PASSWORD"] = os.environ.get("SECRET_RESET_PASSWORD")
+app.config["MAX_CONTENT_LENGTH"] = 16000000
 app.config.from_object(Mail_config)
-app.config['UPLOAD_FOLDER'] = '/app/imgs/'
-app.config['IMG_EXT'] = set(['png', 'jpg', 'jpeg', 'gif'])
+app.config["UPLOAD_FOLDER"] = "/app/imgs/"
+app.config["IMG_EXT"] = set(["png", "jpg", "jpeg", "gif"])
 if os.path.exists("/app/photo.key"):
     file_key = open("/app/photo.key", "rb")
     key = file_key.read()
@@ -41,14 +44,19 @@ else:
     file_key = open("/app/photo.key", "wb")
     file_key.write(key)
 file_key.close()
-app.config['SECRET_PHOTO'] = key
+app.config["SECRET_PHOTO"] = key
 
-CORS(app, origins='*')
-app.config['mail'] = Mail(app)
+CORS(app, origins="*")
+app.config["mail"] = Mail(app)
 
 # initialization of Flask-SocketIO
 
 socketio.init_app(app)
+
+# instanciate the db connector
+
+with app.app_context():
+    app.config["conn"] = set_up_db()
 
 # import and save sub-app
 
@@ -86,9 +94,5 @@ app.register_error_handler(RequestTooLargeError, handle_request_too_large_error)
 app.register_error_handler(SMTPRecipientsRefused, handle_recipient_error)
 
 if __name__ == "__main__":
-    port = int(os.environ.get('SERVER_PORT'))
-    socketio.run(app,
-                 host='0.0.0.0',
-                 port=5066,
-                 debug=True,
-                 allow_unsafe_werkzeug=True)
+    port = int(os.environ.get("SERVER_PORT"))
+    socketio.run(app, host="0.0.0.0", port=5066, debug=True, allow_unsafe_werkzeug=True)

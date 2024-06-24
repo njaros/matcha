@@ -1,13 +1,12 @@
-from db_init import db_conn as conn
 import uuid
 from error_status.error import ForbiddenError, NotFoundError
 import copy
 from psycopg.rows import dict_row
-from flask import current_app
+from flask import current_app as app
 
 
 def insert_new_user_in_database(sign_data):
-    cur = conn.cursor()
+    cur = app.config["conn"].cursor()
     cur.execute(
         """
         INSERT INTO user_table (id, \
@@ -34,14 +33,14 @@ def insert_new_user_in_database(sign_data):
             0,
         ),
     )
-    conn.commit()
+    app.config["conn"].commit()
     id = cur.fetchone()
     cur.close()
     return id
 
 
 def login_user_in_database(kwargs):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(
         """
         UPDATE user_table
@@ -62,19 +61,20 @@ def login_user_in_database(kwargs):
         ),
     )
     user = cur.fetchone()
+    kwargs["user"] = user
     if user is None:
         cur.close()
         return None
-    kwargs["user"] = user
     if user["email_verified"] is False:
-        raise ForbiddenError("your email isn't verified")
-    conn.commit()
+        return 1
+    app.config["conn"].commit()
     cur.close()
+    return 0
 
 
 def update_gps_loc_by_id(**kwargs):
-    cur = conn.cursor()
-    current_app.logger.info(kwargs)
+    cur = app.config["conn"].cursor()
+    app.logger.info(kwargs)
     cur.execute(
         """
         UPDATE user_table
@@ -88,47 +88,50 @@ def update_gps_loc_by_id(**kwargs):
             kwargs["user"]["id"],
         ),
     )
-    conn.commit()
+    app.config["conn"].commit()
     cur.close()
 
 
 def activate_mail_account(**kwargs):
-    cur = conn.cursor()
+    cur = app.config["conn"].cursor()
     cur.execute(
         """
         UPDATE user_table
         SET email_verified = true
         WHERE id = %s;
         """,
-        (kwargs["user"]["id"],)
+        (kwargs["user"]["id"],),
     )
-    conn.commit()
+    app.config["conn"].commit()
     cur.close()
 
 
 def update_password_by_email(**kwargs):
-    cur = conn.cursor()
+    cur = app.config["conn"].cursor()
     cur.execute(
         """
         UPDATE user_table
         SET password = %s
         WHERE email = %s;
         """,
-        (kwargs["new_pass"], kwargs["email"],)
+        (
+            kwargs["new_pass"],
+            kwargs["email"],
+        ),
     )
-    conn.commit()
+    app.config["conn"].commit()
     cur.close()
 
 
 def get_user_by_email(**kwargs):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(
         """
         SELECT *
         FROM user_table
         WHERE email = %s;
         """,
-        (kwargs["email"],)
+        (kwargs["email"],),
     )
     user = cur.fetchone()
     if user is None:

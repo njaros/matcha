@@ -1,4 +1,4 @@
-from db_init import db_conn as conn
+from flask import current_app as app
 from psycopg.rows import dict_row
 from chat import sql as chat_sql
 import uuid
@@ -10,7 +10,26 @@ base_swipe_request = """
                 username,
                 birthDate,
                 gender,
-                rank,
+                CASE    WHEN rank <> 0 THEN rank
+                                    WHEN (
+                                        SELECT COUNT(*)
+                                        FROM relationship
+                                        WHERE liker_id = id
+                                        ) < 10 THEN 0
+                                    ELSE CEIL( 10 *
+                                        (SELECT COUNT(*)
+                                        FROM relationship
+                                        WHERE liked_id = id)
+                                        / (
+                                        (SELECT COUNT(*)
+                                        FROM relationship
+                                        WHERE liker_id = id)
+                                        +
+                                        (SELECT COUNT (*)
+                                        FROM relationship
+                                        WHERE liked_id = id)
+                                        ))
+                        END AS true_rank,
                 ACOS(
                     SIND(%(self_latitude)s) * SIND(latitude)
                     + COSD(%(self_latitude)s)
@@ -36,7 +55,6 @@ base_swipe_request = """
                     WHERE liker_id = %(user)s
                 ) AND id NOT IN ( %(user)s )
                 AND birthDate BETWEEN %(date_min)s AND %(date_max)s
-                AND ABS(rank - %(user_rank)s) < %(ranking_gap)s
                 AND (
                     %(hobby_ids_len)s = 0
                     OR (
@@ -53,28 +71,50 @@ base_swipe_request = """
         FROM prefiltered
         WHERE
             distance < %(distance_max)s
+            AND ABS(
+                true_rank - CASE    WHEN %(user_rank)s <> 0 THEN %(user_rank)s
+                                    WHEN (
+                                            SELECT COUNT (*)
+                                            FROM relationship
+                                            WHERE liker_id = %(user)s
+                                            ) < 10 THEN 0
+                                    ELSE CEIL(  10 *
+                                        (SELECT COUNT(*)
+                                        FROM relationship
+                                        WHERE liked_id = %(user)s)
+                                        / (
+                                        (SELECT COUNT (*)
+                                        FROM relationship
+                                        WHERE liker_id = %(user)s)
+                                        +
+                                        (SELECT COUNT (*)
+                                        FROM relationship
+                                        WHERE liked_id = %(user)s)
+                                        ))
+                                    END
+                    ) <= %(ranking_gap)s
         """
 
 
 def set_request_dict(**kwargs):
     return {
-            "user": kwargs["user"]["id"],
-            "self_latitude": kwargs["user"]["latitude"],
-            "self_longitude": kwargs["user"]["longitude"],
-            "gender": kwargs["user"]["gender"],
-            "preference": kwargs["user"]["preference"],
-            "date_min": kwargs["date_min"],
-            "date_max": kwargs["date_max"],
-            "distance_max": kwargs["distance_max"],
-            "user_rank": kwargs["user"]["rank"],
-            "ranking_gap": kwargs["ranking_gap"],
-            "hobby_ids": kwargs["hobby_ids"],
-            "hobby_ids_len": len(kwargs["hobby_ids"]),
-        }
+        "user": kwargs["user"]["id"],
+        "self_latitude": kwargs["user"]["latitude"],
+        "self_longitude": kwargs["user"]["longitude"],
+        "gender": kwargs["user"]["gender"],
+        "preference": kwargs["user"]["preference"],
+        "date_min": kwargs["date_min"],
+        "date_max": kwargs["date_max"],
+        "distance_max": kwargs["distance_max"],
+        "user_rank": kwargs["user"]["rank"],
+        "ranking_gap": kwargs["ranking_gap"],
+        "hobby_ids": kwargs["hobby_ids"],
+        "hobby_ids_len": len(kwargs["hobby_ids"]),
+    }
 
 
 def get_swipe_list_no_sort(**kwargs):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(
         base_swipe_request,
         set_request_dict(**kwargs),
@@ -86,11 +126,8 @@ def get_swipe_list_no_sort(**kwargs):
 
 def get_swipe_list_age_sort(**kwargs):
     request = base_swipe_request + " ORDER BY birthDate DESC"
-    cur = conn.cursor(row_factory=dict_row)
-    cur.execute(
-        request,
-        set_request_dict(**kwargs)
-    )
+    cur = app.config["conn"].cursor(row_factory=dict_row)
+    cur.execute(request, set_request_dict(**kwargs))
     swipe_list = cur.fetchall()
     cur.close()
     return swipe_list
@@ -98,11 +135,8 @@ def get_swipe_list_age_sort(**kwargs):
 
 def get_swipe_list_ranking_sort(**kwargs):
     request = base_swipe_request + " ORDER BY rank DESC"
-    cur = conn.cursor(row_factory=dict_row)
-    cur.execute(
-        request,
-        set_request_dict(**kwargs)
-    )
+    cur = app.config["conn"].cursor(row_factory=dict_row)
+    cur.execute(request, set_request_dict(**kwargs))
     swipe_list = cur.fetchall()
     cur.close()
     return swipe_list
@@ -110,18 +144,17 @@ def get_swipe_list_ranking_sort(**kwargs):
 
 def get_swipe_list_distance_sort(**kwargs):
     request = base_swipe_request + " ORDER BY distance"
-    cur = conn.cursor(row_factory=dict_row)
-    cur.execute(
-        request,
-        set_request_dict(**kwargs)
-    )
+    cur = app.config["conn"].cursor(row_factory=dict_row)
+    cur.execute(request, set_request_dict(**kwargs))
     swipe_list = cur.fetchall()
     cur.close()
     return swipe_list
 
 
 def get_swipe_list_tags_sort(**kwargs):
-    request = base_swipe_request + """
+    request = (
+        base_swipe_request
+        + """
         ORDER BY (
             SELECT COUNT(*)
             FROM user_hobbie
@@ -136,18 +169,16 @@ def get_swipe_list_tags_sort(**kwargs):
             )
         ) DESC
         """
-    cur = conn.cursor(row_factory=dict_row)
-    cur.execute(
-        request,
-        set_request_dict(**kwargs)
     )
+    cur = app.config["conn"].cursor(row_factory=dict_row)
+    cur.execute(request, set_request_dict(**kwargs))
     swipe_list = cur.fetchall()
     cur.close()
     return swipe_list
 
 
 def like_user(**kwargs):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     user = kwargs["user"]["id"]
     target = kwargs["target_id"]
     new_room = None
@@ -201,13 +232,13 @@ def like_user(**kwargs):
                 "user_id2": target,
             }
         )
-    conn.commit()
+    app.config["conn"].commit()
     cur.close()
     return new_room
 
 
 def dislike_user(**kwargs):
-    cur = conn.cursor()
+    cur = app.config["conn"].cursor()
     user = kwargs["user"]["id"]
     target = kwargs["target_id"]
     cur.execute(
@@ -238,4 +269,4 @@ def dislike_user(**kwargs):
         (user, target, target, user),
     )
     cur.close()
-    conn.commit()
+    app.config["conn"].commit()

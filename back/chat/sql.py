@@ -1,15 +1,14 @@
-from db_init import db_conn as conn
 import uuid
-from user_module import sql as user_sql
 from flask import current_app as app
 from error_status.error import ForbiddenError, NotFoundError
 from psycopg.rows import dict_row
 from profile_module import sql as profile_sql
 
+
 def insert_room(data):
-    if room_exists(data.get('user_id1'), data.get('user_id2')):
-        raise(ForbiddenError('Room already exist'))
-    cur = conn.cursor(row_factory=dict_row)
+    if room_exists(data.get("user_id1"), data.get("user_id2")):
+        raise (ForbiddenError("Room already exist"))
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     room_id = uuid.uuid1()
     query = """
             INSERT INTO room (
@@ -20,7 +19,7 @@ def insert_room(data):
             VALUES (%s, %s, %s)
             RETURNING id, user_1, user_2;
             """
-    cur.execute(query, (room_id, data.get('user_id1'), data.get('user_id2')))
+    cur.execute(query, (room_id, data.get("user_id1"), data.get("user_id2")))
     room = cur.fetchone()
     query2 = """
             INSERT INTO unread_msg (
@@ -29,17 +28,15 @@ def insert_room(data):
             )
             VALUES (%s, %s)
             """
-    data = [
-        (room['user_1'], room['id']),
-        (room['user_2'], room['id'])
-    ]
+    data = [(room["user_1"], room["id"]), (room["user_2"], room["id"])]
     cur.executemany(query2, data)
-    conn.commit()
+    app.config["conn"].commit()
     cur.close()
     return room
 
+
 def room_exists(user1_id, user2_id):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     query = """
             SELECT id
             FROM room
@@ -52,7 +49,7 @@ def room_exists(user1_id, user2_id):
 
 
 def get_room_list_by_id(user_id):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     query = """
             SELECT
                 room.id AS id,
@@ -91,19 +88,21 @@ def get_room_list_by_id(user_id):
     cur.execute(query, (user_id, user_id, user_id))
     res = cur.fetchall()
     if not res:
-        raise NotFoundError('This user does not have any conversation.')
+        raise NotFoundError("This user does not have any conversation.")
     for row in res:
-        row['user_1']['photo'] = profile_sql.get_main_photo_by_user_id(row['user_1']['user_id'])
-        row['user_2']['photo'] = profile_sql.get_main_photo_by_user_id(row['user_2']['user_id'])
-
+        row["user_1"]["photo"] = profile_sql.get_main_photo_by_user_id(
+            row["user_1"]["user_id"]
+        )
+        row["user_2"]["photo"] = profile_sql.get_main_photo_by_user_id(
+            row["user_2"]["user_id"]
+        )
 
     cur.close()
     return res
 
 
-
 def insert_message(data):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     query = """
             INSERT INTO message (
                 content,
@@ -113,14 +112,17 @@ def insert_message(data):
             VALUES (%s, %s, %s)
             RETURNING id;
             """
-    cur.execute(query, (
-        data.get("content"),
-        data.get("sender_id"),
-        data.get("room_id"),
-    ))
+    cur.execute(
+        query,
+        (
+            data.get("content"),
+            data.get("sender_id"),
+            data.get("room_id"),
+        ),
+    )
     id = cur.fetchone()
-    conn.commit()
-    query_sender =  """
+    app.config["conn"].commit()
+    query_sender = """
                     SELECT
                         %s AS id,
                         json_build_object(
@@ -133,20 +135,24 @@ def insert_message(data):
                     FROM user_table
                     WHERE user_table.id = %s  
                     """
-    cur.execute(query_sender, (
-        id['id'],
-        data.get("room_id"),
-        data.get("content"),
-        id['id'],
-        data.get("sender_id")
-    ))
+    cur.execute(
+        query_sender,
+        (
+            id["id"],
+            data.get("room_id"),
+            data.get("content"),
+            id["id"],
+            data.get("sender_id"),
+        ),
+    )
     res = cur.fetchone()
-    app.logger.info('POUUUUET', res)
+    app.logger.info("POUUUUET", res)
     cur.close()
     return res
 
+
 def get_message_list_by_room_id(room_id):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     query = """
             SELECT
                 message.id,
@@ -172,7 +178,7 @@ def get_message_list_by_room_id(room_id):
 
 
 def get_room(room_id):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     query = """
             SELECT 
                 id,
@@ -184,14 +190,13 @@ def get_room(room_id):
     cur.execute(query, (room_id,))
     room = cur.fetchone()
     if room is None:
-        raise NotFoundError('Room does not exist in database')
+        raise NotFoundError("Room does not exist in database")
     cur.close()
     return room
 
 
-
 def get_room_with_message(room_id):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     query = """
             SELECT
                 room.id AS room_id,
@@ -249,54 +254,51 @@ def get_room_with_message(room_id):
     cur.execute(query, (room_id, room_id))
     room = cur.fetchone()
     if room is None:
-        raise NotFoundError('Room does not exist in database')
+        raise NotFoundError("Room does not exist in database")
     cur.close()
     return room
 
 
 def delete_room_by_user_ids(**kwargs):
-    cur = conn.cursor()
+    cur = app.config["conn"].cursor()
     cur.execute(
         """
         DELETE FROM room
         WHERE   user_1 = %(self_id)s AND user_2 = %(other_id)s
                 OR user_1 = %(other_id)s AND user_2 = %(self_id)s
         """,
-        {
-            "self_id": kwargs["user"]["id"],
-            "other_id": kwargs["user_id"]
-        }
+        {"self_id": kwargs["user"]["id"], "other_id": kwargs["user_id"]},
     )
-    conn.commit()
+    app.config["conn"].commit()
     cur.close()
 
 
 def increment_unread_msg_count(user_id, room_id):
-    cur = conn.cursor()
+    cur = app.config["conn"].cursor()
     query = """
             UPDATE unread_msg
             SET count = count + 1
             WHERE user_id = %s AND room_id = %s
             """
     cur.execute(query, (user_id, room_id))
-    conn.commit()
+    app.config["conn"].commit()
     cur.close()
 
 
 def set_unread_msg_count_to_0(user_id, room_id):
-    cur = conn.cursor()
+    cur = app.config["conn"].cursor()
     query = """
             UPDATE unread_msg
             SET count = 0
             WHERE user_id = %s AND room_id = %s
             """
     cur.execute(query, (user_id, room_id))
-    conn.commit()
+    app.config["conn"].commit()
     cur.close()
 
 
 def get_unread_msg_count(user_id, room_id):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     query = """
             SELECT
                 count

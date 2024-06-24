@@ -1,17 +1,35 @@
-from db_init import db_conn as conn
 from error_status.error import NotFoundError
 from flask import current_app as app
 from psycopg.rows import dict_row
 
 
 def get_user_by_username(username):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     query = """
             SELECT
                 user_table.id AS id,
                 user_table.username AS username,
                 user_table.email AS email,
-                user_table.rank AS rank,
+                CASE    WHEN rank <> 0 THEN rank
+                                    WHEN (
+                                        SELECT COUNT(*)
+                                        FROM relationship
+                                        WHERE liker_id = user_table.id
+                                        ) < 10 THEN 0
+                                    ELSE CEIL( 10 *
+                                        (SELECT COUNT(*)
+                                        FROM relationship
+                                        WHERE liked_id = user_table.id)
+                                        / (
+                                        (SELECT COUNT(*)
+                                        FROM relationship
+                                        WHERE liker_id = user_table.id)
+                                        +
+                                        (SELECT COUNT (*)
+                                        FROM relationship
+                                        WHERE liked_id = user_table.id)
+                                        ))
+                        END AS rank,
                 user_table.birthDate AS birthDate,
                 user_table.gender AS gender,
                 user_table.biography AS biography,
@@ -29,13 +47,32 @@ def get_user_by_username(username):
 
 
 def get_user_by_email(email):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     query = """
             SELECT
                 user_table.id AS id,
                 user_table.username AS username,
                 user_table.email AS email,
-                user_table.rank AS rank,
+                CASE    WHEN rank <> 0 THEN rank
+                                    WHEN (
+                                        SELECT COUNT(*)
+                                        FROM relationship
+                                        WHERE liker_id = user_table.id
+                                        ) < 10 THEN 0
+                                    ELSE CEIL( 10 *
+                                        (SELECT COUNT(*)
+                                        FROM relationship
+                                        WHERE liked_id = user_table.id)
+                                        / (
+                                        (SELECT COUNT(*)
+                                        FROM relationship
+                                        WHERE liker_id = user_table.id)
+                                        +
+                                        (SELECT COUNT (*)
+                                        FROM relationship
+                                        WHERE liked_id = user_table.id)
+                                        ))
+                        END AS rank,
                 user_table.birthDate AS birthDate,
                 user_table.gender AS gender,
                 user_table.biography AS biography,
@@ -53,13 +90,32 @@ def get_user_by_email(email):
 
 
 def get_user_by_id(id):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     query = """
             SELECT
                 user_table.id AS id,
                 user_table.username AS username,
                 user_table.email AS email,
-                user_table.rank AS rank,
+                CASE    WHEN rank <> 0 THEN rank
+                                    WHEN (
+                                        SELECT COUNT(*)
+                                        FROM relationship
+                                        WHERE liker_id = user_table.id
+                                        ) < 10 THEN 0
+                                    ELSE CEIL( 10 *
+                                        (SELECT COUNT(*)
+                                        FROM relationship
+                                        WHERE liked_id = user_table.id)
+                                        / (
+                                        (SELECT COUNT(*)
+                                        FROM relationship
+                                        WHERE liker_id = user_table.id)
+                                        +
+                                        (SELECT COUNT (*)
+                                        FROM relationship
+                                        WHERE liked_id = user_table.id)
+                                        ))
+                        END AS rank,
                 user_table.birthDate AS birthDate,
                 user_table.gender AS gender,
                 user_table.biography AS biography,
@@ -76,7 +132,7 @@ def get_user_by_id(id):
 
 
 def get_user_profile(**kwargs):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     app.logger.info(kwargs)
     cur.execute(
         """
@@ -87,7 +143,26 @@ def get_user_profile(**kwargs):
                 biography,
                 to_char(birthDate, 'YYYY-MM-DD') AS birthDate,
                 gender,
-                rank,
+                CASE    WHEN rank <> 0 THEN rank
+                                    WHEN (
+                                        SELECT COUNT(*)
+                                        FROM relationship
+                                        WHERE liker_id = user_table.id
+                                        ) < 10 THEN 0
+                                    ELSE CEIL( 10 *
+                                        (SELECT COUNT(*)
+                                        FROM relationship
+                                        WHERE liked_id = user_table.id)
+                                        / (
+                                        (SELECT COUNT(*)
+                                        FROM relationship
+                                        WHERE liker_id = user_table.id)
+                                        +
+                                        (SELECT COUNT (*)
+                                        FROM relationship
+                                        WHERE liked_id = user_table.id)
+                                        ))
+                        END AS rank,
                 (
                     SELECT json_agg (
                         json_build_object (
@@ -116,8 +191,8 @@ def get_user_profile(**kwargs):
                     END loved
                 FROM user_table
                 WHERE id = %(user_id)s
-        """, {"user_id": kwargs["user_id"],
-              "self_id": kwargs["user"]["id"]}
+        """,
+        {"user_id": kwargs["user_id"], "self_id": kwargs["user"]["id"]},
     )
     user = cur.fetchone()
     cur.close()
@@ -125,7 +200,7 @@ def get_user_profile(**kwargs):
 
 
 def get_user_with_room(user_id):
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     query = """
             SELECT
                 user_table.id AS user_id,
@@ -149,14 +224,14 @@ def get_user_with_room(user_id):
     cur.execute(query, (user_id,))
     res = cur.fetchone()
     if res is None:
-        raise NotFoundError('This user does not exist in database')
+        raise NotFoundError("This user does not exist in database")
     cur.close()
     return res
 
 
 def get_user_with_room_and_message(user_id):
 
-    cur = conn.cursor(row_factory=dict_row)
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     query = """
             SELECT
                 user_table.id AS user_id,
@@ -200,28 +275,27 @@ def get_user_with_room_and_message(user_id):
     cur.execute(query, (user_id,))
     res = cur.fetchone()
     if res is None:
-        raise NotFoundError('This user does not exist in database')
+        raise NotFoundError("This user does not exist in database")
     cur.close()
     return res
 
 
 def visite_profile(**kwargs):
-    cur = conn.cursor()
+    cur = app.config["conn"].cursor()
     cur.execute(
         """
             INSERT INTO visits (visitor_id, visited_id)
             VALUES (%(visitor)s, %(visited)s)
-        """, {"visitor": kwargs["user"]["id"],
-              "visited": kwargs["user_id"]}
+        """,
+        {"visitor": kwargs["user"]["id"], "visited": kwargs["user_id"]},
     )
     cur.close()
-    conn.commit()
+    app.config["conn"].commit()
 
 
 def get_visited_me_history(**kwargs):
-    """Returns list of users who visited my profile
-    """
-    cur = conn.cursor(row_factory=dict_row)
+    """Returns list of users who visited my profile"""
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(
         """
             SELECT  user_table.id AS id,
@@ -235,7 +309,8 @@ def get_visited_me_history(**kwargs):
                 AND main = true
             WHERE visits.visited_id = %s
             ORDER by at DESC
-        """, (kwargs["user"]["id"],)
+        """,
+        (kwargs["user"]["id"],),
     )
     history = cur.fetchall()
     cur.close()
@@ -243,9 +318,8 @@ def get_visited_me_history(**kwargs):
 
 
 def get_my_visits_history(**kwargs):
-    """Returns list of users whose profile I visited
-    """
-    cur = conn.cursor(row_factory=dict_row)
+    """Returns list of users whose profile I visited"""
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(
         """
             SELECT  user_table.id AS id,
@@ -259,7 +333,8 @@ def get_my_visits_history(**kwargs):
                 AND photos.main = true
             WHERE visits.visitor_id = %s
             ORDER by at DESC
-        """, (kwargs["user"]["id"],)
+        """,
+        (kwargs["user"]["id"],),
     )
     history = cur.fetchall()
     cur.close()
