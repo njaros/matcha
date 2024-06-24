@@ -13,6 +13,7 @@ import { getPosInfo } from "../../tools/Thingy";
 import { storeMe } from "../../tools/Stores";
 import ReturnButton from "./ReturnButton";
 import ReportTrigger from "../ReportTrigger";
+import { IoChevronBack } from "react-icons/io5";
 
 const fontSizeName = {base: "25px", sm: "30px", md: "35px", lg: "40px", xl: "45px"}
 const fontSizeLocation = {base: "15px", sm: "20px", md: "25px", lg: "30px", xl: "35px"}
@@ -302,6 +303,16 @@ export default function OtherProfile()
                 </Box>
             </Box> :
             <Text>Nothing to display</Text>}
-            <ReturnButton to="/settings"/>
+            <Button
+                borderRadius={'100%'}
+                padding={'0'}
+                size={'sm'}
+                bgColor={'#edf2f'}
+                onClick={() => {
+                    navigate(-1)
+                }}
+            >
+                <Icon as={IoChevronBack}/>
+            </Button>
         </Box>)
 }

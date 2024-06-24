@@ -186,7 +186,7 @@ const Photo = () => {
                     display={'flex'}
                     alignItems={'center'}
                     justifyContent={'center'}
-                    >
+                >
 
                     {props.photo ? (
                     <>
@@ -207,7 +207,7 @@ const Photo = () => {
                             type="file"
                             accept="image/"
                             ref={inputRef}
-                            style={{ display: "none" }} // Cache l'input file
+                            style={{ display: "none" }}
                             onChange={onChangeFile}
                         />
                         <Icon

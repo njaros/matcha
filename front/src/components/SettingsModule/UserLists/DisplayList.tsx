@@ -1,14 +1,20 @@
 import { IListUser } from "../../../Interfaces";
-import { Box, Divider, Flex, Image, Text } from "@chakra-ui/react";
+import { Box, Divider, Flex, Image, SimpleGrid, Text } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
 import ReturnButton from "../ReturnButton";
 
 const lineSizes={base: "70px", sm: "95px", md: "115px", lg:"135px", xl: "160px"}
 
 export default function DisplayList(props: {list: IListUser[], enableDate: boolean, name: string}) {
-
+    
     return (
-    <Flex flex={1} overflow={"hidden"} flexDirection={"column"} w="100%" alignItems={"center"} justifyContent={"flex-end"}>
+    <Flex 
+        flex={1} 
+        overflow={"hidden"} 
+        flexDirection={"column"} 
+        w="100%" 
+        // alignItems={"center"} 
+    >
         <Flex 
             flexDirection={'row'}
             placeSelf={'self-start'}
@@ -41,34 +47,55 @@ export default function DisplayList(props: {list: IListUser[], enableDate: boole
                             height="auto" 
                     ></Image>
         }
-        <Flex w="100%" marginBottom={"3%"} overflowY="auto" flexDirection="column" flex={1} justifyContent={"flex-start"}>
-            {props.list.map((user, idx, array) => {
+        <SimpleGrid
+            columns={{ base: 2, md: 3, lg: 4, xl: 5 }}
+            spacing={3}
+            w="100%"
+            h="100%"
+            justifyItems="center"
+            overflowY={'auto'}
+            marginTop={'15px'}
+            padding={'0px 10px'}  
+        >
+            {props.list.map((user, index) => {
                 return (
-                    <Flex w="100%" direction="column">
+                    <Flex 
+                        flexDirection={'column'}
+                    >
                         <NavLink key={user.id} to={`/other_profile/${user.id}`}>
-                            <Flex display="flex" h={lineSizes} flexDir={"row"} justifyContent={"flex-start"}>
-                                <Image
-                                        fit="contain"
-                                        borderRadius={"full"}
-                                        src={user.photo}/>
-                                <Text   margin="0 5%"
-                                        alignSelf={"center"}
-                                        >{user.username}</Text>
-                                {props.enableDate && <Text  alignSelf={"center"}>{user.at}</Text>}
+                        <Box 
+                            bg="#edf2f7" 
+                            h="300px" 
+                            w="170px" 
+                            borderRadius={'15px'} 
+                            border={'1px'} 
+                            borderColor={'grey'}
+                            display={'flex'}
+                            alignItems={'center'}
+                            justifyContent={'center'}
+                        >
+                            <Image 
+                                src={user.photo} 
+                                alt="Photo" 
+                                objectFit="cover" 
+                                borderRadius="15px"
+                                top="0"
+                                left="0"
+                                width="100%"
+                                height="100%" 
+                        />
+                        </Box>
+                        <Flex
+                            justifyContent={'center'}
+                            marginTop={'5px'}
+                        >
+                            <Text fontWeight={'bold'}>{user.username}</Text>
                         </Flex>
-                    </NavLink>
-                    {idx < array.length -1 && <Divider  
-                                                        placeSelf={"center"}
-                                                        w="80%"
-                                                        borderWidth={"2px"}
-                                                        borderRadius={"2px"}
-                                                        borderColor="black"
-                                                        margin={("3% 0")}/>}
+                        </NavLink>
                     </Flex>
                 )
             })}
-        </Flex>
-       
+        </SimpleGrid>
     </Flex>
     )
 }
