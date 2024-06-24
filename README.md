@@ -34,4 +34,3 @@ dating web site 42 project
 # Apres rererelecture du sujet ce qu'on a pas fait:
 
 - See if a user is currently online, and if not, see the date and time of their last connection.
-- faire un bouton block qui remove le like + met le user dans le cancel_table
