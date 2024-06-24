@@ -3,6 +3,7 @@ from flask import current_app as app
 from error_status.error import ForbiddenError, NotFoundError
 from psycopg.rows import dict_row
 from profile_module import sql as profile_sql
+from uuid import UUID
 
 
 def insert_room(data):
@@ -309,3 +310,21 @@ def get_unread_msg_count(user_id, room_id):
     res = cur.fetchone()
     cur.close()
     return res
+
+
+def correct_room(room_id: str | UUID, user_id: str | UUID):
+    cur = app.config["conn"].cursor(row_factory=dict_row)
+    query = """
+            SELECT  CASE WHEN user_1 = %(user_id)s THEN user_2
+                    ELSE user_1
+                    END AS target
+            FROM room
+            WHERE id = %(room_id)s
+            AND user_1 = %(user_id)s OR user_2 = %(user_id)s
+            """
+    cur.execute(query, {"room_id": room_id, "user_id": user_id})
+    res = cur.fetchone()
+    cur.close()
+    if res is None:
+        return None
+    return res["target"]

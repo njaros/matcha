@@ -61,8 +61,9 @@ function Chatbox(){
             console.log('from send message')
         }
         catch(err){
-            if (err)
-                console.error(err)
+            console.warn(err)
+            if (err.response && err.response.status == 403)
+                navigate(-1);
         }
     }
 

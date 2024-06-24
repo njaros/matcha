@@ -6,9 +6,9 @@ from chat.sql import (
     get_room_with_message,
     increment_unread_msg_count,
     set_unread_msg_count_to_0,
+    correct_room,
 )
 from validators import str, uuid, int
-from socket_app.events import connected_clients
 
 
 @socketio.on("join_video_chat_room")
@@ -119,15 +119,15 @@ def send_message(data):
     #     app.logger.error('Wrong type of parameter')
 
     # try and catch
-    room = get_room_with_message(room_id)
-    if room is None:
+    target = correct_room(room_id, connected_clients[request.sid]["id"])
+    if target is None:
         app.logger.info(f"Room {room_id} not found in database.")
         return
-    target = (
-        room["user_1"]["id"]
-        if room["user_1"]["id"] != user_id
-        else room["user_2"]["id"]
-    )
+    # target = (
+    #     room["user_1"]["id"]
+    #     if room["user_1"]["id"] != user_id
+    #     else room["user_2"]["id"]
+    # )
     increment_unread_msg_count(target, room_id)
 
     emit("msg_count", room_id, room=f"room-{room_id}")

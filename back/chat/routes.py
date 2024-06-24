@@ -1,4 +1,5 @@
 from flask import request, current_app, jsonify
+from error_status.error import ForbiddenError, NotFoundError
 from datetime import datetime, timezone
 import pytz
 from chat import sql as chat_sql
@@ -13,6 +14,8 @@ from .dto import message_dto
 @message_dto
 @token_required
 def add_message(**kwargs):
+    if chat_sql.correct_room(kwargs["room_id"], kwargs["user"]["id"]) is None:
+        raise ForbiddenError("this room doesn't exist")
     return chat_sql.insert_message(data = {
         'content': request.json['content'],
         'sender_id': kwargs['user']['id'],
@@ -74,4 +77,7 @@ def set_unread_msg_count_to_0(**kwargs):
 
 @token_required
 def get_unread_msg_count(**kwargs):
-    return chat_sql.get_unread_msg_count(kwargs['user']['id'], uuid.isUuid(request.json['room_id']))
+    count = chat_sql.get_unread_msg_count(kwargs['user']['id'], uuid.isUuid(request.json['room_id']))
+    if count is None:
+        raise NotFoundError("This room doesn't exists")
+    return count
