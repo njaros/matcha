@@ -122,7 +122,8 @@ const Footer = (props: {
 
     return (
 
-        !hidesOnRoute && <Box
+        <Box
+        hidden={hidesOnRoute}
         className="iconUserLogged"
         display="flex"
         width={'60%'}

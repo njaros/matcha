@@ -8,6 +8,7 @@ from .dto import remove_like_dto, report_dto
 from swipe_module.sql import dislike_user
 import base64
 from cryptography.fernet import Fernet
+from tools.matcha_socketio import emit
 
 
 @token_required
@@ -78,6 +79,12 @@ def create_room_when_user_are_matched():
 @remove_like_dto
 def remove_like(**kwargs):
     relationship_sql.remove_like(**kwargs)
+    emit(
+        "unliked",
+        kwargs["user_id"],
+        kwargs["user"]["id"],
+        {"id": str(kwargs["user"]["id"])}
+    )
     return [], 200
 
 

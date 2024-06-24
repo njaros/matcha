@@ -76,8 +76,10 @@ def set_up_db():
                 id uuid PRIMARY KEY,
                 liker_id uuid,
                 liked_id uuid,
-                FOREIGN KEY (liker_id) REFERENCES user_table(id),
+                FOREIGN KEY (liker_id) REFERENCES user_table(id)
+                    ON DELETE CASCADE,
                 FOREIGN KEY (liked_id) REFERENCES user_table(id)
+                    ON DELETE CASCADE
             )
         """
         )
@@ -132,7 +134,7 @@ def set_up_db():
             """
             CREATE TABLE report (
                 reported_id uuid REFERENCES user_table(id) ON DELETE CASCADE,
-                reporter_id uuid REFERENCES user_table(id),
+                reporter_id uuid REFERENCES user_table(id) ON DELETE CASCADE,
                 CONSTRAINT report_pk PRIMARY KEY(reported_id, reporter_id)
             );
             """
@@ -156,8 +158,10 @@ def set_up_db():
                 user_id uuid,
                 room_id uuid,
                 count   integer default 0,
-                FOREIGN KEY (user_id) REFERENCES user_table(id),
+                FOREIGN KEY (user_id) REFERENCES user_table(id)
+                    ON DELETE CASCADE,
                 FOREIGN KEY (room_id) REFERENCES room(id)
+                    ON DELETE CASCADE
             );
             """
         )

@@ -1,5 +1,5 @@
 from flask import current_app, jsonify
-from flask_socketio import emit
+from tools.matcha_socketio import emit
 from tools.thingy import to_socket_uuid
 from user_module import sql as user_sql_request
 from profile_module.sql import get_photos_by_user_id
@@ -75,9 +75,9 @@ def get_user_profile_from_swipe(**kwargs):
     current_app.logger.info(f"user={str(user_profile['id'])}")
     emit(
         "viewed",
+        user_profile["id"],
+        kwargs["user"]["id"],
         {"id": str(kwargs["user"]["id"])},
-        room=f"user-{str(user_profile['id'])}",
-        namespace="/",
     )
     return user_profile, 200
 

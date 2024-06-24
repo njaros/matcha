@@ -1,9 +1,7 @@
 from jwt_policy.jwt_policy import token_required
 from . import sql
 from .dto import like_dislike_dto, filter_swipe_dto
-from extensions import socketio
-from flask_socketio import emit
-from tools.thingy import to_socket_uuid
+from tools.matcha_socketio import emit
 from flask import current_app
 
 
@@ -12,17 +10,16 @@ from flask import current_app
 def like_user(**kwargs):
     new_room = sql.like_user(**kwargs)
     current_app.logger.info(f"user-{kwargs['target_id']}")
-    # current_app.logger.info(rooms(None, None))
     emit('liked',
+         kwargs['target_id'],
+         kwargs["user"]["id"],
          {"id": str(kwargs["user"]["id"])},
-         room=f"user-{kwargs['target_id']}",
-         namespace='/'
          )
     if new_room is not None:
         emit('match',
+             kwargs['target_id'],
+             kwargs["user"]["id"],
              {"id": str(kwargs["user"]["id"])},
-             room=f"user-{kwargs['target_id']}",
-             namespace='/'
              )
         return new_room
     return [], 200

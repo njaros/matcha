@@ -53,7 +53,7 @@ export default function Notification() {
 
             socket.on("unliked", (data: any) => {
                 setNotifList((list) => [...list, {
-                    content: "Someone doesn't like you anymore",
+                    content: "You lost a like",
                     type: "relation",
                     id: data.id
                 }]);

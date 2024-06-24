@@ -9,7 +9,8 @@ dating web site 42 project
 
 - dans match-list, les users sont dupliques pour chaque photos qu'ils ont
 - lorsqu on unlike un match avec lequel on a des message en conversation : DETAIL:  Key (id)=(71e7ad98-3148-11ef-8cdc-0242ac120003) is still referenced from table "unread_msg". => il manque des ON DELETE CASCADE a la creation de la table
-- lorsqu on unlike un match, la conv apparait encore => soucis de store
+- lorsqu on unlike un match, la conv apparait encore => soucis de store, erreur 500 lorsqu'on ecrit dans une conv qui n'est plus dans le back
+- on me devrait pas pouvoir mettre de champs vide sur tout les champs de modif profile
 
 # TODOS-REPORT
 
