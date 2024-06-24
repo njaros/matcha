@@ -1,4 +1,4 @@
-from flask import request, current_app, jsonify
+from flask import request, current_app
 from error_status.error import ForbiddenError, NotFoundError
 from datetime import datetime, timezone
 import pytz

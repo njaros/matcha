@@ -7,6 +7,7 @@ import { FaRegHeart } from "react-icons/fa";
 import { FaHeartPulse } from "react-icons/fa6";
 import { RiSpyFill } from "react-icons/ri";
 import { GiHouseKeys } from "react-icons/gi";
+import { GiLoveLetter } from "react-icons/gi";
 import { IconType } from "react-icons";
 
 const settingFontSize = { base: '16px', sm: '18px', md: '20px', lg: '22px', xl: '24px' };
@@ -112,6 +113,11 @@ const Settings = () => {
                         name="Likes"
                         desc="See who like you, unlike if you change your mind"
                         icon={FaRegHeart}/>
+                    <SettingElement
+                        path="/settings/liker_list"
+                        name="Likers"
+                        desc="See who liked your profile, and match them easily"
+                        icon={GiLoveLetter}/>
                     <SettingElement
                         path="/settings/match_list"
                         name="Matches"

@@ -11,6 +11,7 @@ from .routes import (
     remove_like,
     get_matches,
     get_liked_not_matched,
+    get_liker_not_matched,
     report_user
 )
 
@@ -61,6 +62,12 @@ app.add_url_rule(
     "/relationship/get_liked_not_matched",
     "get_liked_not_matched",
     get_liked_not_matched,
+    methods=["GET"]
+)
+app.add_url_rule(
+    "/relationship/get_liker_not_matched",
+    "get_liker_not_matched",
+    get_liker_not_matched,
     methods=["GET"]
 )
 app.add_url_rule(

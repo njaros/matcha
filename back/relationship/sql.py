@@ -170,10 +170,42 @@ def get_liked_by_user_id(**kwargs):
             LEFT OUTER JOIN user_table ON liked_id = user_table.id
             LEFT OUTER JOIN photos ON photos.user_id = user_table.id
                                    AND photos.main = true
-            WHERE liker_id = %s
+            WHERE   liker_id = %(user)s
+                    AND liked_id NOT IN (
+                        SELECT liker_id
+                        FROM relationship
+                        WHERE liked_id = %(user)s
+                    )
             ORDER BY username;
         """,
-        (kwargs["user"]["id"],),
+        {"user": kwargs["user"]["id"]},
+    )
+    list = cur.fetchall()  # modif by me
+    cur.close()
+    return list
+
+
+def get_liker_by_user_id(**kwargs):
+    cur = app.config["conn"].cursor(row_factory=dict_row)
+    cur.execute(
+        """
+            SELECT  user_table.id AS id,
+                    username,
+                    photos.binaries AS binaries,
+                    photos.mime_type AS mime_type
+            FROM    relationship
+            LEFT OUTER JOIN user_table ON liker_id = user_table.id
+            LEFT OUTER JOIN photos ON photos.user_id = user_table.id
+                                   AND photos.main = true
+            WHERE   liked_id = %(user)s
+                    AND liker_id NOT IN (
+                        SELECT liked_id
+                        FROM relationship
+                        WHERE liker_id = %(user)s
+                    )
+            ORDER BY username;
+        """,
+        {"user": kwargs["user"]["id"]},
     )
     list = cur.fetchall()  # modif by me
     cur.close()

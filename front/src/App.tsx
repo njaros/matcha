@@ -26,6 +26,7 @@ import VoiceChat from "./components/ConversationModule/Call";
 import { useLocalCameraStream } from "./components/ConversationModule/Call";
 import Forgot from "./components/LoginModule/Forgot";
 import ChangePassword from "./components/SettingsModule/ChangePassword";
+import LikerList from "./components/SettingsModule/UserLists/LikerList";
 
 function App() {
 
@@ -223,6 +224,7 @@ function App() {
 								<Route path="/settings/change_password" element={ <ChangePassword /> } />
 								<Route path="/settings/match_list" element={ <MatchList />}/>
 								<Route path="/settings/liked_list" element={ <LikeList /> } />
+								<Route path="/settings/liker_list" element={ <LikerList /> } />
 								<Route path="/settings/visits_list" element={ <VisitorList/> } />
 								<Route path="/settings/filter" element={ <Filter focus={true} /> } />
 								<Route path="/settings/hobbies" element= { <Hobbies /> } />

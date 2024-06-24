@@ -113,6 +113,18 @@ def get_liked_not_matched(**kwargs):
 
 
 @token_required
+def get_liker_not_matched(**kwargs):
+    hasher = Fernet(current_app.config["SECRET_PHOTO"])
+    list = relationship_sql.get_liker_by_user_id(**kwargs)
+    for elt in list:
+        if elt["binaries"] is not None:
+            elt["binaries"] = base64.b64encode(
+                hasher.decrypt(elt["binaries"])
+            ).decode("utf-8")
+    return list, 200
+
+
+@token_required
 @report_dto
 def report_user(**kwargs):
     user_deleted = relationship_sql.report_user(**kwargs)
