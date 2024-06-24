@@ -33,7 +33,5 @@ dating web site 42 project
 
 # Apres rererelecture du sujet ce qu'on a pas fait:
 
-- profile : liste de ceux qui ont like l'utilisateur
-- creer des champs nom et prenom dans le user_table
 - See if a user is currently online, and if not, see the date and time of their last connection.
 - faire un bouton block qui remove le like + met le user dans le cancel_table

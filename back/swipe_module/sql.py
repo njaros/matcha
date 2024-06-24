@@ -1,6 +1,7 @@
 from flask import current_app as app
 from psycopg.rows import dict_row
 from chat import sql as chat_sql
+from tools.matcha_socketio import emit
 import uuid
 
 base_swipe_request = """
@@ -243,23 +244,21 @@ def dislike_user(**kwargs):
     target = kwargs["target_id"]
     cur.execute(
         """
-        SELECT id
-        FROM cancel
-        WHERE   canceler_id = %s AND canceled_id = %s
-                OR canceler_id = %s AND canceled_id = %s;
-        """,
-        (user, target, target, user),
-    )
-    if cur.fetchone() is not None:
-        cur.close()
-        return
-    cur.execute(
-        """
         INSERT INTO cancel (id, canceler_id, canceled_id)
-        VALUES (%s, %s, %s);
+        VALUES (%s, %s, %s)
+        ON CONFLICT DO NOTHING;
         """,
         (uuid.uuid1(), user, target),
     )
+    cur.execute(
+        """
+        DELETE FROM relationship
+        WHERE   liker_id = %s and liked_id = %s
+        RETURNING id
+        """,
+        (user, target)
+    )
+    rel = cur.fetchone()
     cur.execute(
         """
         DELETE FROM room
@@ -270,3 +269,5 @@ def dislike_user(**kwargs):
     )
     cur.close()
     app.config["conn"].commit()
+    if rel is not None:
+        emit("unlike", target, user, {"id": user})
