@@ -3,6 +3,7 @@ import uuid
 from error_status.error import NotFoundError
 from psycopg.rows import dict_row
 from chat.sql import delete_room_by_user_ids
+from uuid import UUID
 
 
 def insert_liker_and_liked(data):
@@ -208,3 +209,21 @@ def report_user(**kwargs):
     cur.close()
     app.config["conn"].commit()
     return user_deleted
+
+
+def is_A_canceled_by_B(A: str | UUID, B: str | UUID):
+    cur = app.config["conn"].cursor()
+    cur.execute(
+        """
+        SELECT *
+        FROM cancel
+        WHERE canceled_id = %s AND canceler_id = %s
+        """,
+        (
+            A,
+            B,
+        ),
+    )
+    res = cur.fetchone()
+    cur.close()
+    return res is not None

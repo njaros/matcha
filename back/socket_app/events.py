@@ -55,7 +55,7 @@ def handle_disconnect():
     # current_app.logger.info("Disconnect of socket ID: " + client_id)
     # current_app.logger.info(rooms())
     # current_app.logger.info(connected_clients[client_id])
-    leave_room(f"user-{str(connected_clients[client_id]["id"])}")
+    leave_room(f"user-{str(connected_clients[client_id]['id'])}")
     leave_room(client_id)
     disconnect(client_id)
     del connected_clients[client_id]
