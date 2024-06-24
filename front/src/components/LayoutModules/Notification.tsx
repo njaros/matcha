@@ -81,6 +81,7 @@ export default function Notification() {
         setNbNews(0);
         setOldNbNews(0);
         setNotifList([]);
+        onClose();
     }
 
     function handleViewedItems() {
@@ -149,7 +150,10 @@ export default function Notification() {
                     }
             >
                 <Text flex={1} marginLeft={"13px"}>{props.content}</Text>
-                <Button onClick={() => navigate(`/other_profile/${props.id}`)}
+                <Button onClick={() => {
+                    onClose();
+                    navigate(`/other_profile/${props.id}`);
+                }}
                         borderRadius={"15px"}
                         marginRight={"10px"}
                         h={buttonSize}
