@@ -2,7 +2,7 @@ from extensions import socketio
 from flask_socketio import join_room, leave_room, rooms, disconnect, emit
 from flask import request, current_app
 from user_module.sql import get_user_with_room
-from uuid import UUID
+from .sql import reset_last_connection
 from user_module.sql import get_user_by_id
 import jwt
 
@@ -66,6 +66,7 @@ def handle_disconnect():
             user_sockets[user_id].remove(client_sid)
             if len(user_sockets[user_id]) == 0:
                 del user_sockets[user_id]
+                reset_last_connection(user_id)
                 emit("disconnected", {"id": str(user_id)}, broadcast=True)
     current_app.logger.info(
         f"Disconnect of socket ID: {client_sid} of the user {user_id}"
