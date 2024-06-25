@@ -35,7 +35,8 @@ def set_up_db():
                 rank INT,
                 latitude real,
                 longitude real,
-                gpsfixed boolean not null default false
+                gpsfixed boolean not null default false,
+                last_connection TIMESTAMP DEFAULT NOW()
             )
         """
         )

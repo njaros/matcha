@@ -9,16 +9,16 @@ from swipe_module.sql import dislike_user
 import base64
 from cryptography.fernet import Fernet
 from tools.matcha_socketio import emit
+from flask_socketio import disconnect, rooms, close_room, emit as base_emit
+from socket_app.events import user_sockets, connected_clients
 
 
 @token_required
 def get_relationship_by_id(**kwargs):
-    rel = relationship_sql.get_relationship_by_id(
-        uuid.isUuid(request.form.get("id"))
-    )
-    if kwargs["user"]["id"] == str(rel["liker_id"]) or kwargs["user"][
-        "id"
-    ] == str(rel["liked_id"]):
+    rel = relationship_sql.get_relationship_by_id(uuid.isUuid(request.form.get("id")))
+    if kwargs["user"]["id"] == str(rel["liker_id"]) or kwargs["user"]["id"] == str(
+        rel["liked_id"]
+    ):
         return rel
     raise ForbiddenError("You cannot acces to this information.")
 
@@ -83,7 +83,7 @@ def remove_like(**kwargs):
         "unliked",
         kwargs["user_id"],
         kwargs["user"]["id"],
-        {"id": str(kwargs["user"]["id"])}
+        {"id": str(kwargs["user"]["id"])},
     )
     return [], 200
 
@@ -94,9 +94,9 @@ def get_matches(**kwargs):
     list = relationship_sql.get_matches_by_user_id(**kwargs)
     for elt in list:
         if elt["binaries"] is not None:
-            elt["binaries"] = base64.b64encode(
-                hasher.decrypt(elt["binaries"])
-            ).decode("utf-8")
+            elt["binaries"] = base64.b64encode(hasher.decrypt(elt["binaries"])).decode(
+                "utf-8"
+            )
     return list, 200
 
 
@@ -106,9 +106,9 @@ def get_liked_not_matched(**kwargs):
     list = relationship_sql.get_liked_by_user_id(**kwargs)
     for elt in list:
         if elt["binaries"] is not None:
-            elt["binaries"] = base64.b64encode(
-                hasher.decrypt(elt["binaries"])
-            ).decode("utf-8")
+            elt["binaries"] = base64.b64encode(hasher.decrypt(elt["binaries"])).decode(
+                "utf-8"
+            )
     return list, 200
 
 
@@ -118,9 +118,9 @@ def get_liker_not_matched(**kwargs):
     list = relationship_sql.get_liker_by_user_id(**kwargs)
     for elt in list:
         if elt["binaries"] is not None:
-            elt["binaries"] = base64.b64encode(
-                hasher.decrypt(elt["binaries"])
-            ).decode("utf-8")
+            elt["binaries"] = base64.b64encode(hasher.decrypt(elt["binaries"])).decode(
+                "utf-8"
+            )
     return list, 200
 
 
@@ -129,7 +129,15 @@ def get_liker_not_matched(**kwargs):
 def report_user(**kwargs):
     user_deleted = relationship_sql.report_user(**kwargs)
     if user_deleted is False:
-        relationship_sql.remove_like(**kwargs)
-        kwargs["target_id"] = kwargs["user_id"]
         dislike_user(**kwargs)
+    else:
+        for socket_id in user_sockets[kwargs["user_id"]]:
+            del connected_clients[socket_id]
+            for room in rooms(socket_id):
+                close_room(room, namespace="/")
+            disconnect(socket_id, namespace="/")
+        del user_sockets[kwargs["user_id"]]
+        base_emit(
+            "disconnect", {"id": kwargs["user_id"]}, namespace="/", broadcast=True
+        )
     return [], 200

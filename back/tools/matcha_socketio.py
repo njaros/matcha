@@ -50,4 +50,10 @@ def emit(
             return None
         room = f"user-{str(to)}"
     namespace = "/"
-    base_emit(event, *args, namespace=namespace, room=room, skip_sid=skip_sid)
+    base_emit(
+        event,
+        *args,
+        namespace=namespace,
+        room=room,
+        skip_sid=skip_sid,
+    )
