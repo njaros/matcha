@@ -27,10 +27,6 @@ dating web site 42 project
 
 - a la deconnection via le bouton, il faut deconnecter la socket
 
-# ERROR_LOGS_SERVER
-
-- TypeError: The view function for 'chat.get_unread_msg_count' did not return a valid response. The function either returned None or ended without a return statement.
-
 # Apres rererelecture du sujet ce qu'on a pas fait:
 
 - See if a user is currently online, and if not, see the date and time of their last connection.
