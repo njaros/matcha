@@ -19,7 +19,7 @@ export default function Notification() {
     const [ notifList, setNotifList ] = useState<{content: string, type: string, id: string}[]>([])
     const [ nbNews, setNbNews ] = useState<number>(0);
     const [ oldNbNews, setOldNbNews ] = useState<number>(0);
-    const socket = storeSocket(state => state.socket)
+    const socket = storeSocket(state => state.socket);
 
     useEffect(() => {
         if (socket) {

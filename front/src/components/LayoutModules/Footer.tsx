@@ -1,5 +1,5 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { storeGps, storeTimeout, storeDisplayNavBool, storeMsgCount, storeRoomList, storeRoomInfo } from "../../tools/Stores";
+import { storeGps, storeTimeout, storeDisplayNavBool, storeMsgCount, storeRoomList, storeRoomInfo, storeSocket } from "../../tools/Stores";
 import { cookieMan } from "../../tools/CookieMan";
 import { As, Box, Icon, Text } from "@chakra-ui/react"
 import { MdFavorite, MdHome, MdSettings } from "react-icons/md"
@@ -50,12 +50,17 @@ const Footer = (props: {
     const roomList = storeRoomList(state => state.roomList)
     const [msgBool, setMsgBool] = useState<boolean>(false)
     const room = storeRoomInfo(state => state.roomInfo)
+    const { socket, updateSocket } = storeSocket();
 
     const logout = () => {
         if (refreshTokenTimeoutId != undefined)
         {
             clearTimeout(refreshTokenTimeoutId);
             updateRefreshTimeout(undefined);
+        }
+        if (socket) {
+            socket.disconnect();
+            updateSocket(null);
         }
         setLogoutClicked(!logoutClicked);
         cookieMan.eraseCookie('token');

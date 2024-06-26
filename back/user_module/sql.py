@@ -188,7 +188,8 @@ def get_user_profile(**kwargs):
                     LIMIT 1)
                     WHEN 1 then true
                     WHEN 0 then false
-                    END loved
+                    END loved,
+                last_connection
                 FROM user_table
                 WHERE id = %(user_id)s
         """,

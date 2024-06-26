@@ -53,7 +53,7 @@ export interface ISwipeUser
 	photos: IPhoto[],
 	hobbies: string[],
 	love: boolean,
-	loved: boolean
+	loved: boolean,
 }
 
 export interface IListUser

@@ -26,7 +26,7 @@ interface IstoreTimeout {
 
 interface IstoreSocket {
 	socket: Socket | null,
-	updateSocket: (newSocket: Socket) => void
+	updateSocket: (newSocket: Socket | null) => void
 }
 
 interface IstoreRoom {
@@ -127,7 +127,7 @@ export const storeTimeout = create<IstoreTimeout>()((set) => ({
 
 export const storeSocket = create<IstoreSocket>()((set) => ({
 	socket: null,
-	updateSocket: (newSocket: Socket) => set({socket: newSocket})
+	updateSocket: (newSocket: Socket | null) => set({socket: newSocket})
 }))
 
 export const storeGps = create<IstoreGps>()((set) => ({

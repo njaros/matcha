@@ -98,7 +98,7 @@ function App() {
 			}))
 
 		}
-	},[userId, logged]) 
+	},[userId, logged])
 
 
 	//START OF TOKEN MANAGEMENT

@@ -1,18 +1,19 @@
 import { useEffect, useRef, useState } from "react";
 import { IPhoto, ISwipeUser } from "../../Interfaces";
-import { Box, Button, Icon, Text, Spinner, Tag } from "@chakra-ui/react";
-import { FcNext, FcPrevious } from "react-icons/fc"
-import { RiHeartAddFill } from "react-icons/ri";
-import { BsFillHeartbreakFill } from "react-icons/bs";
-import { BsStars } from "react-icons/bs";
-import { BiSolidUserDetail } from "react-icons/bi";
+import { Box, Button, Icon, Text, Spinner, Tag, Flex } from "@chakra-ui/react";
 import { useNavigate, useParams } from "react-router-dom";
 import Axios from "../../tools/Caller";
 import { DateTools } from "../../tools/DateTools";
 import { getPosInfo } from "../../tools/Thingy";
-import { storeMe } from "../../tools/Stores";
+import { storeMe, storeSocket } from "../../tools/Stores";
 import ReturnButton from "./ReturnButton";
 import ReportTrigger from "../ReportTrigger";
+import { FcNext, FcPrevious } from "react-icons/fc"
+import { RiHeartAddFill } from "react-icons/ri";
+import { BsFillHeartbreakFill } from "react-icons/bs";
+import { BsStars } from "react-icons/bs";
+import { FaCircle } from "react-icons/fa6";
+import { BiSolidUserDetail } from "react-icons/bi";
 
 const fontSizeName = {base: "25px", sm: "30px", md: "35px", lg: "40px", xl: "45px"}
 const fontSizeLocation = {base: "15px", sm: "20px", md: "25px", lg: "30px", xl: "35px"}
@@ -57,6 +58,9 @@ export default function OtherProfile()
     const loveRef = useRef<HTMLDivElement>(null);
     const buttonsRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
+    const socket = storeSocket(state => state.socket);
+    const [ connected, setConnected ] = useState<boolean>(false);
+    const [ lastConnection, setLastConnection ] = useState<string>("")
 
     useEffect(() => {
         if (userParam != undefined)
@@ -64,6 +68,7 @@ export default function OtherProfile()
             setLoading(true)
             Axios.post("user/get_user_profile", { user_id: userParam }).then(
                 response => {
+                    console.log(response, typeof(response.data.last_connection));
                     const photos = parsePhotosFromBack(response.data.photos);
                     setNbPhotos(photos.length);
                     setUser({
@@ -79,6 +84,8 @@ export default function OtherProfile()
                         love: response.data.love,
                         loved: response.data.loved
                     });
+                    setLastConnection(DateTools.lastConnectionFormat(response.data.last_connection))
+                    setConnected(response.data.connected);
                 }
             ).catch(
                 err => {
@@ -89,6 +96,34 @@ export default function OtherProfile()
             )
         }
     }, [])
+
+    useEffect(() => {
+
+        if (socket && user) {
+            socket.on("connected", (data: any) => {
+                if (user.id == data.id) {
+                    setConnected(true)
+                }
+            })
+        }
+
+        if (socket && user) {
+            socket.on("disconnected", (data: any) => {
+                if (user.id == data.id) {
+                    setConnected(false)
+                    setLastConnection("just disconnected")
+                }
+            })
+        }
+
+        return (() => {
+            if (socket) {
+                socket.off("connected");
+                socket.off("disconnected");
+            }
+        })
+
+    }, [socket, user])
 
     function incrPhotoIdx()
     {
@@ -148,7 +183,7 @@ export default function OtherProfile()
     }
 
     function Biography() {
-        if (user != undefined && user.biography != "")
+        if (user != undefined)
             return (
                 <Box    display="flex"
                         bgColor="white"
@@ -286,7 +321,24 @@ export default function OtherProfile()
                                 {user.age}
                             </Text>
                         </Box>
-                        <Text   marginLeft="10px"
+                        <Flex   className="online"
+                                margin="3% 3%"
+                                alignItems={"center"}
+                        >
+                            <Icon as={FaCircle} color={connected ? "green" : "red"} />
+                            <Text   marginLeft={"4%"}
+                                    fontSize={fontSizeLocation}
+                                    fontWeight={"bold"}
+                                    color="white"
+                            >
+                                {
+                                    connected ? "connected" :
+                                    lastConnection
+                                }
+                            </Text>
+                        </Flex>
+                        <Text   className="location"
+                                marginLeft="10px"
                                 color="white"
                                 fontSize={fontSizeLocation}
                                 fontWeight="bold">{user.location}</Text>

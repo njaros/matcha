@@ -22,4 +22,45 @@ function ageFromDate(date: string): number
     return t_year - d_year + 1;
 }
 
-export const DateTools = {dateFromAge, ageFromDate}
+/**
+ * 
+ * @param dateISOString a date to a format toISOstring
+ * @returns a string describing time ellapsed between dateISOString param and now
+ */
+function lastConnectionFormat(dateISOString: string): string
+{
+    let msg = "last connection: "
+    const sMs = 1000;
+    const minMs = 60 * sMs;
+    const hMs = 1000 * 3600;
+    const dMs = hMs * 24;
+    const mMs = dMs * 30;
+    const yMs = (mMs * 12) + 5;
+
+    const now = new Date();
+    const date = new Date(dateISOString);
+    const ellapsed = now - date;
+    console.log(ellapsed);
+
+    const yEllapsed = Math.floor(ellapsed/yMs);
+    if (yEllapsed > 0)
+        return msg + yEllapsed + " years";
+    const mEllapsed = Math.floor(ellapsed/mMs);
+    if (mEllapsed > 0)
+        return msg + mEllapsed + " months";
+    const dEllapsed = Math.floor(ellapsed/dMs);
+    if (dEllapsed > 0)
+        return msg + dEllapsed + " days";
+    const hEllapsed = Math.floor(ellapsed/hMs);
+    if (hEllapsed > 0)
+        return msg + hEllapsed + " hours";
+    const minEllapsed = Math.floor(ellapsed/minMs);
+    if (minEllapsed > 0)
+        return msg + minEllapsed + " minutes";
+    const sEllapsed = Math.floor(ellapsed/sMs);
+    if (sEllapsed > 0)
+        return msg + sEllapsed + " seconds";
+    return msg + 0 + " second";
+}
+
+export const DateTools = {dateFromAge, ageFromDate, lastConnectionFormat}
