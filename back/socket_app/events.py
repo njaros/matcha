@@ -31,9 +31,9 @@ def handle_connection():
         connected_clients[client_id] = user
         user_id = str(user["id"])
         if user_sockets.get(user_id) is None:
-            user_sockets[user_id] = []
+            user_sockets[user_id] = set()
             emit("connected", {"id": user_id}, broadcast=True)
-        user_sockets[str(user["id"])].append(client_id)
+        user_sockets[str(user["id"])].add(client_id)
     except jwt.exceptions.InvalidTokenError:
         current_app.logger.error("Invalid Authentication token")
         return
