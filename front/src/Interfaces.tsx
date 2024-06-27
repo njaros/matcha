@@ -54,6 +54,8 @@ export interface ISwipeUser
 	hobbies: string[],
 	love: boolean,
 	loved: boolean,
+	last_connection: string,
+	connected: boolean
 }
 
 export interface IListUser

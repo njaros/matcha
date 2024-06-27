@@ -14,6 +14,7 @@ import { BsFillHeartbreakFill } from "react-icons/bs";
 import { BsStars } from "react-icons/bs";
 import { FaCircle } from "react-icons/fa6";
 import { BiSolidUserDetail } from "react-icons/bi";
+import Online from "../Online";
 
 const fontSizeName = {base: "25px", sm: "30px", md: "35px", lg: "40px", xl: "45px"}
 const fontSizeLocation = {base: "15px", sm: "20px", md: "25px", lg: "30px", xl: "35px"}
@@ -82,10 +83,10 @@ export default function OtherProfile()
                         photos: photos,
                         hobbies: response.data.hobbies,
                         love: response.data.love,
-                        loved: response.data.loved
+                        loved: response.data.loved,
+                        last_connection: response.data.last_connection,
+                        connected: response.data.connected
                     });
-                    setLastConnection(DateTools.lastConnectionFormat(response.data.last_connection))
-                    setConnected(response.data.connected);
                 }
             ).catch(
                 err => {
@@ -96,34 +97,6 @@ export default function OtherProfile()
             )
         }
     }, [])
-
-    useEffect(() => {
-
-        if (socket && user) {
-            socket.on("connected", (data: any) => {
-                if (user.id == data.id) {
-                    setConnected(true)
-                }
-            })
-        }
-
-        if (socket && user) {
-            socket.on("disconnected", (data: any) => {
-                if (user.id == data.id) {
-                    setConnected(false)
-                    setLastConnection("just disconnected")
-                }
-            })
-        }
-
-        return (() => {
-            if (socket) {
-                socket.off("connected");
-                socket.off("disconnected");
-            }
-        })
-
-    }, [socket, user])
 
     function incrPhotoIdx()
     {
@@ -321,22 +294,7 @@ export default function OtherProfile()
                                 {user.age}
                             </Text>
                         </Box>
-                        <Flex   className="online"
-                                margin="3% 3%"
-                                alignItems={"center"}
-                        >
-                            <Icon as={FaCircle} color={connected ? "green" : "red"} />
-                            <Text   marginLeft={"4%"}
-                                    fontSize={fontSizeLocation}
-                                    fontWeight={"bold"}
-                                    color="white"
-                            >
-                                {
-                                    connected ? "connected" :
-                                    lastConnection
-                                }
-                            </Text>
-                        </Flex>
+                        <Online id={user.id} lastConnection={user.last_connection} online={user.connected} />
                         <Text   className="location"
                                 marginLeft="10px"
                                 color="white"
