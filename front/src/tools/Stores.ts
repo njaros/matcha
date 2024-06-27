@@ -46,7 +46,7 @@ interface IstoreRoomInfo{
 
 interface IstoreRoomList{
 	roomList: RoomList[] | undefined,
-	updateRoomList: (newRoomList: RoomList[]) => void
+	updateRoomList: (newRoomList: RoomList[] | undefined) => void
 }
 
 interface IstoreMessageList{
@@ -107,7 +107,7 @@ export const storeGeoFocus = create<IFocus>()((set) => ({
 
 export const storeRoomList = create<IstoreRoomList>()((set) => ({
 	roomList: undefined,
-	updateRoomList: (newRoomList: RoomList[]) => set({roomList: newRoomList})
+	updateRoomList: (newRoomList: RoomList[] | undefined) => set({roomList: newRoomList})
 }))
 
 export const storeMe = create<IstoreMe>()((set) => ({

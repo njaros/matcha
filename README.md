@@ -8,7 +8,6 @@ dating web site 42 project
 # BUGS
 
 - a la deco de socket via socket.disconnect() en se deconnectant via le bouton, un log d'erreur apparait. rien ne semble se casser.
-- responsive de l'image 0
 
 # TODOS-REPORT
 

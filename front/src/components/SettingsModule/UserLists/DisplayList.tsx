@@ -8,7 +8,7 @@ const lineSizes={base: "70px", sm: "95px", md: "115px", lg:"135px", xl: "160px"}
 export default function DisplayList(props: {list: IListUser[], enableDate: boolean, name: string}) {
 
     return (
-    <Flex flex={1} overflow={"hidden"} flexDirection={"column"} w="100%" alignItems={"center"} justifyContent={"flex-end"}>
+    <Flex flex={1} overflow={"hidden"} flexDirection={"column"} w="100%" h="100%" alignItems={"center"} justifyContent={"flex-end"}>
         <Flex 
             flexDirection={'row'}
             placeSelf={'self-start'}
@@ -30,17 +30,13 @@ export default function DisplayList(props: {list: IListUser[], enableDate: boole
                 {props.name}
             </Text>
         </Flex>
-        {props.list.length === 0 && 
-                        <Image
-                            src="../../assets/images/main-tenant-numero-0.png"
-                            objectFit="contain"
-                            backgroundPosition="top"
-                            backgroundRepeat="no-repeat"
-                            margin={'auto'}
-                            width={{ base: "95%", sm: "80%", md: "60%", lg: "50%", xl: "40%"}}
-                            height="auto" 
-                    ></Image>
-        }
+        {props.list.length === 0 ?
+                        <Box
+                            flex={1}
+                            w="100%"
+                            bgImage="../../assets/images/main-tenant-numero-0.png"
+                            backgroundSize="contain" bgPosition="center" bgRepeat="no-repeat"
+                        /> :
         <Flex w="100%" marginBottom={"3%"} overflowY="auto" flexDirection="column" flex={1} justifyContent={"flex-start"}>
             {props.list.map((user, idx, array) => {
                 return (
@@ -67,7 +63,7 @@ export default function DisplayList(props: {list: IListUser[], enableDate: boole
                     </Flex>
                 )
             })}
-        </Flex>
+        </Flex>}
        
     </Flex>
     )

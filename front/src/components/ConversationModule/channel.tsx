@@ -124,7 +124,7 @@ function ChannelList(){
                 } catch (error: any) {
                     console.error(error);
                     if (error.response.status == 404) {
-                        updateRoomList([]);
+                        updateRoomList(undefined);
                     }
                 }
             };
@@ -154,37 +154,28 @@ function ChannelList(){
           }
     }, [roomList])
     return (
-        <Flex 
-            h={'100%'}
-            w={'100%'}
-            bg={'white'}
-            flexDirection="column"
-        >
             <Flex
                 h={'100%'}
                 w={'100%'}
                 flexDirection="column"
-
+                alignItems={"center"}
             >
                 <Text 
                     fontSize={'xx-large'}
                     fontWeight={'bold'}
                     marginLeft={'10px'} 
                     marginBottom={'10px'}
+                    alignSelf={"start"}
                 >
                     Conversation
                 </Text>
-                {!roomList && 
-                    <Image
-                        src="../../assets/images/main-tenant-numero-0.png"
-                        objectFit="contain"
-                        backgroundPosition="top"
-                        backgroundRepeat="no-repeat"
-                        margin={'auto'}
-                        width={{ base: "100%", sm: "80%", md: "60%", lg: "50%", xl: "40%"}} // Ajuste la largeur en fonction de la taille de l'écran
-                        height="auto" // Maintient le ratio d'aspect de l'image                
-                    ></Image>
-                }
+                {!roomList ? 
+                    <Box
+                        flex={1}
+                        w="100%"
+                        bgImage="../../assets/images/main-tenant-numero-0.png"
+                        backgroundSize="contain" bgPosition="center" bgRepeat="no-repeat"
+                    /> :
                 <Flex
                     width={'100%'}
                     h={'100%'}
@@ -206,10 +197,8 @@ function ChannelList(){
                         />
                     </Box>                                
                     ))}
-                </Flex>
+                </Flex>}
             </Flex>
-
-        </Flex>
     );
 }
 
