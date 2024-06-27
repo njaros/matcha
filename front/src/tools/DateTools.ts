@@ -32,7 +32,7 @@ function lastConnectionFormat(dateISOString: string): string
     let msg = "last connection: "
     const sMs = 1000;
     const minMs = 60 * sMs;
-    const hMs = 1000 * 3600;
+    const hMs = 60 * minMs;
     const dMs = hMs * 24;
     const mMs = dMs * 30;
     const yMs = (mMs * 12) + 5;
