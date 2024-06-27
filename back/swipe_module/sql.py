@@ -135,7 +135,7 @@ def get_swipe_list_age_sort(**kwargs):
 
 
 def get_swipe_list_ranking_sort(**kwargs):
-    request = base_swipe_request + " ORDER BY rank DESC"
+    request = base_swipe_request + " ORDER BY true_rank DESC"
     cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(request, set_request_dict(**kwargs))
     swipe_list = cur.fetchall()
