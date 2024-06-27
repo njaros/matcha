@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Axios from "../../tools/Caller";
 import { storeDisplayNavBool, storeMe, storeMessageList, storeMsgCount, storeRoomInfo, storeRoomList, storeSocket } from "../../tools/Stores";
 import { Room_info } from "../../tools/interface";
+import { AxiosResponse } from "axios";
 
 
 function Conv(props: {conv: any, index: number, me: any, join_room: any, setMessageList: any}){
@@ -120,8 +121,11 @@ function ChannelList(){
                         }
                     })
                     updateRoomList(updatedRoomList)
-                } catch (error) {
+                } catch (error: any) {
                     console.error(error);
+                    if (error.response.status == 404) {
+                        updateRoomList([]);
+                    }
                 }
             };
             fetchData();
