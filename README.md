@@ -17,10 +17,6 @@ dating web site 42 project
 
 - dans l'action de report dans les listes du profile, faire retourner a la liste
 
-# TODOS-VALIDATORS
-
-- is_email
-
 # TODOS-CHAT
 
 - fix last message
