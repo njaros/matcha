@@ -70,8 +70,8 @@ def update_user_dto(f):
             request.form.get("username"),
             {"maxlen": 20, "minlen": 3, "no_sp_char": True, "optionnal": True},
         )
-        kwargs["email"] = str.isString(
-            request.form.get("email"), {"optionnal": True}
+        kwargs["email"] = str.isEmail(
+            request.form.get("email"), optionnal=True
         )
         kwargs["birthDate"] = date.isDate(
             request.form.get("birthDate"),

@@ -32,6 +32,11 @@ class StrForbiddenCharException(BadRequestError):
         self.message = f"character {match.group()} is forbidden"
 
 
+class NotEmailException(BadRequestError):
+    def __init__(self, val):
+        self.message = f"credential {val} is not an email format"
+
+
 forbidden_chars = re.compile(r'[\x00-\x1F\x7F-\x9F&<>"/\'%]')
 
 
@@ -88,4 +93,24 @@ def isString(foo: any, req: dict[str, any] = {}):
         fchar = forbidden_chars.search(foo)
         if fchar:
             raise (StrForbiddenCharException(fchar))
+    return foo
+
+
+def isEmail(foo: any, optionnal: bool = False):
+    """Check if the argument is a string class,
+    throwing a NotStrException if not.
+    Then it check if the argument match an email regex,
+    throwing a NotEmailException if not.
+    if optionnal is True, foo can be None without throwing exception.
+    the function returns the argument without any modification.
+    """
+    if foo is None:
+        if optionnal is True:
+            return foo
+    if type(foo) is not str:
+        raise NotStrException
+
+    rg = re.compile(r"""^[\w\-\.]+@([\w\-]+\.)+[\w\-]{2,4}$""")
+    if rg.match(foo) is None:
+        raise NotEmailException(foo)
     return foo

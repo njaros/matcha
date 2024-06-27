@@ -15,9 +15,7 @@ def signup_dto(f):
             {"maxlen": 20, "minlen": 3, "no_sp_char": True},
         )
         kwargs["password"] = str.isString(request.form["password"])
-        kwargs["email"] = str.isString(
-            request.form["email"], {"max": 50, "no_sp_char": True}
-        )
+        kwargs["email"] = str.isEmail(request.form["email"])
         kwargs["birthDate"] = date.isDate(
             request.form["birthDate"], {"yearMin": 18, "yearMax": 150}
         )
@@ -49,10 +47,7 @@ def signup_dto(f):
 def login_dto(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        kwargs["email"] = str.isString(
-            request.json["email"],
-            {"maxlen": 50, "minlen": 3, "no_sp_char": True},
-        )
+        kwargs["email"] = str.isEmail(request.json["email"])
         kwargs["password"] = str.isString(request.json["password"])
         kwargs["latitude"] = gps.isLatitude(
             request.json.get("latitude"), {"optionnal": True}
@@ -91,10 +86,7 @@ def mail_register_dto(f):
 def reset_password_dto(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        kwargs["email"] = str.isString(
-            request.json["email"],
-            {"maxlen": 50, "minlen": 3, "no_sp_char": True},
-        )
+        kwargs["email"] = str.isEmail(request.json["email"])
         get_user_by_email(**kwargs)
         return f(*args, **kwargs)
 
