@@ -5,8 +5,6 @@ import { As, Box, Icon, Text } from "@chakra-ui/react"
 import { MdFavorite, MdHome, MdSettings } from "react-icons/md"
 import { TbMessage, TbMessage2Heart } from "react-icons/tb";
 import { ImExit } from "react-icons/im"
-import { MdChat } from "react-icons/md";
-import { ChatIcon, SettingsIcon } from "@chakra-ui/icons"
 import { useEffect, useState } from "react";
 import Notification from "./Notification";
 

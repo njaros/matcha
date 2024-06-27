@@ -129,6 +129,7 @@ def get_liker_not_matched(**kwargs):
 def report_user(**kwargs):
     user_deleted = relationship_sql.report_user(**kwargs)
     if user_deleted is False:
+        kwargs["target_id"] = kwargs["user_id"]
         dislike_user(**kwargs)
     else:
         for socket_id in user_sockets[kwargs["user_id"]]:
