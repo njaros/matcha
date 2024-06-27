@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { ISwipeUser, IPhoto } from "../../Interfaces";
 import Axios from "../../tools/Caller";
-import { Box, Button, Circle, Icon, Image, Text, Spinner, useToast } from "@chakra-ui/react";
-import { storeFilter, storeSocket } from "../../tools/Stores";
+import { Box, Button, Circle, Icon, Image, Text, Spinner } from "@chakra-ui/react";
+import { storeFilter } from "../../tools/Stores";
 import { DateTools } from "../../tools/DateTools";
 import { RiSortAsc } from "react-icons/ri"
 import DisplayProfile from "./DisplayProfile";
@@ -11,8 +11,6 @@ import ReportTrigger from "../ReportTrigger";
 const fontSizeNobody = {base: "13px", sm: "20px", md: "25px", lg: "25px", xl: "25px"}
 
 const Swipe = () => {
-    const toast = useToast()
-    const socket = storeSocket(state => state.socket)
     const [ swipeList, setSwipeList ] = useState<string[]>([]);
     const [ index, setIndex ] = useState<number>(0);
     const { filter, updateFilter } = storeFilter();
@@ -137,20 +135,6 @@ const Swipe = () => {
     }, [sort])
 
     useEffect(() => {
-        if (socket) {
-            socket.on("send_like", () => {
-                toast({title: "hello", description: "someone like U"})
-            });
-        }
-
-        return (() => {
-            if (socket) {
-                socket.off("send_like")
-            }
-        })
-    })
-
-    useEffect(() => {
         if (swipeList.length > 0)
             get_user_profile();
         else
@@ -220,18 +204,17 @@ const Swipe = () => {
     return (
     <Box flex={1} className="Swipe" w="100%" display="flex" alignItems="center" flexDirection="column">
         <Box    className="SortButtons"
-                w={"100%"}
+                w={"85%"}
                 display={"flex"}
                 flexDirection={"row"}
                 margin="5% 0"
                 justifyContent={"space-evenly"}>
-            <ReportTrigger user_id={swipeUser.id} optionAction={incrementIndex}/>
             <Button colorScheme={sort == "age" ? "purple_palet": "gray"}
                     value={"age"}
                     onClick={handleSort}>Age</Button>
             <Button colorScheme={sort == "distance" ? "purple_palet": "gray"}
                     value={"distance"}
-                    onClick={handleSort}>Distance</Button>
+                    onClick={handleSort}>Nearest</Button>
             <Button colorScheme={sort == "rank" ? "purple_palet": "gray"}
                     value={"rank"}
                     onClick={handleSort}>Rank</Button>
@@ -249,7 +232,7 @@ const Swipe = () => {
             />
         </Box>}
         {swipeUser.id != "" && !loading &&
-            <DisplayProfile user={swipeUser} likeHandler={likeHandler} dislikeHandler={dislikeHandler} />
+            <DisplayProfile user={swipeUser} likeHandler={likeHandler} dislikeHandler={dislikeHandler} incrementIndex={incrementIndex} />
         }
         {swipeUser.id == "" && !loading && !startPage &&
             <Box    flex={1} display="flex" w="80%" maxW="590px" alignItems="start"

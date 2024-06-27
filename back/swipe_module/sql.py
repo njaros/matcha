@@ -270,4 +270,4 @@ def dislike_user(**kwargs):
     cur.close()
     app.config["conn"].commit()
     if rel is not None:
-        emit("unlike", target, user, {"id": user})
+        emit("unlike", target, str(user), {"id": str(user)})

@@ -7,6 +7,7 @@ import { RiHeartAddFill } from "react-icons/ri";
 import { BsStars } from "react-icons/bs";
 import { BiSolidUserDetail } from "react-icons/bi";
 import Online from "../Online";
+import ReportTrigger from "../ReportTrigger";
 
 const fontSizeName = {base: "25px", sm: "30px", md: "35px", lg: "40px", xl: "45px"}
 const fontSizeLocation = {base: "15px", sm: "20px", md: "25px", lg: "30px", xl: "35px"}
@@ -16,7 +17,9 @@ const fontSizeLove = {base: "17px", sm: "22px", md: "25px", lg: "28px", xl: "33p
 export default function DisplayProfile(props: {
     user: ISwipeUser,
     likeHandler: (e: any) => void,
-    dislikeHandler: (e: any) => void})
+    dislikeHandler: (e: any) => void,
+    incrementIndex: () => void
+})
 {
     const [ photoIdx, setPhotoIdx ] = useState<number>(0);
     const [ detail, setDetail ] = useState<boolean>(false);
@@ -177,6 +180,7 @@ export default function DisplayProfile(props: {
                     <Button value={props.user.id} borderRadius="15px" onClick={props.dislikeHandler}>
                         <Icon boxSize={7} color="black" as={SiIfixit}/>
                     </Button>
+                    <ReportTrigger user_id={props.user.id} optionAction={props.incrementIndex}/>
                     <Button borderRadius="15px" colorScheme={detail ? "matchaPink" : "gray"} onClick={detailHandler}>
                         <Icon boxSize={9} as={BiSolidUserDetail} />
                     </Button>

@@ -3,8 +3,8 @@ import { useRef, useState } from "react";
 import { AiOutlineWarning } from "react-icons/ai";
 import Axios from "../tools/Caller";
 
-export default function ReportTrigger(props: {user_id: string, optionAction: any}) {
-    const initialFocusRef = useRef();
+export default function ReportTrigger(props: {user_id: string, optionAction: any, borderRadius?: string}) {
+    const initialFocusRef = useRef(null);
     const { onOpen, onClose, isOpen } = useDisclosure()
 
     function reportHandler() {
@@ -45,7 +45,7 @@ export default function ReportTrigger(props: {user_id: string, optionAction: any
                     placement="bottom"
                     >
             <PopoverTrigger>
-              <Button>
+              <Button borderRadius={props.borderRadius ? props.borderRadius : "15px"}>
                 <Icon   className="ReportTriggerIcon"
                         size={8}
                         color="red"
