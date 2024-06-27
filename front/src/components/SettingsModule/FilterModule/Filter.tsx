@@ -52,7 +52,7 @@ export default function Filter(props: {focus: boolean}) {
                 placeSelf={'flex-start'}
             >
                 <Box alignSelf={'center'}>
-                    <ReturnButton to="/settings"/>
+                    <ReturnButton to={-1}/>
                 </Box>
                 <Text
                     fontSize={'xx-large'}

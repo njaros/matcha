@@ -38,17 +38,17 @@ const Settings = () => {
                                 boxSize={'40px'}
                                 color={'#A659EC'}
                                 />
-                            <Box paddingLeft={'10px'} >
-                                <Flex   w="100%" fontSize={'lg'} /*margin="4% 0"*/>
-                                    <Text>{props.name}</Text>
-                                </Flex>
-                                <Text 
-                                    fontSize={'small'}
-                                    opacity={'70%'}
-                                    >
-                                    {props.desc}
-                                </Text>
-                            </Box>
+                        <Box paddingLeft={'10px'} >
+                            <Flex   w="100%" fontSize={'lg'} /*margin="4% 0"*/>
+                                <Text>{props.name}</Text>
+                            </Flex>
+                            <Text 
+                                fontSize={'small'}
+                                opacity={'70%'}
+                                >
+                                {props.desc}
+                            </Text>
+                        </Box>
                     </Flex>
                 </NavLink>
             </Flex>

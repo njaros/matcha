@@ -1,6 +1,6 @@
 import { createRef, useEffect, useRef, useState } from "react";
 import { ISwipeUser } from "../../Interfaces";
-import { Box, Button, Icon, Image, Tag, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Icon, Image, Tag, Text } from "@chakra-ui/react";
 import { FcNext, FcPrevious } from "react-icons/fc"
 import { SiIfixit } from "react-icons/si"
 import { RiHeartAddFill } from "react-icons/ri";
@@ -176,17 +176,21 @@ export default function DisplayProfile(props: {
                     <Biography />
                 </Box>
             </Box>
-            <Box    ref={buttonsRef} display="flex" margin="5% 5%" justifyContent="space-between" flexDirection="row">
-                    <Button value={props.user.id} borderRadius="15px" onClick={props.dislikeHandler}>
+            <Box    ref={buttonsRef} display="flex" margin="5% 3%" justifyContent="flex-start" flexDirection="row">
+                <Flex>
+                    <Button marginRight={"4%"} value={props.user.id} borderRadius="15px" onClick={props.dislikeHandler}>
                         <Icon boxSize={7} color="black" as={SiIfixit}/>
                     </Button>
                     <ReportTrigger user_id={props.user.id} optionAction={props.incrementIndex}/>
-                    <Button borderRadius="15px" colorScheme={detail ? "matchaPink" : "gray"} onClick={detailHandler}>
+                </Flex>
+                <Flex flex={1}>
+                    <Button borderRadius="15px" margin={"0 13%"} colorScheme={detail ? "matchaPink" : "gray"} onClick={detailHandler}>
                         <Icon boxSize={9} as={BiSolidUserDetail} />
                     </Button>
                     <Button value={props.user.id} borderRadius="15px" onClick={props.likeHandler}>
                         <Icon boxSize={8} color="red.400" as={RiHeartAddFill}/>
                     </Button>
+                </Flex>
             </Box>
         </Box>
     </Box>

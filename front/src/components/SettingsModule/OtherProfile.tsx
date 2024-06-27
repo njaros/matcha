@@ -213,7 +213,7 @@ export default function OtherProfile()
         {
             return (
             <Box    ref={buttonsRef} display="flex" margin="5% 5%" justifyContent="space-between" flexDirection="row">
-                    {me && me.id != user.id && <ReportTrigger user_id={user.id} optionAction={() => navigate("/settings", {replace: true})} />}
+                    {me && me.id != user.id && <ReportTrigger user_id={user.id} optionAction={() => navigate(-1, {replace: true})} />}
                     <Button borderRadius="15px" colorScheme={detail ? "matchaPink" : "gray"} onClick={detailHandler}>
                         <Icon boxSize={9} as={BiSolidUserDetail} />
                     </Button>

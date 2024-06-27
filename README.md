@@ -9,10 +9,6 @@ dating web site 42 project
 
 - a la deco de socket via socket.disconnect() en se deconnectant via le bouton, un log d'erreur apparait. rien ne semble se casser.
 
-# TODOS-REPORT
-
-- dans l'action de report dans les listes du profile, faire retourner a la liste
-
 # TODOS-CHAT
 
 - fix last message
@@ -23,7 +19,6 @@ dating web site 42 project
 
 # SWIPE ?
 
-- prevoir un bouton qui redirige sur la route settings/filter serait incr
 - possibilite de passer le systeme de swipe comme un bonus
 
 # TODO-UI

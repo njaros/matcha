@@ -5,13 +5,16 @@ import { Box, Button, Circle, Icon, Image, Text, Spinner } from "@chakra-ui/reac
 import { storeFilter } from "../../tools/Stores";
 import { DateTools } from "../../tools/DateTools";
 import { RiSortAsc } from "react-icons/ri"
+import { TbFilter } from "react-icons/tb";
 import DisplayProfile from "./DisplayProfile";
-import ReportTrigger from "../ReportTrigger";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const fontSizeNobody = {base: "13px", sm: "20px", md: "25px", lg: "25px", xl: "25px"}
+const fontSizeButton = {base: "13px", sm: "15px", md: "17px", lg: "25px", xl: "25px"}
 
 const Swipe = () => {
     const [ swipeList, setSwipeList ] = useState<string[]>([]);
+    const navigate = useNavigate()
     const [ index, setIndex ] = useState<number>(0);
     const { filter, updateFilter } = storeFilter();
     const [ sort, setSort ] = useState<string>("none");
@@ -204,23 +207,44 @@ const Swipe = () => {
     return (
     <Box flex={1} className="Swipe" w="100%" display="flex" alignItems="center" flexDirection="column">
         <Box    className="SortButtons"
-                w={"85%"}
+                w={"90%"}
                 display={"flex"}
                 flexDirection={"row"}
                 margin="5% 0"
                 justifyContent={"space-evenly"}>
             <Button colorScheme={sort == "age" ? "purple_palet": "gray"}
                     value={"age"}
-                    onClick={handleSort}>Age</Button>
+                    onClick={handleSort}>
+                    <Text fontSize={fontSizeButton}>
+                        Age
+                    </Text>
+            </Button>
             <Button colorScheme={sort == "distance" ? "purple_palet": "gray"}
                     value={"distance"}
-                    onClick={handleSort}>Nearest</Button>
+                    onClick={handleSort}>
+                    <Text fontSize={fontSizeButton}>
+                        Nearest
+                    </Text>
+            </Button>
             <Button colorScheme={sort == "rank" ? "purple_palet": "gray"}
                     value={"rank"}
-                    onClick={handleSort}>Rank</Button>
+                    onClick={handleSort}>
+                    <Text fontSize={fontSizeButton}>
+                        Rank
+                    </Text>
+            </Button>
             <Button colorScheme={sort == "tags" ? "purple_palet": "gray"}
                     value={"tags"}
-                    onClick={handleSort}>Tags</Button>
+                    onClick={handleSort}>
+                    <Text fontSize={fontSizeButton}>
+                        Tags
+                    </Text>
+            </Button>
+            <Button onClick={() => {navigate("/settings/filter")}}>
+                <Box>
+                    <Icon as={TbFilter}/>
+                </Box>
+            </Button>
         </Box>
         {loading && <Box display="flex" flex={1} justifyContent="center" alignItems="center">
             <Spinner    
