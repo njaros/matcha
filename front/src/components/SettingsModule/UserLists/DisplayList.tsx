@@ -44,8 +44,8 @@ export default function DisplayList(props: {list: IListUser[], enableDate: boole
         <Flex w="100%" marginBottom={"3%"} overflowY="auto" flexDirection="column" flex={1} justifyContent={"flex-start"}>
             {props.list.map((user, idx, array) => {
                 return (
-                    <Flex w="100%" direction="column">
-                        <NavLink key={user.id} to={`/other_profile/${user.id}`}>
+                    <Flex key={idx} w="100%" direction="column">
+                        <NavLink to={`/other_profile/${user.id}`}>
                             <Flex display="flex" h={lineSizes} flexDir={"row"} justifyContent={"flex-start"}>
                                 <Image
                                         fit="contain"

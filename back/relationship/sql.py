@@ -147,7 +147,9 @@ def get_matches_by_user_id(**kwargs):
             LEFT OUTER JOIN user_table AS user_table_2
                 ON user_2 = user_table_2.id
             LEFT OUTER JOIN photos AS photos_1 ON user_1 = photos_1.user_id
+                AND photos_1.main = true
             LEFT OUTER JOIN photos AS photos_2 ON user_2 = photos_2.user_id
+                AND photos_2.main = true
             WHERE   user_1 = %(self_id)s OR user_2 = %(self_id)s
             ORDER BY username
         """,
