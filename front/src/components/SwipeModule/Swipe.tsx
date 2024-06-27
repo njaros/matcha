@@ -31,7 +31,9 @@ const Swipe = () => {
             photos: [],
             hobbies: [],
             love: false,
-            loved: false
+            loved: false,
+            connected: false,
+            last_connection: ""
         }
     );
 
@@ -91,7 +93,9 @@ const Swipe = () => {
                     photos: photos,
                     hobbies: response.data.hobbies,
                     love: response.data.love,
-                    loved: false
+                    loved: false,
+                    last_connection: response.data.last_connection,
+                    connected: response.data.connected
                 })
             }
         ).catch(
@@ -161,7 +165,9 @@ const Swipe = () => {
                 photos: [],
                 hobbies: [],
                 love: false,
-                loved: false
+                loved: false,
+                last_connection: "",
+                connected: false
             })
     }, [swipeList, index])
 

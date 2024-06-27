@@ -5,14 +5,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import Axios from "../../tools/Caller";
 import { DateTools } from "../../tools/DateTools";
 import { getPosInfo } from "../../tools/Thingy";
-import { storeMe, storeSocket } from "../../tools/Stores";
+import { storeMe } from "../../tools/Stores";
 import ReturnButton from "./ReturnButton";
 import ReportTrigger from "../ReportTrigger";
 import { FcNext, FcPrevious } from "react-icons/fc"
 import { RiHeartAddFill } from "react-icons/ri";
 import { BsFillHeartbreakFill } from "react-icons/bs";
 import { BsStars } from "react-icons/bs";
-import { FaCircle } from "react-icons/fa6";
 import { BiSolidUserDetail } from "react-icons/bi";
 import Online from "../Online";
 
@@ -59,9 +58,6 @@ export default function OtherProfile()
     const loveRef = useRef<HTMLDivElement>(null);
     const buttonsRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
-    const socket = storeSocket(state => state.socket);
-    const [ connected, setConnected ] = useState<boolean>(false);
-    const [ lastConnection, setLastConnection ] = useState<string>("")
 
     useEffect(() => {
         if (userParam != undefined)

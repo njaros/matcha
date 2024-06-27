@@ -6,6 +6,7 @@ import { SiIfixit } from "react-icons/si"
 import { RiHeartAddFill } from "react-icons/ri";
 import { BsStars } from "react-icons/bs";
 import { BiSolidUserDetail } from "react-icons/bi";
+import Online from "../Online";
 
 const fontSizeName = {base: "25px", sm: "30px", md: "35px", lg: "40px", xl: "45px"}
 const fontSizeLocation = {base: "15px", sm: "20px", md: "25px", lg: "30px", xl: "35px"}
@@ -20,9 +21,9 @@ export default function DisplayProfile(props: {
     const [ photoIdx, setPhotoIdx ] = useState<number>(0);
     const [ detail, setDetail ] = useState<boolean>(false);
     const nbPhotos = props.user.photos.length;
-    const userInfoRef = useRef<HTMLElement>();
-    const loveRef = useRef<HTMLElement>();
-    const buttonsRef = useRef<HTMLElement>();
+    const userInfoRef = useRef<HTMLDivElement>(null);
+    const loveRef = useRef<HTMLDivElement>(null);
+    const buttonsRef = useRef<HTMLDivElement>(null);
 
     function incrPhotoIdx()
     {
@@ -159,6 +160,7 @@ export default function DisplayProfile(props: {
                         {props.user.age}
                     </Text>
                 </Box>
+                <Online id={props.user.id} lastConnection={props.user.last_connection} online={props.user.connected} />
                 <Text   marginLeft="10px"
                         color="white"
                         fontSize={fontSizeLocation}
