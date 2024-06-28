@@ -63,6 +63,9 @@ def handle_disconnect():
         user_id = user.get("id")
         if user_id is not None:
             user_id = str(user_id)
+            current_app.logger.info(
+                f"Sockets of this user: {user_sockets.get(user_id)}"
+            )
             user_sockets[user_id].remove(client_sid)
             if len(user_sockets[user_id]) == 0:
                 del user_sockets[user_id]

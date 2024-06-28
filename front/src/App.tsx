@@ -87,11 +87,13 @@ function App() {
 	}, [logged])
 	
 	useEffect(() => {
+		const ip = import.meta.env.SERVER_URL;
+		console.log("ip= ", ip)
 		if (logged){
 			getUserId()
 			if (!userId || userId.length <= 0)
 				return
-			updateSocket(io(`http://127.0.0.1:5066`, {
+			updateSocket(io("http://10.13.7.5:5066", {
 				query : {
 					token : getToken()
 				}

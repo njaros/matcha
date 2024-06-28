@@ -1,7 +1,6 @@
 from flask import request, current_app as app
 from datetime import datetime, timezone, timedelta
 from flask_mail import Message
-import socket
 import random
 import jwt
 
@@ -17,7 +16,6 @@ def send_email_register_token(**kwargs):
         algorithm="HS256",
     )
     url_to_send = f"{request.host_url}mail_register/{token}"
-    # url_to_send = f"http://{socket.gethostbyname(socket.gethostname())}:5066/mail_register/{token}"
     msg.html = f"""
                 <h1>activate your account</h1>
                 <a href={url_to_send}>click here to activate your account</a>
@@ -38,7 +36,6 @@ def send_reset_password(**kwargs):
         algorithm="HS256",
     )
     url_to_send = f"{request.host_url}confirm_reset_password/{token}"
-    # url_to_send = f"http://{socket.gethostbyname(socket.gethostname())}:5066/confirm_reset_password/{token}"
     msg.html = f"""
                 <h1>reset your password</h1>
                 <h2>If you click to the link at the end of page, your \

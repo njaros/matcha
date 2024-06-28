@@ -8,6 +8,7 @@ dating web site 42 project
 # BUGS
 
 - a la deco de socket via socket.disconnect() en se deconnectant via le bouton, un log d'erreur apparait. rien ne semble se casser.
+- parfois on ne recoit pas l emit d'un nouveau message dans l'icone message avec un coeur
 
 # TODOS-CHAT
 
@@ -26,3 +27,7 @@ dating web site 42 project
 - swipe
 - les listes
 - en vrai le plein ecran osef tant que c'est utilisable ? Argument : projet de 100 heures
+
+# TODO-SOCKET
+
+- mettre via le .env l'adresse du serv pour socketio
