@@ -93,7 +93,7 @@ function App() {
 			getUserId()
 			if (!userId || userId.length <= 0)
 				return
-			updateSocket(io("http://10.13.7.5:5066", {
+			updateSocket(io("http://192.168.1.76:5066", {
 				query : {
 					token : getToken()
 				}

@@ -11,6 +11,7 @@ from uuid import UUID
 def options_handler(f):
     """Usefull to debug CORS problems
     if wraps a route and handle the OPTIONS method of a request"""
+
     @wraps(f)
     def decorated(*args, **kwargs):
         if request.method == "OPTIONS":
@@ -18,7 +19,8 @@ def options_handler(f):
             # put headers here response.headers["some opt"]="some value"
             response.status = 200
             return response
-        return (f(*args, *kwargs))
+        return f(*args, *kwargs)
+
     return decorated
 
 
@@ -32,8 +34,7 @@ def token_required(f):
             raise BadRequestError("no token")
         kwargs["access_token"] = token
         try:
-            data = jwt.decode(token, app.config["SECRET_ACCESS"],
-                              algorithms=["HS256"])
+            data = jwt.decode(token, app.config["SECRET_ACCESS"], algorithms=["HS256"])
             expDate = data.get("exp")
             if expDate is None:
                 raise BadRequestError("token expiration date is expired")
@@ -42,6 +43,7 @@ def token_required(f):
             app.logger.info(f"error: {e}")
             raise BadRequestError("Invalid Authentication token")
         return f(*args, **kwargs)
+
     return decorated
 
 
@@ -51,12 +53,10 @@ def create_access_token(user_id):
     else:
         hex = user_id.hex
     return jwt.encode(
-                    {"user_id": hex,
-                     "exp": datetime.now(tz=timezone.utc) +
-                     timedelta(days=1)},
-                    app.config["SECRET_ACCESS"],
-                    algorithm="HS256"
-                )
+        {"user_id": hex, "exp": datetime.now(tz=timezone.utc) + timedelta(seconds=5)},
+        app.config["SECRET_ACCESS"],
+        algorithm="HS256",
+    )
 
 
 def create_refresh_token(user_id):
@@ -65,19 +65,17 @@ def create_refresh_token(user_id):
     else:
         hex = user_id.hex
     return jwt.encode(
-        {"user_id": hex,
-         "exp": datetime.now(tz=timezone.utc) +
-         timedelta(days=1)},
+        {"user_id": hex, "exp": datetime.now(tz=timezone.utc) + timedelta(minutes=10)},
         app.config["SECRET_REFRESH"],
-        algorithm="HS256"
-        )
+        algorithm="HS256",
+    )
 
 
 def update_access_token(**kwargs):
     try:
-        refresh_data = jwt.decode(kwargs["refresh_token"],
-                                  app.config["SECRET_REFRESH"],
-                                  algorithms="HS256")
+        refresh_data = jwt.decode(
+            kwargs["refresh_token"], app.config["SECRET_REFRESH"], algorithms="HS256"
+        )
     except Exception:
         raise BadRequestError("failed to read refresh_token")
     access_id = kwargs["user"]["id"]
@@ -88,21 +86,23 @@ def update_access_token(**kwargs):
     now = datetime.now(tz=timezone.utc).timestamp()
     if exp_refresh < now:
         raise BadRequestError("refresh_token expired")
-    response = make_response({"access_token":
-                              create_access_token(access_id)})
+    response = make_response({"access_token": create_access_token(access_id)})
     response.status = 200
     if exp_refresh - now < 3600:
-        response.set_cookie("refresh_token",
-                            create_refresh_token(access_id),
-                            httponly=True,
-                            secure=True,
-                            samesite="none")
+        response.set_cookie(
+            "refresh_token",
+            create_refresh_token(access_id),
+            httponly=True,
+            secure=False,
+            samesite="strict",
+        )
     return response
 
 
 # @options_handler
 @token_required
 def refresh(**kwargs):
+    app.logger.info(request.cookies)
     kwargs["refresh_token"] = str.isString(request.cookies["refresh_token"])
     response = update_access_token(**kwargs)
     return response

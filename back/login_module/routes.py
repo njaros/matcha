@@ -48,8 +48,8 @@ def login(**kwargs):
             "refresh_token",
             jwt_policy.create_refresh_token(kwargs["user"]["id"]),
             httponly=True,
-            secure=True,
-            samesite="none",
+            secure=False,
+            samesite="strict",
         )
         response.status = 200
         return response
