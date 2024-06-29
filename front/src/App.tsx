@@ -63,7 +63,7 @@ function App() {
         return (() => {
             socket?.off('msg_count')
         })
-    })
+    }, [socket])
 
 	useEffect(() => {
 		roomList?.forEach(elt => {

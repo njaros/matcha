@@ -60,7 +60,7 @@ function Chatbox(){
             setMessageList((list) => [...list, senderData])
             console.log('from send message')
         }
-        catch(err){
+        catch(err: any){
             console.warn(err)
             if (err.response && err.response.status == 403)
                 navigate(-1);

@@ -77,16 +77,12 @@ between 0 and 59"
 class Gps:
 
     def __init__(self, latitude, longitude):
-        if isinstance(latitude, (float, int)) and isinstance(
-            longitude, (float, int)
-        ):
+        if isinstance(latitude, (float, int)) and isinstance(longitude, (float, int)):
             self.__float_constructor__(latitude, longitude)
         elif isinstance(latitude, Dms) and isinstance(longitude, Dms):
             self.__Dms_constructor__(latitude, longitude)
         else:
-            raise ValueError(
-                "latitude and longitude must be both Dms or float type"
-            )
+            raise ValueError("latitude and longitude must be both Dms or float type")
 
     def __float_constructor__(self, latitude: float, longitude: float):
         if (
@@ -176,9 +172,7 @@ which are {latitude}, {longitude}"
 
     def distance(self, other):
         if not isinstance(other, Gps):
-            raise ValueError(
-                "Only can calculate distance between 2 gps classes"
-            )
+            raise ValueError("Only can calculate distance between 2 gps classes")
         return (
             acos(
                 sin(self.gradient_latitude) * sin(other.gradient_latitude)
@@ -190,9 +184,7 @@ which are {latitude}, {longitude}"
         )
 
     def __str__(self):
-        return (
-            f"Latitude: {self.dms_latitude}, Longitude: {self.dms_longitude}"
-        )
+        return f"Latitude: {self.dms_latitude}, Longitude: {self.dms_longitude}"
 
 
 def gps_distance(a: Gps, b: Gps):
@@ -205,21 +197,23 @@ def get_gps_from_ip(ip: str):
         url = "https://ipinfo.io/json"
     else:
         url = f"https://ipinfo.io/{ip}/json"
-    response = requests.get(url, timeout=1)
-    response.raise_for_status()
-    loc: str = response.json().get("loc")
-    if loc is None:
+    try:
+        response = requests.get(url, timeout=1)
+        response.raise_for_status()
+        loc: str = response.json().get("loc")
+        if loc is None:
+            return None
+        coma = loc.find(",")
+        return Gps(float(loc[0:coma]), float(loc[coma + 1 :]))
+    except Exception as e:
+        current_app.logger.warn(f"{e.__class__}: {e.args[0]}")
         return None
-    coma = loc.find(",")
-    return Gps(float(loc[0:coma]), float(loc[coma + 1:]))
 
 
 def get_town(latitude, longitude):
     url = f"https://nominatim.openstreetmap.org\
 /reverse?lat={latitude}&lon={longitude}&format=json"
-    headers = {
-        "User-Agent": "Matcha/1.0 (emailaa@aaaa.com)"
-    }
+    headers = {"User-Agent": "Matcha/1.0 (emailaa@aaaa.com)"}
     try:
         response = requests.get(url, headers=headers, timeout=1)
         response.raise_for_status()

@@ -53,7 +53,7 @@ def create_access_token(user_id):
     else:
         hex = user_id.hex
     return jwt.encode(
-        {"user_id": hex, "exp": datetime.now(tz=timezone.utc) + timedelta(seconds=5)},
+        {"user_id": hex, "exp": datetime.now(tz=timezone.utc) + timedelta(minutes=10)},
         app.config["SECRET_ACCESS"],
         algorithm="HS256",
     )

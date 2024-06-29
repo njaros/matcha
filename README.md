@@ -8,7 +8,6 @@ dating web site 42 project
 # BUGS
 
 - a la deco de socket via socket.disconnect() en se deconnectant via le bouton, un log d'erreur apparait. rien ne semble se casser.
-- parfois on ne recoit pas l emit d'un nouveau message dans l'icone message avec un coeur
 
 # TODOS-CHAT
 

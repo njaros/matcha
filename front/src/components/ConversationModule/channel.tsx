@@ -26,7 +26,7 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
             if (data.room === props.conv.id){
                 console.log('alaid')
                 setLastMessage({sender_id: data.author.user_id, content: data.content})
-            }   
+            }
         })
         return (() => {
             socket?.off('last_message')
