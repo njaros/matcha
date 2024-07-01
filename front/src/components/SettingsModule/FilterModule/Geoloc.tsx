@@ -24,8 +24,8 @@ const Geoloc = (props: {focus: boolean}) => {
     function getGps() {
         Axios.get("user/get_gps").then(
             response => {
-                console.log(response);
-                updateGpsLatLng(response.data);
+                if (response.data.latitude != null)
+                    updateGpsLatLng(response.data);
             }
         )
         .catch(
@@ -36,6 +36,13 @@ const Geoloc = (props: {focus: boolean}) => {
     }
 
     function getCountryAndCity(lat: number, lon: number) {
+        if (lat == null) {
+            setPosInfo({
+                country : "unable to get position.",
+                city: ""
+            })
+            return;
+        }
         fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
         .then(response => response.json().then(
             data => {
@@ -188,9 +195,6 @@ const Geoloc = (props: {focus: boolean}) => {
                 </Box>
                 <Box marginLeft="15px" onClick={fixedGpsHandler}><Icon color="#534a4a" as={fixed ? FaLock : FaLockOpen}/></Box>
             </Box>
-
-
-
             <Box ref={mapRef} hidden={hideMap} marginBottom="15px" borderRadius="10px" height="50vh" width="100%" />
         </Box>
     )

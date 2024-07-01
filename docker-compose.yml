@@ -21,8 +21,8 @@ services:
       context: ./back
     container_name: flask_container
     restart: always
-    ports:
-      - ${SERVER_PORT}:${SERVER_PORT}
+    expose:
+      - "5066"
     depends_on: 
       - db
     env_file:
@@ -37,15 +37,30 @@ services:
     build:
       context: ./front
     container_name: react_container
+    expose:
+      - "8000"
     restart: always
-    ports:
-      - ${CLIENT_PORT}:${CLIENT_PORT}
     networks:
       - matcha_network
     env_file:
       - .env
     volumes:
       - ./front:/dev/app/
+########################## NGINX ###########################
+  nginx:
+    build:
+      context: ./serv
+    container_name: nginx_container
+    restart: always
+    ports:
+      - 80:80
+      - 433:433
+    env_file:
+      - .env
+    volumes:
+      - ./serv/conf.d:/etc/nginx/conf.d:ro
+    networks:
+      - matcha_network
 ######################### ADMINER ##########################
   adminer:
     container_name: adminer

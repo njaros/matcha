@@ -3,7 +3,7 @@ import { tokenReader } from "./TokenReader";
 
 const ip = import.meta.env.VITE_IP;
 const Axios = axios.create({
-	baseURL: ip + ':5066',
+	baseURL: ip + "/api/",
 })
 
 // Intercepteur pour le token

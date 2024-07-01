@@ -15,7 +15,7 @@ def send_email_register_token(**kwargs):
         app.config["SECRET_EMAIL_TOKEN"],
         algorithm="HS256",
     )
-    url_to_send = f"{request.host_url}mail_register/{token}"
+    url_to_send = f"{request.host_url}api/mail_register/{token}"
     msg.html = f"""
                 <h1>activate your account</h1>
                 <a href={url_to_send}>click here to activate your account</a>
@@ -35,7 +35,7 @@ def send_reset_password(**kwargs):
         app.config["SECRET_RESET_PASSWORD"],
         algorithm="HS256",
     )
-    url_to_send = f"{request.host_url}confirm_reset_password/{token}"
+    url_to_send = f"{request.host_url}api/confirm_reset_password/{token}"
     msg.html = f"""
                 <h1>reset your password</h1>
                 <h2>If you click to the link at the end of page, your \
