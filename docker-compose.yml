@@ -54,9 +54,6 @@ services:
     restart: always
     ports:
       - 80:80
-      - 433:433
-    env_file:
-      - .env
     volumes:
       - ./serv/conf.d:/etc/nginx/conf.d:ro
     networks:

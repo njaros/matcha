@@ -1,6 +1,5 @@
 from flask import current_app, jsonify
 from tools.matcha_socketio import emit
-from tools.thingy import to_socket_uuid
 from socket_app.utils import is_connected
 from user_module import sql as user_sql_request
 from profile_module.sql import get_photos_by_user_id
@@ -30,9 +29,7 @@ def get_user_with_room(**kwargs):
 
 @token_required
 def get_user_with_room_and_message(**kwargs):
-    return user_sql_request.get_user_with_room_and_message(
-        UUID(kwargs["user"]["id"])
-    )
+    return user_sql_request.get_user_with_room_and_message(UUID(kwargs["user"]["id"]))
 
 
 @token_required
@@ -64,10 +61,7 @@ def base_get_user_profile(**kwargs):
         user_profile["location"] = GPS_tools.get_town(
             user_profile["latitude"], user_profile["longitude"]
         )
-        current_app.logger.info(type(user_profile["last_connection"]))
-        user_profile["last_connection"] = user_profile[
-            "last_connection"
-        ].isoformat()
+        user_profile["last_connection"] = user_profile["last_connection"].isoformat()
         del user_profile["latitude"]
         del user_profile["longitude"]
         user_profile["connected"] = is_connected(kwargs["user_id"])

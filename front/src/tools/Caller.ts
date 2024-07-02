@@ -1,9 +1,9 @@
 import axios from "axios";
 import { tokenReader } from "./TokenReader";
 
-const ip = import.meta.env.VITE_IP;
+const ip = process.env.SERVER_URL;
 const Axios = axios.create({
-	baseURL: ip + "/api/",
+	baseURL: ip,
 })
 
 // Intercepteur pour le token
