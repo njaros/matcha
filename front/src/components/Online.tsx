@@ -33,17 +33,15 @@ export default function Online(props: {id: string, online: boolean, lastConnecti
                     setConnected(true);
                     if (intervalId)
                         clearInterval(intervalId);
-                        setIntervalId(null);
+                    setIntervalId(null);
                 }
             })
-        }
 
-        if (socket) {
             socket.on("disconnected", (data: any) => {
                 if (props.id == data.id) {
                     setConnected(false);
                     setSecEllapsed(0);
-                    setIntervalId(setInterval(() => setSecEllapsed((nb) => nb + 1), 1000));
+                    setIntervalId(setInterval(() => {setSecEllapsed((nb) => nb + 1)}, 1000));
                 }
             })
         }
@@ -55,7 +53,7 @@ export default function Online(props: {id: string, online: boolean, lastConnecti
             }
         })
 
-    }, [socket])
+    }, [socket, intervalId])
 
     useEffect(() => {
 
@@ -68,20 +66,20 @@ export default function Online(props: {id: string, online: boolean, lastConnecti
 
     return (
         <Flex   className="online"
-                                margin="3% 3%"
-                                alignItems={"center"}
-                        >
-                            <Icon as={FaCircle} color={connected ? "green" : "red"} />
-                            <Text   marginLeft={"4%"}
-                                    fontSize={fontSizeTime}
-                                    fontWeight={"bold"}
-                                    color="white"
-                            >
-                                {
-                                    connected ? "connected" :
-                                    DateTools.timeEllapsedStringFormatFromSec(secEllapsed)
-                                }
-                            </Text>
-                        </Flex>
+                margin="3% 3%"
+                alignItems={"center"}
+        >
+            <Icon as={FaCircle} color={connected ? "green" : "red"} />
+            <Text   marginLeft={"4%"}
+                    fontSize={fontSizeTime}
+                    fontWeight={"bold"}
+                    color="white"
+            >
+                {
+                    connected ? "connected" :
+                    DateTools.timeEllapsedStringFormatFromSec(secEllapsed)
+                }
+            </Text>
+        </Flex>
     )
 }

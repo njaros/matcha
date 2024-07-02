@@ -10,7 +10,8 @@ from .routes import (
     get_user_profile,
     get_self_profile,
     get_user_profile_from_swipe,
-    get_visits_history
+    get_visits_history,
+    is_user_connected,
 )
 
 app = Blueprint("user", __name__)
@@ -55,11 +56,11 @@ app.add_url_rule(
     "/user/get_visits_history",
     "get_visits_history",
     get_visits_history,
-    methods=["GET"]
+    methods=["GET"],
 )
 app.add_url_rule(
-    "/user/get_self_profile",
-    "get_self_profile",
-    get_self_profile,
-    methods=["GET"]
+    "/user/get_self_profile", "get_self_profile", get_self_profile, methods=["GET"]
+)
+app.add_url_rule(
+    "/user/is_user_connected", "is_user_connected", is_user_connected, methods=["POST"]
 )

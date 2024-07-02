@@ -105,3 +105,16 @@ def get_visits_history(**kwargs):
                 hasher.decrypt(user["binaries"])
             ).decode("utf-8")
     return history, 200
+
+
+@token_required
+@dto.user_profile_dto
+def is_user_connected(**kwargs):
+    user_state = {}
+    user_state["connected"] = is_connected(kwargs["user_id"])
+    if user_state["connected"] is False:
+        user_state["last_connection"] = user_sql_request.last_connection_by_id(
+            kwargs["user_id"]
+        )["last_connection"]
+    current_app.logger.info(user_state)
+    return user_state, 200

@@ -340,3 +340,24 @@ def get_my_visits_history(**kwargs):
     history = cur.fetchall()
     cur.close()
     return history
+
+
+def last_connection_by_id(user_id):
+    """If user_id exists, returns a dictionnary
+    {"last_connection": dateISOFormat}
+    or returns None if user_id doesn't exists.
+    """
+    cur = app.config["conn"].cursor(row_factory=dict_row)
+    cur.execute(
+        """
+            SELECT last_connection
+            FROM user_table
+            WHERE id = %s
+        """,
+        (user_id,),
+    )
+    res = cur.fetchone()
+    cur.close()
+    if res is not None:
+        res["last_connection"] = res["last_connection"].isoformat()
+    return res

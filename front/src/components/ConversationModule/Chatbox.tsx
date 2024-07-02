@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import Axios from "../../tools/Caller";
 import { storeMe, storeMessageList, storeMsgCount, storeRoomInfo, storeSocket } from "../../tools/Stores";
 import { MessageData } from "../../tools/interface";
+import OnlineChat from "./OnlineChat";
 
 
 export function timeOfDay(timestampz: string | Date){
@@ -136,6 +137,7 @@ function Chatbox(){
                     </Button>
                     <Avatar marginLeft={'15px'} src={me?.id === room?.user_1.user_id ? room?.user_2.photo : room?.user_1.photo} />
                     <Text marginLeft={'10px'} flex={1}>{room?.name}</Text>
+                    <OnlineChat id={me?.id === room?.user_1.user_id ? room?.user_2.user_id : room?.user_1.user_id} />
                     <Button onClick={() => navigate('/chatbox/call/' + room?.id)}>voice call</Button>
                 </Flex>
                 <Flex

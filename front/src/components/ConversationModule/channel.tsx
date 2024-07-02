@@ -6,6 +6,7 @@ import Axios from "../../tools/Caller";
 import { storeDisplayNavBool, storeMe, storeMessageList, storeMsgCount, storeRoomInfo, storeRoomList, storeSocket } from "../../tools/Stores";
 import { Room_info } from "../../tools/interface";
 import { AxiosResponse } from "axios";
+import OnlineChat from "./OnlineChat";
 
 
 function Conv(props: {conv: any, index: number, me: any, join_room: any, setMessageList: any}){
@@ -50,33 +51,33 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
             }}
         >
             <Avatar src={props.me?.id === props.conv.user_1.user_id ? props.conv.user_2?.photo : props.conv?.user_1?.photo}/>
-                <Box
-                    flex={1}
-        
-                    marginLeft={'10px'}
+            <Box
+                flex={1}
+    
+                marginLeft={'10px'}
+                textOverflow="ellipsis" 
+                overflow="hidden" 
+                whiteSpace="nowrap"
+            >
+                <Box>{props.conv.name}</Box>
+                <Text
+                    fontSize={'small'} 
+                    opacity={'50%'}
                     textOverflow="ellipsis" 
                     overflow="hidden" 
                     whiteSpace="nowrap"
-                >
-                    <Box>{props.conv.name}</Box>
-                    <Text
-                        fontSize={'small'} 
-                        opacity={'50%'}
-                        textOverflow="ellipsis" 
-                        overflow="hidden" 
-                        whiteSpace="nowrap"
-                    >   
-                        {props.me?.id === lastMessage?.sender_id ? 
-                        "You: " + lastMessage.content : 
-                        <>
-                            {props.conv.last_message_author && <Icon as={BsArrowReturnRight} marginRight={'5px'}/>}
-                            {lastMessage.content}
-                        </>
-                        }
-                        
-                    </Text>
-                </Box>
-                <Box margin={15} position="relative">
+                >   
+                    {props.me?.id === lastMessage?.sender_id ? 
+                    "You: " + lastMessage.content : 
+                    <>
+                        {props.conv.last_message_author && <Icon as={BsArrowReturnRight} marginRight={'5px'}/>}
+                        {lastMessage.content}
+                    </>
+                    }
+                </Text>
+            </Box>
+            <OnlineChat id={props.me?.id == props.conv.user_1.user_id ? props.conv.user_2.user_id : props.conv.user_1.user_id} />
+            <Box margin={15} position="relative">
                 <Box
                     width={6} 
                     height={6}
