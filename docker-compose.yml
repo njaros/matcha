@@ -54,6 +54,7 @@ services:
     restart: always
     ports:
       - 80:80
+      - 443:433
     volumes:
       - ./serv/conf.d:/etc/nginx/conf.d:ro
     networks:
