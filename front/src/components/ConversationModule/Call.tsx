@@ -110,9 +110,8 @@ function useChatConnection(peerConnection: RTCPeerConnection){
     }, [roomName, handleConnection, handleConnectionOffer, handleOfferAnswer, sendOffer]) 
 }
 
-function usePeerConnection(localStream: MediaStream){
+function usePeerConnection(localStream: MediaStream, setGuestStream: (media: MediaStream) => void){
     const { roomName } = useParams()
-    const [guestStream, setGuestStream] = useState<MediaStream | null>(null)
     const socket = storeSocket(state => state.socket)
 
     const peerConnection = useMemo(() => {
@@ -121,6 +120,7 @@ function usePeerConnection(localStream: MediaStream){
         })
 
         connection.addEventListener('icecandidate', ({candidate}) => {
+            console.log(candidate);
             socket?.emit('send_candidate', {candidate, roomName})
         })
 
@@ -135,8 +135,7 @@ function usePeerConnection(localStream: MediaStream){
     }, [localStream, roomName])
 
     return {
-        peerConnection,
-        guestStream,
+        peerConnection
     }
 }
 
@@ -172,13 +171,21 @@ export function useLocalCameraStream(){
 }
 
 const VideoChatRoom: React.FC<VideoChatRoomProps> = ({ localStream }) => {
-    const { peerConnection, guestStream } = usePeerConnection(localStream)
+    const [ guestStream, setGuestStream ] = useState<MediaStream | null>(null)
+    const { peerConnection } = usePeerConnection(localStream, (media: MediaStream) => setGuestStream(media))
     const { hangup } = useHangup()
     useChatConnection(peerConnection);
 
     const handleHangupClick = () => {
         hangup(peerConnection, localStream);
     };
+
+    function logVariable(variable: any) {
+        console.log("logVariable: ", variable);
+        if (variable)
+            return true;
+        return false;
+    }
 
     return (
         <>
@@ -192,7 +199,7 @@ const VideoChatRoom: React.FC<VideoChatRoomProps> = ({ localStream }) => {
                     bg={'green'}
                     h={'50%'}
                 >
-                    {guestStream && ( <VideoFeed mediaStream={guestStream} isMuted={true}/>)}
+                    {logVariable(guestStream) && ( <VideoFeed mediaStream={guestStream} isMuted={true}/>)}
                 </Box>
                 <Box bg={'blue'} h={'50%'}>
                     <VideoFeed mediaStream={localStream} isMuted={true} />
