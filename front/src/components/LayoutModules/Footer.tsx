@@ -7,6 +7,7 @@ import { TbMessage, TbMessage2Heart } from "react-icons/tb";
 import { ImExit } from "react-icons/im"
 import { useEffect, useState } from "react";
 import Notification from "./Notification";
+import { getToken } from "../../tools/TokenReader";
 
 const headerTextSize = {base: "14px", sm: "16px", md: "19px", lg: "22px", xl: "25px"}
 const headerIconSize = {base: 8, sm: 10, md: 12, lg: 14, xl: 16}
@@ -50,23 +51,6 @@ const Footer = (props: {
     const room = storeRoomInfo(state => state.roomInfo)
     const { socket, updateSocket } = storeSocket();
 
-    const logout = () => {
-        if (refreshTokenTimeoutId != undefined)
-        {
-            clearTimeout(refreshTokenTimeoutId);
-            updateRefreshTimeout(undefined);
-        }
-        if (socket) {
-            socket.disconnect();
-            updateSocket(null);
-        }
-        setLogoutClicked(!logoutClicked);
-        cookieMan.eraseCookie('token');
-        props.handleLog(false);
-        props.handleAccess("");
-		navigate("./login", { relative: "path" });
-	}
-
     function success(pos: GeolocationPosition) {
         var crd = pos.coords;
         console.log("your current position is: ");
@@ -103,7 +87,7 @@ const Footer = (props: {
         else {
             updateGps(undefined);
         }
-    }, [logoutClicked])
+    }, [])
     
     useEffect(() => {
         let hasUnreadMessage = false;
@@ -119,9 +103,6 @@ const Footer = (props: {
 
     const route= ['/chatbox', `/chatbox/call/${room.id}`]
     const hidesOnRoute = route.includes(location.pathname)
-    // console.log(location.pathname)
-    // if (shouldHide)
-    //   return null
 
     return (
 
@@ -138,12 +119,11 @@ const Footer = (props: {
         marginBottom={'10px'}
         padding={'0 10px '}
         >
-        { props.logged &&
+        { getToken() !== "" &&
         <>
             <IconNavBar url="/" icon={MdFavorite} boxSize={headerIconSize} isTarget={isTarget("/", location.pathname)} />
             <IconNavBar url="/channel" icon={msgBool === false ? TbMessage : TbMessage2Heart} boxSize={headerIconSize} isTarget={isTarget("/channel", location.pathname)} />
             <IconNavBar url="/settings" icon={MdSettings} boxSize={headerIconSize} isTarget={isTargetSettings(location.pathname)} />
-            <button onClick={logout} style={{display: 'flex'}}><Icon color={"#57595D"} as={ImExit} boxSize={headerIconSize}/></button>
             <Notification />
         </>
         }
