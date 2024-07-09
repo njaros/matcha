@@ -53,8 +53,17 @@ const Login = (props:{
         })
         .catch(error => {
             console.warn(error)
-            if (error.response)
-                setErrorMessage(error.response.data)
+            if (error.response) {
+                if (error.response.data)
+                {
+                    if (typeof(error.response.data) == 'string')
+                        setErrorMessage(error.response.data);
+                    else if (error.response.data.message)
+                        setErrorMessage(error.response.data.message);
+                    else
+                        setErrorMessage("Unhandled error");
+                }
+            }
             else
                 setErrorMessage("Unhandled error")
             setWrong(true);

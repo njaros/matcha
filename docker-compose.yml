@@ -51,10 +51,12 @@ services:
     build:
       context: ./serv
     container_name: nginx_container
+    depends_on:
+      - back
+      - front
     restart: always
     ports:
-      - 80:80
-      - 443:433
+      - 8080:8080
     volumes:
       - ./serv/conf.d:/etc/nginx/conf.d:ro
     networks:
@@ -69,7 +71,7 @@ services:
     environment:
       ADMINER_DEFAULT_SERVER: db_container
     ports:
-      - 8080:8080
+      - 8081:8081
     networks:
       - matcha_network
 volumes:
