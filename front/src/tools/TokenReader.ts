@@ -26,7 +26,7 @@ export function readPayload(token: string | undefined)
     }
 }
 
-function getAttr(token: string, attr: string): any
+export function getAttr(token: string, attr: string): any
 {
     let payload: JwtPayload | undefined = readPayload(token);
     if (payload == undefined)
@@ -34,7 +34,7 @@ function getAttr(token: string, attr: string): any
     return payload[attr];
 }
 
-function getAttrAsString(token: string, attr: string): string
+export function getAttrAsString(token: string, attr: string): string
 {
     let val = getAttr(token, attr);
     if (typeof(val) == "string")
@@ -42,11 +42,10 @@ function getAttrAsString(token: string, attr: string): string
     return "";
 }
 
-function isTokenValid(token: string | undefined)
+export function isTokenValid(token: string | undefined)
 {
     if (token == undefined || token == "")
     {
-        console.log("isTokenValid: no token");
         return false;
     }
     let decodedToken: JwtPayload | undefined = readPayload(token);
@@ -54,13 +53,12 @@ function isTokenValid(token: string | undefined)
         ( decodedToken.exp !== undefined
         && decodedToken.exp < Date.now() / 1000))
 	{
-		console.log("invalid token");
         return false;
 	}
     return true;
 }
 
-function isLogged()
+export function isLogged()
 {
     return isTokenValid(getToken());
 }

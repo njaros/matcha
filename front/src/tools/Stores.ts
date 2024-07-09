@@ -1,14 +1,19 @@
 import { Socket, io } from "socket.io-client";
 import { create } from "zustand";
 import { Room, Me, RoomList, MessageData, msgCount, Room_info } from "./interface";
-import { LatLng } from "leaflet";
 import { ISwipeFilter } from "../Interfaces"
 import { DateTools } from "./DateTools";
+import { isLogged } from "./TokenReader";
 
+
+interface ILog {
+	log: boolean;
+	updateLog: (newLog: boolean) => void;
+}
 
 interface IFocus {
 	focus: string;
-	updateFocus: (newFocus: string) => void
+	updateFocus: (newFocus: string) => void;
 }
 
 interface IstoreGps {
@@ -68,6 +73,14 @@ interface ImsgCount {
 	msgCount: {[room_id: string]: msgCount};
 	updateMsgCount: (room_id: string, newCount: number) => void
 }
+
+export const storeLog = create<ILog>()((set) => ({
+	log: isLogged(),
+	updateLog: (newLog: boolean) => {
+		console.log("change log state: ", newLog);
+		set({log: newLog})
+	}
+}))
 
 export const storeRoomInfo = create<IstoreRoomInfo>()((set) => ({
 	roomInfo: {
