@@ -18,7 +18,7 @@ import Signup from "./components/SignUpModule/SignUp";
 import Swipe from "./components/SwipeModule/Swipe";
 import Axios from "./tools/Caller";
 import { cookieMan } from "./tools/CookieMan";
-import { storeMe, storeMsgCount, storeRoomList, storeSocket, storeTimeout } from "./tools/Stores";
+import { storeLog, storeMe, storeMsgCount, storeRoomList, storeSocket, storeTimeout } from "./tools/Stores";
 import { getToken, tokenReader } from "./tools/TokenReader";
 import ChannelList from "./components/ConversationModule/channel";
 import Chatbox from "./components/ConversationModule/Chatbox";
@@ -31,14 +31,14 @@ import NoMatch from "./components/NoMatch";
 
 function App() {
 
-	const [userId, setUserId] = useState("")
-	const { socket, updateSocket } = storeSocket()
-	const [ logged, setLogged ] = useState<boolean>(tokenReader.isLogged())
+	const [userId, setUserId] = useState("");
+	const { socket, updateSocket } = storeSocket();
 	const [ access, setAccess ] = useState<string>(tokenReader.getToken());
     const { refreshTokenTimeoutId, updateRefreshTimeout } = storeTimeout();
-	const [ me, updateMe ] = storeMe(state => [state.me, state.updateMe])
-	const updateMsgCount = storeMsgCount(state => state.updateMsgCount)
-    const roomList = storeRoomList(state => state.roomList)
+	const [ me, updateMe ] = storeMe(state => [state.me, state.updateMe]);
+	const updateMsgCount = storeMsgCount(state => state.updateMsgCount);
+    const roomList = storeRoomList(state => state.roomList);
+	const { log, updateLog } = storeLog();
 
 	const getUserId = () => {
 		setUserId(tokenReader.getAttrAsString(getToken(), "user_id"))
@@ -85,12 +85,11 @@ function App() {
 			}
 		}
 		fetchMe()
-	}, [logged])
+	}, [log])
 	
 	useEffect(() => {
 		const ip = process.env.HOST_URL;
-		console.log("ip= ", ip);
-		if (logged && ip){
+		if (getToken() != "" && ip){
 			getUserId()
 			if (!userId || userId.length <= 0)
 				return
@@ -102,7 +101,7 @@ function App() {
 			}))
 
 		}
-	},[userId, logged])
+	},[userId, log])
 
 
 	//START OF TOKEN MANAGEMENT
@@ -141,7 +140,7 @@ function App() {
 				}
 				cookieMan.eraseCookie("token");
 				setAccess("");
-				setLogged(false);
+				updateLog(false);
 			}
 		)
 	}	
@@ -157,7 +156,7 @@ function App() {
 			clearTimeout(refreshTokenTimeoutId);
             updateRefreshTimeout(undefined);
 		}
-		if (logged && access != "") {
+		if (log && access != "") {
 			accessPayload = tokenReader.readPayload(access);
 			if (accessPayload != undefined) {
 				accessExp = accessPayload.exp;
@@ -170,32 +169,32 @@ function App() {
 					}
 					else {
 						console.log("token expired before asking a new one");
-						setLogged(false);
+						updateLog(false);
 					}
 				}
 				else {
 					console.log("no expiration date on token's payload");
-					setLogged(false);
+					updateLog(false);
 				}
 			}
 			else {
 				console.log("no payload extractable from this token");
-				setLogged(false);
+				updateLog(false);
 			}
 		}
 		else
 		{	
-			setLogged(false);
+			updateLog(false);
 			console.log("no token");
 		}
 		
 		return () => {
 			clearTimeout(timeIdTmp);
 		}
-	}, [access, logged])
+	}, [access, log])
 
 	const handleLog = (newState: boolean) => {
-		setLogged(newState);
+		updateLog(newState);
 	}
 	
 	const handleAccess = (newAccess: string) => {
@@ -215,7 +214,7 @@ function App() {
 			>
 			<BrowserRouter>
 				<Routes>
-					<Route element={ <Layout logged={logged} handleLog={handleLog} handleAccess={handleAccess} /> }>
+					<Route element={ <Layout logged={log} handleLog={handleLog} handleAccess={handleAccess} /> }>
 						<Route path="/login" element={ logged ? <Navigate to="/" /> : (<Login handleLog={handleLog} handleAccess={handleAccess} />) } />
 						<Route path="/signUp" element={ logged ? <Navigate to="/" /> : (<Signup />) } />
 						<Route path="/forgot" element={ logged ? <Navigate to="/" /> : (<Forgot />) } />

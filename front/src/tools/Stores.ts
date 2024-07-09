@@ -4,11 +4,17 @@ import { Room, Me, RoomList, MessageData, msgCount, Room_info } from "./interfac
 import { LatLng } from "leaflet";
 import { ISwipeFilter } from "../Interfaces"
 import { DateTools } from "./DateTools";
+import { getToken } from "./TokenReader";
 
+
+interface ILog {
+	log: boolean;
+	updateLog: (newLog: boolean) => void;
+}
 
 interface IFocus {
 	focus: string;
-	updateFocus: (newFocus: string) => void
+	updateFocus: (newFocus: string) => void;
 }
 
 interface IstoreGps {
@@ -68,6 +74,11 @@ interface ImsgCount {
 	msgCount: {[room_id: string]: msgCount};
 	updateMsgCount: (room_id: string, newCount: number) => void
 }
+
+export const storeLog = create<ILog>()((set) => ({
+	log: getToken() != "",
+	updateLog: (newLog: boolean) => set({log: newLog})
+}))
 
 export const storeRoomInfo = create<IstoreRoomInfo>()((set) => ({
 	roomInfo: {

@@ -90,7 +90,6 @@ const Footer = (props: {
         if (navigator.geolocation) {
             navigator.permissions.query({name: "geolocation"}).then(function(result)
             {
-                console.log(result);
                 if (result.state == "granted" || result.state == "prompt")
                 {
                     navigator.geolocation.getCurrentPosition(success, error, options);
