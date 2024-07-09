@@ -1,5 +1,5 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { storeGps, storeTimeout, storeDisplayNavBool, storeMsgCount, storeRoomList, storeRoomInfo, storeSocket } from "../../tools/Stores";
+import { storeGps, storeTimeout, storeDisplayNavBool, storeMsgCount, storeRoomList, storeRoomInfo, storeSocket, storeLog } from "../../tools/Stores";
 import { cookieMan } from "../../tools/CookieMan";
 import { As, Box, Icon, Text } from "@chakra-ui/react"
 import { MdFavorite, MdHome, MdSettings } from "react-icons/md"
@@ -49,6 +49,7 @@ const Footer = (props: {
     const roomList = storeRoomList(state => state.roomList)
     const [msgBool, setMsgBool] = useState<boolean>(false)
     const room = storeRoomInfo(state => state.roomInfo)
+    const log = storeLog(state => state.log);
     const { socket, updateSocket } = storeSocket();
 
     function success(pos: GeolocationPosition) {
@@ -118,12 +119,12 @@ const Footer = (props: {
         marginBottom={'10px'}
         padding={'0 10px '}
         >
-        { getToken() !== "" &&
+        { log &&
         <>
             <IconNavBar url="/" icon={MdFavorite} boxSize={headerIconSize} isTarget={isTarget("/", location.pathname)} />
             <IconNavBar url="/channel" icon={msgBool === false ? TbMessage : TbMessage2Heart} boxSize={headerIconSize} isTarget={isTarget("/channel", location.pathname)} />
             <IconNavBar url="/settings" icon={MdSettings} boxSize={headerIconSize} isTarget={isTargetSettings(location.pathname)} />
-            <Notification />
+            {/* <Notification /> */}
         </>
         }
     </Box>

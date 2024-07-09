@@ -74,22 +74,25 @@ function App() {
 
 	
 	useEffect(() => {
-		const fetchMe = async () => {
-			try {
-				const res = await Axios.get('/user/get_me')
-				updateMe(res.data)
+		if (log)
+		{
+			const fetchMe = async () => {
+				try {
+					const res = await Axios.get('/user/get_me')
+					updateMe(res.data)
+				}
+				catch (err){
+					if (err)
+						console.log(err)
+				}
 			}
-			catch (err){
-				if (err)
-					console.log(err)
-			}
+			fetchMe()
 		}
-		fetchMe()
 	}, [log])
 	
 	useEffect(() => {
 		const ip = process.env.HOST_URL;
-		if (getToken() != "" && ip){
+		if (log && ip){
 			getUserId()
 			if (!userId || userId.length <= 0)
 				return
@@ -214,11 +217,11 @@ function App() {
 			>
 			<BrowserRouter>
 				<Routes>
-					<Route element={ <Layout logged={logged} handleLog={handleLog} handleAccess={handleAccess} /> }>
-						<Route path="/login" element={ getToken() !== "" ? <Navigate to="/" /> : (<Login handleAccess={handleAccess} />) } />
-						<Route path="/signUp" element={ getToken() !== "" ? <Navigate to="/" /> : (<Signup />) } />
-						<Route path="/forgot" element={ getToken() !== "" ? <Navigate to="/" /> : (<Forgot />) } />
-						<Route element={ getToken() !== "" ? <Outlet /> : <Navigate to="/login" /> } >
+					<Route element={ <Layout logged={log} handleLog={handleLog} handleAccess={handleAccess} /> }>
+						<Route path="/login" element={ log ? <Navigate to="/" /> : (<Login handleAccess={handleAccess} />) } />
+						<Route path="/signUp" element={ log ? <Navigate to="/" /> : (<Signup />) } />
+						<Route path="/forgot" element={ log ? <Navigate to="/" /> : (<Forgot />) } />
+						<Route element={ log ? <Outlet /> : <Navigate to="/login" /> } >
 							<Route path="/" element={ <Swipe/> } />
 							<Route path="/settings" element={ <Outlet />}>
 								<Route path="/settings/" element={ <Settings /> } />

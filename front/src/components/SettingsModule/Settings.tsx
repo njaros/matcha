@@ -10,7 +10,7 @@ import { GiHouseKeys } from "react-icons/gi";
 import { GiLoveLetter } from "react-icons/gi";
 import { IconType } from "react-icons";
 import { ImExit } from "react-icons/im"
-import { storeSocket, storeTimeout } from "../../tools/Stores";
+import { storeLog, storeSocket, storeTimeout } from "../../tools/Stores";
 import { cookieMan } from "../../tools/CookieMan";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -25,6 +25,7 @@ const Settings = () => {
     const { socket, updateSocket } = storeSocket();
     const navigate = useNavigate();
     const [ logoutClicked, setLogoutClicked] = useState<boolean>(false);
+    const { log, updateLog } = storeLog();
 
     const logout = () => {
         if (refreshTokenTimeoutId != undefined)
@@ -36,6 +37,7 @@ const Settings = () => {
             socket.disconnect();
             updateSocket(null);
         }
+        updateLog(false);
         setLogoutClicked(!logoutClicked);
         cookieMan.eraseCookie('token');
 	}

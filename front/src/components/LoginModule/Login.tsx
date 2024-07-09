@@ -4,7 +4,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { ILoginInForm } from "../../Interfaces";
 import Axios from "../../tools/Caller";
 import { cookieMan } from "../../tools/CookieMan";
-import { storeGps } from "../../tools/Stores";
+import { storeGps, storeLog } from "../../tools/Stores";
 import { AiFillWarning } from "react-icons/ai";
 import { Box, Button, Flex, Icon, Input, Link, Spinner, Stack, Text } from "@chakra-ui/react";
 
@@ -19,6 +19,7 @@ const Login = (props:{
     const { gps, updateGpsLatLng } = storeGps();
     const { fixed, updateGpsFixed } = storeGps();
     const [ errorMsg, setErrorMessage ] = useState<string>("");
+    const { log, updateLog } = storeLog();
 
 	const loginSubmit = (data: ILoginInForm) => {
         setLoading(true);
@@ -40,6 +41,7 @@ const Login = (props:{
                     });
                     updateGpsFixed(response.data.gpsfixed);
                     props.handleAccess(response.data.access_token);
+                    updateLog(true);
 					const from = (location.state as any)?.from || "/";
 					navigate(from);
 				}
