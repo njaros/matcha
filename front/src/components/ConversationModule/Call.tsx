@@ -38,6 +38,7 @@ function useOfferSending(peerConnection: RTCPeerConnection){
     const sendOffer = useCallback(async () => {
         const offer = await peerConnection.createOffer()
         await peerConnection.setLocalDescription(offer)
+        console.log("offer= ", offer)
 
         socket?.emit('send_connection_offer', {
             roomName,
@@ -51,12 +52,14 @@ function useOfferSending(peerConnection: RTCPeerConnection){
 function useOffersListening(peerConnection: RTCPeerConnection){
     const { roomName } = useParams()
     const socket = storeSocket(state => state.socket)
+    console.log("from offers listener")
 
     const handleConnectionOffer = useCallback(
         async ({offer} : {offer: RTCSessionDescriptionInit}) => {
             await peerConnection.setRemoteDescription(offer)
             const answer = await peerConnection.createAnswer()
             await peerConnection.setLocalDescription(answer)
+            console.log("answer= ", answer)
             console.log('test')
 
             socket?.emit('answer', {answer, roomName})
@@ -92,6 +95,7 @@ function useChatConnection(peerConnection: RTCPeerConnection){
 
     const handleReceiveCandidate = useCallback(
         ({candidate}: {candidate: RTCIceCandidate}) => {
+            console.log("handle receive candidate, candidate = ", candidate);
             peerConnection.addIceCandidate(candidate)
         }, [peerConnection])
 
@@ -102,10 +106,10 @@ function useChatConnection(peerConnection: RTCPeerConnection){
         socket?.on('send_connection_offer', handleConnectionOffer)
         socket?.on('send_candidate', handleReceiveCandidate);
         return () => {
-            socket?.off('another_person_ready', sendOffer)
-            socket?.off('send_connection_offer', handleConnectionOffer)
-            socket?.off('answer', handleOfferAnswer)
-            socket?.off('send_candidate', handleReceiveCandidate)
+            socket?.off('another_person_ready')
+            socket?.off('send_connection_offer')
+            socket?.off('answer')
+            socket?.off('send_candidate')
         }
     }, [roomName, handleConnection, handleConnectionOffer, handleOfferAnswer, sendOffer]) 
 }
@@ -121,7 +125,8 @@ function usePeerConnection(localStream: MediaStream, setGuestStream: (media: Med
 
         connection.addEventListener('icecandidate', ({candidate}) => {
             console.log(candidate);
-            socket?.emit('send_candidate', {candidate, roomName})
+            if (candidate)
+                socket?.emit('send_candidate', {candidate, roomName})
         })
 
         connection.addEventListener('track', ({streams}) => {

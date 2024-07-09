@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { ILoginInForm } from "../../Interfaces";
 import Axios from "../../tools/Caller";
 import { cookieMan } from "../../tools/CookieMan";
@@ -11,8 +11,6 @@ import { Box, Button, Flex, Icon, Input, Link, Spinner, Stack, Text } from "@cha
 const Login = (props:{
     handleAccess: (newAccess: string) => void}) =>
 {
-	const navigate = useNavigate();
-	const location = useLocation();
     const { register, handleSubmit } = useForm<ILoginInForm>();
 	const [wrong, setWrong] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
@@ -42,8 +40,6 @@ const Login = (props:{
                     updateGpsFixed(response.data.gpsfixed);
                     props.handleAccess(response.data.access_token);
                     updateLog(true);
-					const from = (location.state as any)?.from || "/";
-					navigate(from);
 				}
 				else
 				{

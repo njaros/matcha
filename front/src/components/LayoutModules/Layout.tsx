@@ -6,10 +6,7 @@ import { storeSocket } from "../../tools/Stores";
 import { useEffect } from "react";
 //Ici qu'il faudra mettre les modules du genre pop-ups qui doivent pop de n importe ou
 
-const Layout = (props: {
-    logged: boolean,
-    handleLog: (newState: boolean) => void,
-    handleAccess: (newAccess: string) => void}) =>
+const Layout = (props: {handleAccess: (newAccess: string) => void}) =>
 {
     return (
         <Box
@@ -23,7 +20,7 @@ const Layout = (props: {
                 textColor={'black'}
                 >
             <Outlet />
-            <Footer logged={props.logged} handleLog={props.handleLog} handleAccess={props.handleAccess} />
+            <Footer handleAccess={props.handleAccess} />
         </Box>
     )
 }

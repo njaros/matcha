@@ -195,10 +195,6 @@ function App() {
 			clearTimeout(timeIdTmp);
 		}
 	}, [access, log])
-
-	const handleLog = (newState: boolean) => {
-		updateLog(newState);
-	}
 	
 	const handleAccess = (newAccess: string) => {
 		setAccess(newAccess);
@@ -217,7 +213,7 @@ function App() {
 			>
 			<BrowserRouter>
 				<Routes>
-					<Route element={ <Layout logged={log} handleLog={handleLog} handleAccess={handleAccess} /> }>
+					<Route element={ <Layout handleAccess={handleAccess} /> }>
 						<Route path="/login" element={ log ? <Navigate to="/" /> : (<Login handleAccess={handleAccess} />) } />
 						<Route path="/signUp" element={ log ? <Navigate to="/" /> : (<Signup />) } />
 						<Route path="/forgot" element={ log ? <Navigate to="/" /> : (<Forgot />) } />

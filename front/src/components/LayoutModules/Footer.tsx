@@ -1,13 +1,10 @@
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { storeGps, storeTimeout, storeDisplayNavBool, storeMsgCount, storeRoomList, storeRoomInfo, storeSocket, storeLog } from "../../tools/Stores";
-import { cookieMan } from "../../tools/CookieMan";
 import { As, Box, Icon, Text } from "@chakra-ui/react"
 import { MdFavorite, MdHome, MdSettings } from "react-icons/md"
 import { TbMessage, TbMessage2Heart } from "react-icons/tb";
-import { ImExit } from "react-icons/im"
 import { useEffect, useState } from "react";
 import Notification from "./Notification";
-import { getToken } from "../../tools/TokenReader";
 
 const headerTextSize = {base: "14px", sm: "16px", md: "19px", lg: "22px", xl: "25px"}
 const headerIconSize = {base: 8, sm: 10, md: 12, lg: 14, xl: 16}
@@ -34,23 +31,15 @@ const IconNavBar = ({url, icon, boxSize, isTarget}: IIconNavBar) => {
         </NavLink>
     )
 }
-const Footer = (props: {
-    logged: boolean,
-    handleLog: (newState: boolean) => void,
-    handleAccess: (newAccess: string) => void}) =>
+const Footer = (props: {handleAccess: (newAccess: string) => void}) =>
 {
-    const { refreshTokenTimeoutId, updateRefreshTimeout } = storeTimeout();
-    const navigate = useNavigate();
     const location = useLocation();
     const { gps, updateGps } = storeGps();
-    const [ logoutClicked, setLogoutClicked] = useState<boolean>(false);
-    const DisplayNavBool = storeDisplayNavBool(state => state.DisplayNavBool)
     const msgCount = storeMsgCount(state => state.msgCount)
     const roomList = storeRoomList(state => state.roomList)
     const [msgBool, setMsgBool] = useState<boolean>(false)
     const room = storeRoomInfo(state => state.roomInfo)
     const log = storeLog(state => state.log);
-    const { socket, updateSocket } = storeSocket();
 
     function success(pos: GeolocationPosition) {
         var crd = pos.coords;

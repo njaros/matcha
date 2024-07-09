@@ -28,7 +28,7 @@ def join_video_chat_room(roomName):
 
     if number_of_people_in_room == 1:
         app.logger.debug("FROM number of people in room")
-        emit("another_person_ready", room=f"video-room-{room_id}")
+        emit("another_person_ready", room=f"video-room-{room_id}", skip_sid=request.sid)
 
     join_room(f"video-room-{room_id}")
     app.logger.debug("FROM JOIN VIDEO CHAT ROOM")
@@ -59,7 +59,7 @@ def answer(data):
     answer = data.get("answer")
     roomName = data.get("roomName")
     emit(
-        "send_connection_offer",
+        "answer",
         {"answer": answer, "roomName": roomName},
         room=f"video-room-{roomName}",
         skip_sid=request.sid,
@@ -71,6 +71,7 @@ def answer(data):
 def send_candidate(data):
     candidate = data.get("candidate")
     roomName = data.get("roomName")
+    app.logger.info(f"{candidate=}")
     emit(
         "send_candidate",
         {"candidate": candidate, "roomName": roomName},
