@@ -5,6 +5,7 @@ import { RiDeleteBin5Fill } from "react-icons/ri";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { storeSocket } from "../../tools/Stores";
 import { useNavigate } from "react-router-dom";
+import { IoIosNotifications } from "react-icons/io";
 
 
 const bodySize = {base: "160px", sm: "200px", md: "280px", lg: "320px", xl: "400px"}
@@ -23,7 +24,6 @@ export default function Notification() {
 
     useEffect(() => {
         if (socket) {
-
             socket.on("liked", (data: any) => {
                 setNotifList((list) => [...list, {
                     content: "You got a new like !",
@@ -205,12 +205,11 @@ export default function Notification() {
                         onClose={onClose}
             >
                 <PopoverTrigger>
-                    <Button onClick={openPopover}>
-                        <Icon as={nbNews == 0 ?
-                            MdOutlineNotifications :
-                            MdOutlineNotificationsActive}
-                        />
-                    </Button>
+                    <Icon onClick={openPopover}
+                        as={nbNews == 0 ?
+                        MdOutlineNotifications :
+                        MdOutlineNotificationsActive}
+                    />
                 </PopoverTrigger>
                 <PopoverContent fontSize={textSize}
                                 borderRadius={"20px"}

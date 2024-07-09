@@ -214,11 +214,11 @@ function App() {
 			>
 			<BrowserRouter>
 				<Routes>
-					<Route element={ <Layout logged={log} handleLog={handleLog} handleAccess={handleAccess} /> }>
-						<Route path="/login" element={ logged ? <Navigate to="/" /> : (<Login handleLog={handleLog} handleAccess={handleAccess} />) } />
-						<Route path="/signUp" element={ logged ? <Navigate to="/" /> : (<Signup />) } />
-						<Route path="/forgot" element={ logged ? <Navigate to="/" /> : (<Forgot />) } />
-						<Route element={ logged ? <Outlet /> : <Navigate to="/login" /> } >
+					<Route element={ <Layout logged={logged} handleLog={handleLog} handleAccess={handleAccess} /> }>
+						<Route path="/login" element={ getToken() !== "" ? <Navigate to="/" /> : (<Login handleAccess={handleAccess} />) } />
+						<Route path="/signUp" element={ getToken() !== "" ? <Navigate to="/" /> : (<Signup />) } />
+						<Route path="/forgot" element={ getToken() !== "" ? <Navigate to="/" /> : (<Forgot />) } />
+						<Route element={ getToken() !== "" ? <Outlet /> : <Navigate to="/login" /> } >
 							<Route path="/" element={ <Swipe/> } />
 							<Route path="/settings" element={ <Outlet />}>
 								<Route path="/settings/" element={ <Settings /> } />

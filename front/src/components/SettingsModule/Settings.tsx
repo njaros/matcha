@@ -9,20 +9,36 @@ import { RiSpyFill } from "react-icons/ri";
 import { GiHouseKeys } from "react-icons/gi";
 import { GiLoveLetter } from "react-icons/gi";
 import { IconType } from "react-icons";
+import { ImExit } from "react-icons/im"
+import { storeSocket, storeTimeout } from "../../tools/Stores";
+import { cookieMan } from "../../tools/CookieMan";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { getToken } from "../../tools/TokenReader";
+
 
 const settingFontSize = { base: '16px', sm: '18px', md: '20px', lg: '22px', xl: '24px' };
 
 const Settings = () => {
 
-    function NavLinkSettings(props: {path: string, name: string}) {
-        return (
-        <Flex   w="100%" fontSize={'lg'} /*margin="4% 0"*/>
-            <NavLink    to={props.path}>
-                <Text>{props.name}</Text>
-            </NavLink>
-        </Flex>
-        )
-    }
+    const { refreshTokenTimeoutId, updateRefreshTimeout } = storeTimeout();
+    const { socket, updateSocket } = storeSocket();
+    const navigate = useNavigate();
+    const [ logoutClicked, setLogoutClicked] = useState<boolean>(false);
+
+    const logout = () => {
+        if (refreshTokenTimeoutId != undefined)
+        {
+            clearTimeout(refreshTokenTimeoutId);
+            updateRefreshTimeout(undefined);
+        }
+        if (socket) {
+            socket.disconnect();
+            updateSocket(null);
+        }
+        setLogoutClicked(!logoutClicked);
+        cookieMan.eraseCookie('token');
+	}
 
     function SettingElement(props: {path: string, name: string, desc: string, icon: IconType})
     {
@@ -31,7 +47,7 @@ const Settings = () => {
                 padding={'10px 10px'} 
                 alignItems={'center'}
                 >
-                <NavLink    to={props.path}>
+                <NavLink to={props.path}>
                     <Flex>
                         <Icon 
                                 as={props.icon}
@@ -39,7 +55,10 @@ const Settings = () => {
                                 color={'#A659EC'}
                                 />
                         <Box paddingLeft={'10px'} >
-                            <Flex   w="100%" fontSize={'lg'} /*margin="4% 0"*/>
+                            <Flex   
+                                w="100%" 
+                                fontSize={'lg'}
+                            >
                                 <Text>{props.name}</Text>
                             </Flex>
                             <Text 
@@ -51,6 +70,40 @@ const Settings = () => {
                         </Box>
                     </Flex>
                 </NavLink>
+            </Flex>
+        )
+    }
+
+    function LogoutElement(){
+        return (
+            <Flex
+                padding={'10px 10px'} 
+                alignItems={'center'}
+                bgColor={"#edf2f7"}
+                borderRadius='20px'
+                onClick={logout}
+            >
+                <Flex >
+                    <Icon 
+                        as={ImExit}
+                        boxSize={'40px'}
+                        color={'#A659EC'}
+                    />
+                    <Box paddingLeft={'10px'} >
+                        <Flex 
+                            w="100%" 
+                            fontSize={'lg'}
+                        >
+                            <Text>Log out</Text>
+                        </Flex>
+                        <Text 
+                            fontSize={'small'}
+                            opacity={'70%'}
+                        >
+                            disconnect from matcha
+                        </Text>
+                    </Box>
+                </Flex>
             </Flex>
         )
     }
@@ -129,6 +182,7 @@ const Settings = () => {
                         desc="See all the users who visit your profile"
                         icon={RiSpyFill}/>
                 </Flex>
+                <LogoutElement/>
             </Stack>
         </Flex>
     )
