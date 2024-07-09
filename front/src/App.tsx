@@ -27,6 +27,7 @@ import { useLocalCameraStream } from "./components/ConversationModule/Call";
 import Forgot from "./components/LoginModule/Forgot";
 import ChangePassword from "./components/SettingsModule/ChangePassword";
 import LikerList from "./components/SettingsModule/UserLists/LikerList";
+import NoMatch from "./components/NoMatch";
 
 function App() {
 
@@ -237,6 +238,7 @@ function App() {
 							<Route path="/chatbox" element={ <Chatbox />} />
 							<Route path="/chatbox/call/:roomName" element={ <VoiceChat />} />
 						</Route>
+						<Route path="*" element={ <NoMatch /> } />
 					</Route>
 				</Routes>
 			</BrowserRouter>

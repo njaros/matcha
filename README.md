@@ -24,9 +24,4 @@ dating web site 42 project
 # TODO-UI
 
 - swipe
-- les listes
 - en vrai le plein ecran osef tant que c'est utilisable ? Argument : projet de 100 heures
-
-# TODO-SOCKET
-
-- mettre via le .env l'adresse du serv pour socketio

@@ -114,7 +114,6 @@ const Swipe = () => {
         setLoading(true);
         Axios.post("/swipe/get_swipe_list", {...filter, sort: sort}).then(
             response => {
-                console.log(response);
                 const newSwipeList = [];
                 for (let i = 0; i < response.data.length; ++i)
                     newSwipeList.push(response.data[i].id);
@@ -158,29 +157,23 @@ const Swipe = () => {
             })
     }, [swipeList, index])
 
-    const handleSort = (e: any) => {
-        if (e.target.value == sort)
-            setSort("none")
+    const handleSort = (sortBy: string) => {
+        if (sortBy == sort)
+            setSort("none");
         else
-            setSort(e.target.value)
+            setSort(sortBy);
     }
 
     function incrementIndex() {
         if (index >= swipeList.length - 1)
-        {
             get_swipe_list();
-        }
         else
-        {
             setIndex(idx => idx + 1);
-        }
     }
 
     const likeHandler = (e: any) => {
         Axios.post("swipe/like_user", {"target_id": e.currentTarget.value}).then(
-            response => {
-                console.log(response);
-            }
+            () => {}
         ).catch(
             err => {
                 console.warn(err);
@@ -192,9 +185,7 @@ const Swipe = () => {
 
     const dislikeHandler = (e: any) => {
         Axios.post("swipe/dislike_user", {"target_id": e.currentTarget.value}).then(
-            response => {
-                console.log(response);
-            }
+            () => {}
         ).catch(
             err => {
                 console.warn(err);
@@ -213,29 +204,25 @@ const Swipe = () => {
                 margin="5% 0"
                 justifyContent={"space-evenly"}>
             <Button colorScheme={sort == "age" ? "purple_palet": "gray"}
-                    value={"age"}
-                    onClick={handleSort}>
+                    onClick={() => handleSort("age")}>
                     <Text fontSize={fontSizeButton}>
                         Age
                     </Text>
             </Button>
             <Button colorScheme={sort == "distance" ? "purple_palet": "gray"}
-                    value={"distance"}
-                    onClick={handleSort}>
+                    onClick={() => handleSort("distance")}>
                     <Text fontSize={fontSizeButton}>
                         Nearest
                     </Text>
             </Button>
             <Button colorScheme={sort == "rank" ? "purple_palet": "gray"}
-                    value={"rank"}
-                    onClick={handleSort}>
+                    onClick={() => handleSort("rank")}>
                     <Text fontSize={fontSizeButton}>
                         Rank
                     </Text>
             </Button>
             <Button colorScheme={sort == "tags" ? "purple_palet": "gray"}
-                    value={"tags"}
-                    onClick={handleSort}>
+                    onClick={() => handleSort("tags")}>
                     <Text fontSize={fontSizeButton}>
                         Tags
                     </Text>
