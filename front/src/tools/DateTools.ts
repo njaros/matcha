@@ -39,23 +39,23 @@ function timeEllapsedStringFormatFromSec(secEllapsed: number): string
 
     const yEllapsed = Math.floor(secEllapsed/yMs);
     if (yEllapsed > 0)
-        return msg + yEllapsed + " years";
+        return msg + yEllapsed + " y";
     const mEllapsed = Math.floor(secEllapsed/mMs);
     if (mEllapsed > 0)
-        return msg + mEllapsed + " months";
+        return msg + mEllapsed + " mon";
     const dEllapsed = Math.floor(secEllapsed/dMs);
     if (dEllapsed > 0)
-        return msg + dEllapsed + " days";
+        return msg + dEllapsed + " d";
     const hEllapsed = Math.floor(secEllapsed/hMs);
     if (hEllapsed > 0)
-        return msg + hEllapsed + " hours";
+        return msg + hEllapsed + " h";
     const minEllapsed = Math.floor(secEllapsed/minMs);
     if (minEllapsed > 0)
-        return msg + minEllapsed + " minutes";
+        return msg + minEllapsed + " min";
     const sEllapsed = Math.floor(secEllapsed/sMs);
     if (sEllapsed > 0)
-        return msg + sEllapsed + " seconds";
-    return msg + 0 + " second";
+        return msg + sEllapsed + " sec";
+    return msg + 0 + " sec";
 }
 
 /**

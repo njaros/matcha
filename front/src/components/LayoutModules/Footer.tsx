@@ -44,10 +44,6 @@ const Footer = (props: {handleAccess: (newAccess: string) => void}) =>
 
     function success(pos: GeolocationPosition) {
         var crd = pos.coords;
-        console.log("your current position is: ");
-        console.log(`Latitude : ${crd.latitude}`);
-        console.log(`Longitude : ${crd.longitude}`);
-        console.log(`More or less ${crd.accuracy} meters.`);
         updateGps(crd);
     }
 
