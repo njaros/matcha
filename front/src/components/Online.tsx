@@ -77,7 +77,7 @@ export default function Online(props: {id: string, online: boolean, lastConnecti
             >
                 {
                     connected ? "connected" :
-                    DateTools.timeEllapsedStringFormatFromSec(secEllapsed)
+                    "Zzz... " + DateTools.timeEllapsedStringFormatFromSec(secEllapsed)
                 }
             </Text>
         </Flex>

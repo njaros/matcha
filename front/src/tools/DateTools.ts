@@ -29,7 +29,6 @@ function ageFromDate(date: string): number
  */
 function timeEllapsedStringFormatFromSec(secEllapsed: number): string
 {
-    let msg = "last connection: "
     const sMs = 1;
     const minMs = 60 * sMs;
     const hMs = 60 * minMs;
@@ -39,23 +38,23 @@ function timeEllapsedStringFormatFromSec(secEllapsed: number): string
 
     const yEllapsed = Math.floor(secEllapsed/yMs);
     if (yEllapsed > 0)
-        return msg + yEllapsed + " y";
+        return yEllapsed.toString() + " y";
     const mEllapsed = Math.floor(secEllapsed/mMs);
     if (mEllapsed > 0)
-        return msg + mEllapsed + " mon";
+        return mEllapsed.toString() + " mon";
     const dEllapsed = Math.floor(secEllapsed/dMs);
     if (dEllapsed > 0)
-        return msg + dEllapsed + " d";
+        return dEllapsed.toString() + " d";
     const hEllapsed = Math.floor(secEllapsed/hMs);
     if (hEllapsed > 0)
-        return msg + hEllapsed + " h";
+        return hEllapsed.toString() + " h";
     const minEllapsed = Math.floor(secEllapsed/minMs);
     if (minEllapsed > 0)
-        return msg + minEllapsed + " min";
+        return minEllapsed.toString() + " min";
     const sEllapsed = Math.floor(secEllapsed/sMs);
     if (sEllapsed > 0)
-        return msg + sEllapsed + " sec";
-    return msg + 0 + " sec";
+        return sEllapsed.toString() + " sec";
+    return "0 sec";
 }
 
 /**

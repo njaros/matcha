@@ -50,10 +50,9 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
                 navigate('/chatbox')
             }}
         >
-            <Avatar src={props.me?.id === props.conv.user_1.user_id ? props.conv.user_2?.photo : props.conv?.user_1?.photo}/>
+            <Avatar w="13.4%" src={props.me?.id === props.conv.user_1.user_id ? props.conv.user_2?.photo : props.conv?.user_1?.photo}/>
             <Box
-                flex={1}
-    
+                w="35%"
                 marginLeft={'10px'}
                 textOverflow="ellipsis" 
                 overflow="hidden" 
@@ -77,7 +76,7 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
                 </Text>
             </Box>
             <OnlineChat id={props.me?.id == props.conv.user_1.user_id ? props.conv.user_2.user_id : props.conv.user_1.user_id} />
-            <Box margin={15} position="relative">
+            <Box w="8%" margin={15} position="relative">
                 <Box
                     width={6} 
                     height={6}

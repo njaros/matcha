@@ -71,22 +71,28 @@ export default function OnlineChat(props: {id: string}) {
     }, [socket, intervalId]);
 
     return (
-        <Flex   className="OnlineChatInitFetch">
+        <Flex   className="OnlineChatInitFetch"
+                w="35%">
             {loading? <Spinner justifySelf="center" color="purple" size="md"/>:
             <Flex   className="OnlineChat"
                     margin="3% 3%"
                     alignItems={"center"}
             >
                 <Icon as={FaCircle} color={connected ? "green" : "red"} />
-                <Text   marginLeft={"4%"}
+                <Flex   marginLeft={connected? "10%" : "35%"}
                         fontSize={fontSizeTime}
                         fontWeight={"bold"}
                 >
                     {
                         connected ? "connected" :
-                        DateTools.timeEllapsedStringFormatFromSec(secEllapsed)
+                        <Flex flexDirection={"column"}>
+                            <Text>Zzz...</Text>
+                            <Text alignSelf={"center"} whiteSpace={"nowrap"}>
+                                {DateTools.timeEllapsedStringFormatFromSec(secEllapsed)}
+                            </Text>
+                        </Flex>
                     }
-                </Text>
+                </Flex>
             </Flex>
             }
         </Flex>

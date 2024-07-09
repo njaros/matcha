@@ -236,7 +236,34 @@ export default function OtherProfile()
 
     return (
     <Box flex={1} w="100%" display={"flex"} flexDirection={"column"} justifyContent={"flex-end"} alignItems={"center"}>
-        {loading ? <Spinner margin="60% 0" size={"xl"} borderWidth={"5px"} color="blue.500" justifySelf={"center"} alignSelf={"center"}/> : user != undefined ?
+        <Flex 
+            flexDirection={'row'}
+            placeSelf={'self-start'}
+            paddingLeft={'15px'}
+            marginTop={'15px'}
+        >
+            <Box 
+                alignSelf={'center'}
+            >
+                <ReturnButton to={-1}/>
+            </Box>
+             <Text
+                fontSize={'xx-large'}
+                alignSelf={'center'}
+                margin={'0px 5px'}
+                fontWeight={'bold'}
+                paddingLeft={'5px'}
+            >
+                {
+                    loading ? <Spinner color="blue.500" /> :
+                    user?.love && user.loved ? "Match profile" :
+                    user?.love ? "Liker profile" :
+                    user?.loved ? "Liked profile" :
+                    "Other profile"
+                }
+            </Text>
+        </Flex>
+        {loading ? <Spinner flex={1} margin="60% 0" size={"xl"} borderWidth={"5px"} color="blue.500" justifySelf={"center"} alignSelf={"center"}/> : user != undefined ?
             <Box    className="DisplayProfile"
                     display="flex"
                     width="80%"
@@ -250,23 +277,6 @@ export default function OtherProfile()
                     flexDirection="column"
                     overflowY="auto"
                     ref={userInfoRef}>
-                <Box    display="flex"
-                        flexDirection="row"
-                        margin="2% 5% 2% 5%"
-                        justifyContent="space-between"
-                        alignContent="center"
-                        hidden={!user.love}
-                        ref={loveRef}>
-                    <Icon color="gold" boxSize={8} as={BsStars}/>
-                    <Text   color="hsl(324, 70%, 45%)"
-                            animation="wheelHueColor 10s infinite"
-                            fontWeight="bold"
-                            fontSize={fontSizeLove}
-                            >
-                        This person likes you !
-                    </Text>
-                    <Icon color="gold" boxSize={8} as={BsStars}/>
-                </Box>
                 <PhotosBrowser/>
                 <Box    bgColor="gray"
                         opacity="60%"     
@@ -309,16 +319,5 @@ export default function OtherProfile()
                 </Box>
             </Box> :
             <Text>Nothing to display</Text>}
-            <Button
-                borderRadius={'100%'}
-                padding={'0'}
-                size={'sm'}
-                bgColor={'#edf2f'}
-                onClick={() => {
-                    navigate(-1)
-                }}
-            >
-                <Icon as={IoChevronBack}/>
-            </Button>
         </Box>)
 }
