@@ -107,24 +107,24 @@ const Footer = (props: {
     return (
 
         <Box
-        hidden={hidesOnRoute}
-        className="iconUserLogged"
-        display="flex"
-        width={'60%'}
-        backgroundColor={'#212328'}
-        borderRadius={'40px'}
-        flexDirection="row"
-        justifyContent="space-evenly"
-        alignItems={'center'}
-        marginBottom={'10px'}
-        padding={'0 10px '}
+            hidden={hidesOnRoute}
+            className="iconUserLogged"
+            display="flex"
+            width={'60%'}
+            backgroundColor={'#212328'}
+            borderRadius={'40px'}
+            flexDirection="row"
+            justifyContent="space-evenly"
+            alignItems={'center'}
+            marginBottom={'10px'}
+            padding={'0 10px '}
         >
         { getToken() !== "" &&
         <>
             <IconNavBar url="/" icon={MdFavorite} boxSize={headerIconSize} isTarget={isTarget("/", location.pathname)} />
             <IconNavBar url="/channel" icon={msgBool === false ? TbMessage : TbMessage2Heart} boxSize={headerIconSize} isTarget={isTarget("/channel", location.pathname)} />
             <IconNavBar url="/settings" icon={MdSettings} boxSize={headerIconSize} isTarget={isTargetSettings(location.pathname)} />
-            <Notification />
+            <Notification/>
         </>
         }
     </Box>
