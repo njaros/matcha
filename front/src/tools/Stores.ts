@@ -1,10 +1,9 @@
 import { Socket, io } from "socket.io-client";
 import { create } from "zustand";
 import { Room, Me, RoomList, MessageData, msgCount, Room_info } from "./interface";
-import { LatLng } from "leaflet";
 import { ISwipeFilter } from "../Interfaces"
 import { DateTools } from "./DateTools";
-import { getToken } from "./TokenReader";
+import { isLogged } from "./TokenReader";
 
 
 interface ILog {
@@ -76,8 +75,11 @@ interface ImsgCount {
 }
 
 export const storeLog = create<ILog>()((set) => ({
-	log: getToken() != "",
-	updateLog: (newLog: boolean) => set({log: newLog})
+	log: isLogged(),
+	updateLog: (newLog: boolean) => {
+		console.log("change log state: ", newLog);
+		set({log: newLog})
+	}
 }))
 
 export const storeRoomInfo = create<IstoreRoomInfo>()((set) => ({

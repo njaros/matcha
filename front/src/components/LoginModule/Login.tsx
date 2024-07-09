@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { ILoginInForm } from "../../Interfaces";
 import Axios from "../../tools/Caller";
 import { cookieMan } from "../../tools/CookieMan";
@@ -18,6 +18,7 @@ const Login = (props:{
     const { fixed, updateGpsFixed } = storeGps();
     const [ errorMsg, setErrorMessage ] = useState<string>("");
     const { log, updateLog } = storeLog();
+    const navigate = useNavigate();
 
 	const loginSubmit = (data: ILoginInForm) => {
         setLoading(true);
@@ -27,25 +28,16 @@ const Login = (props:{
             data.longitude = gps.longitude;
         }
 		Axios.post("login", data, {withCredentials: true})
-			.then(response => {
-				console.log(response);
-				if (response.status == 200)
-				{
-					cookieMan.addCookie('token', response.data.access_token);
-                    console.log(response.data);
-                    updateGpsLatLng({
-                        latitude: response.data.latitude,
-                        longitude: response.data.longitude
-                    });
-                    updateGpsFixed(response.data.gpsfixed);
-                    props.handleAccess(response.data.access_token);
-                    updateLog(true);
-				}
-				else
-				{
-                    console.log(response)
-					setWrong(true);
-				}
+        .then(response => {
+            cookieMan.addCookie('token', response.data.access_token);
+            updateGpsLatLng({
+                latitude: response.data.latitude,
+                longitude: response.data.longitude
+            });
+            updateGpsFixed(response.data.gpsfixed);
+            props.handleAccess(response.data.access_token);
+            updateLog(true);
+            navigate('/');
         })
         .catch(error => {
             console.warn(error)
@@ -61,7 +53,7 @@ const Login = (props:{
                 }
             }
             else
-                setErrorMessage("Unhandled error")
+                setErrorMessage("Unhandled error");
             setWrong(true);
         })
         .finally(() => {
@@ -77,8 +69,6 @@ const Login = (props:{
         w={'100%'}
         h={'100%'}
         className="login_page"
-
-        
     >
         <Flex         
             flexDirection="column"        
@@ -98,8 +88,7 @@ const Login = (props:{
             </Text>
             <form className="login_form" onSubmit={handleSubmit(loginSubmit)}>
                 <Flex
-                    flexDirection="column" 
-                    
+                    flexDirection="column"
                 >
                     <Stack spacing={1}>
                         <Box paddingBottom={'5px'}>

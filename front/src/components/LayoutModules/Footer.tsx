@@ -5,6 +5,7 @@ import { MdFavorite, MdHome, MdSettings } from "react-icons/md"
 import { TbMessage, TbMessage2Heart } from "react-icons/tb";
 import { useEffect, useState } from "react";
 import Notification from "./Notification";
+import { isLogged } from "../../tools/TokenReader";
 
 const headerTextSize = {base: "14px", sm: "16px", md: "19px", lg: "22px", xl: "25px"}
 const headerIconSize = {base: 8, sm: 10, md: 12, lg: 14, xl: 16}
@@ -108,7 +109,7 @@ const Footer = (props: {handleAccess: (newAccess: string) => void}) =>
         marginBottom={'10px'}
         padding={'0 10px '}
         >
-        { log &&
+        { isLogged() &&
         <>
             <IconNavBar url="/" icon={MdFavorite} boxSize={headerIconSize} isTarget={isTarget("/", location.pathname)} />
             <IconNavBar url="/channel" icon={msgBool === false ? TbMessage : TbMessage2Heart} boxSize={headerIconSize} isTarget={isTarget("/channel", location.pathname)} />

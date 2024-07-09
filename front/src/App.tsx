@@ -19,7 +19,7 @@ import Swipe from "./components/SwipeModule/Swipe";
 import Axios from "./tools/Caller";
 import { cookieMan } from "./tools/CookieMan";
 import { storeLog, storeMe, storeMsgCount, storeRoomList, storeSocket, storeTimeout } from "./tools/Stores";
-import { getToken, tokenReader } from "./tools/TokenReader";
+import { getToken, isLogged, tokenReader } from "./tools/TokenReader";
 import ChannelList from "./components/ConversationModule/channel";
 import Chatbox from "./components/ConversationModule/Chatbox";
 import VoiceChat from "./components/ConversationModule/Call";
@@ -67,12 +67,14 @@ function App() {
     }, [socket])
 
 	useEffect(() => {
-		roomList?.forEach(elt => {
-			get_unread_msg_count(elt.id)			
-		});
+		if (log)
+		{
+			roomList?.forEach(elt => {
+				get_unread_msg_count(elt.id)			
+			});
+		}
 	})
 
-	
 	useEffect(() => {
 		if (log)
 		{
@@ -185,12 +187,7 @@ function App() {
 				updateLog(false);
 			}
 		}
-		else
-		{	
-			updateLog(false);
-			console.log("no token");
-		}
-		
+
 		return () => {
 			clearTimeout(timeIdTmp);
 		}
