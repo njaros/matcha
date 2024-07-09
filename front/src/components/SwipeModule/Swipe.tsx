@@ -173,9 +173,7 @@ const Swipe = () => {
 
     const likeHandler = (e: any) => {
         Axios.post("swipe/like_user", {"target_id": e.currentTarget.value}).then(
-            response => {
-                console.log(response);
-            }
+            () => {}
         ).catch(
             err => {
                 console.warn(err);
@@ -187,9 +185,7 @@ const Swipe = () => {
 
     const dislikeHandler = (e: any) => {
         Axios.post("swipe/dislike_user", {"target_id": e.currentTarget.value}).then(
-            response => {
-                console.log(response);
-            }
+            () => {}
         ).catch(
             err => {
                 console.warn(err);
