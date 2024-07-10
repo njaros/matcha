@@ -25,3 +25,7 @@ dating web site 42 project
 
 - swipe
 - en vrai le plein ecran osef tant que c'est utilisable ? Argument : projet de 100 heures
+
+# TODO-SOCKETS-CONNECTED
+
+- bug socket connected/disconnected lorsque plusieurs personnes sont vu en meme temps (superposition de listener)

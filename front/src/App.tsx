@@ -94,7 +94,7 @@ function App() {
 	
 	useEffect(() => {
 		const ip = process.env.HOST_URL;
-		if (log && ip){
+		if (log && ip && !socket){
 			getUserId()
 			if (!userId || userId.length <= 0)
 				return

@@ -42,21 +42,17 @@ export default function OnlineChat(props: {id: string}) {
     useEffect(() => {
 
         if (socket) {
-            socket.on("connected", (data: any) => {
-                if (props.id == data.id) {
-                    setConnected(val => !val);
-                    if (intervalId)
-                        clearInterval(intervalId);
-                    setIntervalId(null);
-                }
+            socket.on("connected-" + props.id, () => {
+                setConnected(val => !val);
+                if (intervalId)
+                    clearInterval(intervalId);
+                setIntervalId(null);
             })
 
-            socket.on("disconnected", (data: any) => {
-                if (props.id == data.id) {
-                    setConnected(val => !val);
-                    setSecEllapsed(0);
-                    setIntervalId(setInterval(() => setSecEllapsed((nb) => nb + 1), 1000));
-                }
+            socket.on("disconnected-" + props.id, () => {
+                setConnected(val => !val);
+                setSecEllapsed(0);
+                setIntervalId(setInterval(() => setSecEllapsed((nb) => nb + 1), 1000));
             })
         }
 
@@ -64,8 +60,8 @@ export default function OnlineChat(props: {id: string}) {
             if (intervalId)
                 clearInterval(intervalId);
             if (socket) {
-                socket.off("connected");
-                socket.off("disconnected");
+                socket.off("connected-" + props.id);
+                socket.off("disconnected-" + props.id);
             }
         })
     }, [socket, intervalId]);
@@ -83,6 +79,7 @@ export default function OnlineChat(props: {id: string}) {
                         fontSize={fontSizeTime}
                         fontWeight={"bold"}
                 >
+                    <Flex>
                     {
                         connected ? "connected" :
                         <Flex flexDirection={"column"}>
@@ -92,6 +89,7 @@ export default function OnlineChat(props: {id: string}) {
                             </Text>
                         </Flex>
                     }
+                    </Flex>
                 </Flex>
             </Flex>
             }

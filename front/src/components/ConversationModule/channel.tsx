@@ -50,7 +50,7 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
                 navigate('/chatbox')
             }}
         >
-            <Avatar w="13.4%" src={props.me?.id === props.conv.user_1.user_id ? props.conv.user_2?.photo : props.conv?.user_1?.photo}/>
+            <Avatar src={props.me?.id === props.conv.user_1.user_id ? props.conv.user_2?.photo : props.conv?.user_1?.photo}/>
             <Box
                 w="35%"
                 marginLeft={'10px'}
