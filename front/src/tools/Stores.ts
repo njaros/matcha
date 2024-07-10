@@ -86,10 +86,7 @@ export const storeMutedBool = create<IMutedBool>()((set) => ({
 
 export const storeLog = create<ILog>()((set) => ({
 	log: isLogged(),
-	updateLog: (newLog: boolean) => {
-		console.log("change log state: ", newLog);
-		set({log: newLog})
-	}
+	updateLog: (newLog: boolean) => set({log: newLog})
 }))
 
 export const storeRoomInfo = create<IstoreRoomInfo>()((set) => ({
