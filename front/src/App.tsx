@@ -116,7 +116,6 @@ function App() {
 		Axios.get("/refresh", {withCredentials: true})
 		.then(
 			response => {
-				console.log(response);
 				switch (response.status)
 				{
 					case 200:
