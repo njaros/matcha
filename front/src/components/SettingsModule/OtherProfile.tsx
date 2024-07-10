@@ -66,7 +66,6 @@ export default function OtherProfile()
             setLoading(true)
             Axios.post("user/get_user_profile", { user_id: userParam }).then(
                 response => {
-                    console.log(response, typeof(response.data.last_connection));
                     const photos = parsePhotosFromBack(response.data.photos);
                     setNbPhotos(photos.length);
                     setUser({

@@ -10,7 +10,6 @@ export default function LikerList() {
     useEffect(() => {
         Axios.get("relationship/get_liker_not_matched").then(
             response => {
-                console.log(response);
                 let newList: IListUser[] = [];
                 response.data.map((elt: any) => {
                     newList.push({
