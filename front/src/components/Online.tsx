@@ -66,7 +66,7 @@ export default function Online(props: {id: string, online: boolean, lastConnecti
                 alignItems={"center"}
         >
             <Icon as={FaCircle} color={connected ? "green" : "red"} />
-            <Text   marginLeft={"4%"}
+            <Flex   marginLeft={"4%"}
                     fontSize={fontSizeTime}
                     fontWeight={"bold"}
                     color="white"
@@ -77,7 +77,7 @@ export default function Online(props: {id: string, online: boolean, lastConnecti
                     "Offline since " + DateTools.timeEllapsedStringFormatFromSec(secEllapsed)
                 }
                 </Flex>
-            </Text>
+            </Flex>
         </Flex>
     )
 }
