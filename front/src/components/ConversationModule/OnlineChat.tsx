@@ -53,9 +53,9 @@ export default function OnlineChat(props: {id: string}) {
     }, [socket]);
 
     return (
-        <Flex   className="OnlineChat" marginLeft={"13px"}>
+        <Flex   className="OnlineChat">
             {loading?   <Spinner justifySelf="center" color="purple" size="md"/>:
-                        <Icon as={FaCircle} color={connected ? "green" : "red"} />
+                        <Icon borderWidth={"3px"} borderRadius={"full"} borderColor={"white"} as={FaCircle} color={connected ? "green" : "red"} />
             }
         </Flex>
     )
