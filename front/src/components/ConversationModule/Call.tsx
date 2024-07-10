@@ -1,7 +1,10 @@
-import { Box, Button, Flex } from "@chakra-ui/react";
+import { Box, Button, Flex, Icon } from "@chakra-ui/react";
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from "react";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { storeSocket } from "../../tools/Stores";
+import { BsTelephoneX } from "react-icons/bs";
+
+const headerIconSize = {base: 8, sm: 10, md: 12, lg: 14, xl: 16}
 
 interface Props {
     mediaStream: MediaStream;
@@ -45,7 +48,7 @@ function useOfferSending(peerConnection: RTCPeerConnection){
             offer
         })
     }, [roomName])
-
+    
     return { sendOffer }
 }
 
@@ -165,7 +168,7 @@ function useHangup(){
 export function useLocalCameraStream(){
     const [localStream, setLocalStream] = useState<MediaStream | null>(null);
     useEffect(() => {
-        navigator.mediaDevices.getUserMedia({video: true/*, audio: true*/})
+    navigator.mediaDevices.getUserMedia({video: true/*, audio: true*/})
             .then((localStream) => {
                 setLocalStream(localStream)
             })
@@ -178,6 +181,7 @@ export function useLocalCameraStream(){
 const VideoChatRoom: React.FC<VideoChatRoomProps> = ({ localStream }) => {
     const [ guestStream, setGuestStream ] = useState<MediaStream | null>(null)
     const { peerConnection } = usePeerConnection(localStream, (media: MediaStream) => setGuestStream(media))
+    const socket = storeSocket(state => state.socket)
     const { hangup } = useHangup()
     useChatConnection(peerConnection);
 
@@ -192,27 +196,46 @@ const VideoChatRoom: React.FC<VideoChatRoomProps> = ({ localStream }) => {
         return false;
     }
 
+    useEffect(() => {
+        socket?.on("chat_disconnection", () => {
+            hangup(peerConnection, localStream)
+        })
+        return (() => {        
+            hangup(peerConnection, localStream)
+            socket?.off("chat_disconnection")
+        })
+    }, [])
+
     return (
         <>
             <Flex 
                 flexDir={'column'} 
-                bg={'red'}
+                bg={'#1F1F1F'}
+                alignItems={'center'}
+                justifyContent={'center'}
                 w={'100%'}
                 h={'100%'}
             >
-                <Box
-                    bg={'green'}
-                    h={'50%'}
-                >
-                    {logVariable(guestStream) && ( <VideoFeed mediaStream={guestStream} isMuted={true}/>)}
+                <Box>
+                    {logVariable(guestStream) && ( <VideoFeed mediaStream={guestStream} isMuted={false}/>)}
                 </Box>
-                <Box bg={'blue'} h={'50%'}>
+                <Box 
+                    position={"relative"}
+                >
                     <VideoFeed mediaStream={localStream} isMuted={true} />
-                    <Button
+                    <Icon
+                        as={BsTelephoneX}
+                        boxSize={headerIconSize}
+                        color={'white'}
+                        position={'absolute'}
                         onClick={handleHangupClick}
+                        top={'90%'}
+                        left={'50%'}
+                        transform={'translate(-50%, -50%)'}
+                
                         >
                         Hang Up
-                    </Button>
+                    </Icon>
                 </Box>
                 
                   
@@ -225,6 +248,8 @@ function VoiceChat() {
     const { localStream } = useLocalCameraStream()
     if (!localStream)
         return null
+
+
 
     return (
         <>

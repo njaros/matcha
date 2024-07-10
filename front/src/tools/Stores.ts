@@ -69,10 +69,20 @@ interface IDisplayNavBool {
 	updateDisplayNavBool: (updateDisplayNavBool: boolean) => void
 }
 
+interface IMutedBool {
+	mutedBool: boolean,
+	updateMutedBool: (updateMutedBool: boolean) => void
+}
+
 interface ImsgCount {
 	msgCount: {[room_id: string]: msgCount};
 	updateMsgCount: (room_id: string, newCount: number) => void
 }
+
+export const storeMutedBool = create<IMutedBool>()((set) => ({
+	mutedBool: false,
+	updateMutedBool: (newMutedBool: boolean) => set({mutedBool: newMutedBool})
+}))
 
 export const storeLog = create<ILog>()((set) => ({
 	log: isLogged(),
