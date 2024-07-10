@@ -94,7 +94,7 @@ function App() {
 	
 	useEffect(() => {
 		const ip = process.env.HOST_URL;
-		if (log && ip){
+		if (log && ip && !socket){
 			getUserId()
 			if (!userId || userId.length <= 0)
 				return
@@ -116,7 +116,6 @@ function App() {
 		Axios.get("/refresh", {withCredentials: true})
 		.then(
 			response => {
-				console.log(response);
 				switch (response.status)
 				{
 					case 200:

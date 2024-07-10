@@ -32,7 +32,7 @@ def handle_connection():
         user_id = str(user["id"])
         if user_sockets.get(user_id) is None:
             user_sockets[user_id] = set()
-            emit("connected", {"id": user_id}, broadcast=True)
+            emit(f"connected-{user_id}", broadcast=True)
         user_sockets[str(user["id"])].add(client_id)
     except jwt.exceptions.InvalidTokenError:
         current_app.logger.error("Invalid Authentication token")
@@ -70,7 +70,7 @@ def handle_disconnect():
             if len(user_sockets[user_id]) == 0:
                 del user_sockets[user_id]
                 reset_last_connection(user_id)
-                emit("disconnected", {"id": str(user_id)}, broadcast=True)
+                emit(f"disconnected-{str(user_id)}", broadcast=True)
     current_app.logger.info(
         f"Disconnect of socket ID: {client_sid} of the user {user_id}"
     )

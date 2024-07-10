@@ -7,6 +7,7 @@ import { storeDisplayNavBool, storeMe, storeMessageList, storeMsgCount, storeRoo
 import { Room_info } from "../../tools/interface";
 import { AxiosResponse } from "axios";
 import OnlineChat from "./OnlineChat";
+import AvatarConnected from "./AvatarConnected";
 
 
 function Conv(props: {conv: any, index: number, me: any, join_room: any, setMessageList: any}){
@@ -50,7 +51,9 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
                 navigate('/chatbox')
             }}
         >
-            <Avatar w="13.4%" src={props.me?.id === props.conv.user_1.user_id ? props.conv.user_2?.photo : props.conv?.user_1?.photo}/>
+            <AvatarConnected    id={props.me?.id == props.conv.user_1.user_id ? props.conv.user_2.user_id : props.conv.user_1.user_id}
+                                src={props.me?.id === props.conv.user_1.user_id ? props.conv.user_2?.photo : props.conv?.user_1?.photo}
+            />
             <Box
                 w="35%"
                 marginLeft={'10px'}
@@ -75,7 +78,6 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
                     }
                 </Text>
             </Box>
-            <OnlineChat id={props.me?.id == props.conv.user_1.user_id ? props.conv.user_2.user_id : props.conv.user_1.user_id} />
             <Box w="8%" margin={15} position="relative">
                 <Box
                     width={6} 
