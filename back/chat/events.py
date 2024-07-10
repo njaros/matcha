@@ -3,7 +3,6 @@ from flask import request, current_app as app, jsonify
 from flask_socketio import join_room, emit, leave_room
 from socket_app.events import connected_clients
 from chat.sql import (
-    get_room_with_message,
     increment_unread_msg_count,
     set_unread_msg_count_to_0,
     correct_room,
@@ -21,10 +20,10 @@ def join_video_chat_room(roomName):
 
     app.logger.debug("number_of_people_in_room: %d", number_of_people_in_room)
 
-    # if number_of_people_in_room >= 2:
-    #     app.logger.debug('FROM too many people')
-    #     emit('too_many_people', room=request.sid)
-    #     return
+    if number_of_people_in_room >= 2:
+        app.logger.debug('FROM too many people')
+        emit('too_many_people', room=request.sid)
+        return
 
     if number_of_people_in_room == 1:
         app.logger.debug("FROM number of people in room")
@@ -38,6 +37,7 @@ def join_video_chat_room(roomName):
 def leave_video_chat_room(roomName):
     room_id = roomName
     leave_room(f"video-room-{room_id}")
+    emit("chat_disconnection", room=f"video-room-{room_id}", skip_sid=request.sid)
     app.logger.debug("FROM LEAVE VIDEO CHAT ROOM")
 
 

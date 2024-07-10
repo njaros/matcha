@@ -12,6 +12,7 @@ dating web site 42 project
 # TODOS-CHAT
 
 - fix last message
+- fix store room
 
 # TODOS-LOGS
 
