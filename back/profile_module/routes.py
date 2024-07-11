@@ -122,7 +122,7 @@ def update_user(**kwargs):
     if kwargs["email"] is not None:
         if get_user_by_email(kwargs["email"]) is not None:
             notice = "email already token"
-            kwargs["username"] = None
+            kwargs["email"] = None
             if thingy.notNoneLen(kwargs) < 3:
                 raise BadRequestError(notice + ", nothing to modify")
     app.logger.info(kwargs)

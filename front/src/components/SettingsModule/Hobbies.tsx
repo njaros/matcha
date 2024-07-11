@@ -10,7 +10,6 @@ const Hobbies = () => {
     function get_hobbies() {
         Axios.get("profile/get_self_hobbies")
         .then(response => {
-            console.log(response);
             setHobbies(response.data);
         })
         .catch(err => {
@@ -30,7 +29,7 @@ const Hobbies = () => {
             setRerenderPls(!rerenderPls)
         })
         .catch(err => {
-            console.log(err);
+            console.warn(err);
         })
     }
 
@@ -46,7 +45,7 @@ const Hobbies = () => {
             setRerenderPls(!rerenderPls)
         })
         .catch(err => {
-            console.log(err);
+            console.warn(err);
         })
     }
 

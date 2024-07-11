@@ -8,7 +8,6 @@ dating web site 42 project
 # BUGS
 
 - a la deco de socket via socket.disconnect() en se deconnectant via le bouton, un log d'erreur apparait. rien ne semble se casser. le serveur recoit bien l'info de deco et tout se passe bien.
-je propose qu on s'en foute
 
 # STORE
 

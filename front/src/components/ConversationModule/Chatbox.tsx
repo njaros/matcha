@@ -4,7 +4,7 @@ import { decode } from 'html-entities';
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IoChevronBack, IoVideocamOutline } from "react-icons/io5";
-import { useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import Axios from "../../tools/Caller";
 import { storeMe, storeMessageList, storeMsgCount, storeRoomInfo, storeSocket } from "../../tools/Stores";
 import { MessageData } from "../../tools/interface";
@@ -144,9 +144,15 @@ function Chatbox(){
                     >
                         <Icon as={IoChevronBack} />
                     </Button>
-                    <AvatarConnected    id={me?.id === room?.user_1.user_id ? room?.user_2.user_id : room?.user_1.user_id}
-                                        src={me?.id === room?.user_1.user_id ? room?.user_2.photo : room?.user_1.photo} />
-                    <Text marginLeft={'10px'} flex={1}>{room?.name}</Text>
+                    <Flex flex={1}>
+                        <NavLink to={`/other_profile/${me?.id === room?.user_1.user_id ? room?.user_2.user_id : room?.user_1.user_id}`}>
+                            <Flex alignItems={"center"}>
+                                <AvatarConnected    id={me?.id === room?.user_1.user_id ? room?.user_2.user_id : room?.user_1.user_id}
+                                                    src={me?.id === room?.user_1.user_id ? room?.user_2.photo : room?.user_1.photo} />
+                                <Text marginLeft={'10px'}>{room?.name}</Text>
+                            </Flex>
+                        </NavLink>
+                    </Flex>
                     <Icon as={IoVideocamOutline}  marginRight={'10px'} boxSize={headerIconSize} onClick={() => navigate('/chatbox/call/' + room?.id)}>voice call</Icon>
                 </Flex>
                 <Flex
