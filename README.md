@@ -17,6 +17,8 @@ dating web site 42 project
 
 - fix last message
 - fix store room
+- mettre la conv la plus recente en haut de la liste
+
 
 # TODOS-LOGS
 

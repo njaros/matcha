@@ -1,16 +1,17 @@
 import { ArrowRightIcon } from "@chakra-ui/icons";
-import { Avatar, Button, Flex, FormControl, Icon, Input, Text, WrapItem } from "@chakra-ui/react";
+import { Button, Flex, FormControl, Icon, Input, Text, WrapItem } from "@chakra-ui/react";
 import { decode } from 'html-entities';
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
-import { IoChevronBack } from "react-icons/io5";
+import { IoChevronBack, IoVideocamOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import Axios from "../../tools/Caller";
 import { storeMe, storeMessageList, storeMsgCount, storeRoomInfo, storeSocket } from "../../tools/Stores";
 import { MessageData } from "../../tools/interface";
-import OnlineChat from "./OnlineChat";
 import AvatarConnected from "./AvatarConnected";
 
+
+const headerIconSize = {base: 10, sm: 12, md: 14, lg: 16, xl: 18}
 
 export function timeOfDay(timestampz: string | Date){
     const dateObj = new Date(timestampz)
@@ -139,7 +140,7 @@ function Chatbox(){
                     <AvatarConnected    id={me?.id === room?.user_1.user_id ? room?.user_2.user_id : room?.user_1.user_id}
                                         src={me?.id === room?.user_1.user_id ? room?.user_2.photo : room?.user_1.photo} />
                     <Text marginLeft={'10px'} flex={1}>{room?.name}</Text>
-                    <Button onClick={() => navigate('/chatbox/call/' + room?.id)}>voice call</Button>
+                    <Icon as={IoVideocamOutline}  marginRight={'10px'} boxSize={headerIconSize} onClick={() => navigate('/chatbox/call/' + room?.id)}>voice call</Icon>
                 </Flex>
                 <Flex
                     width={'100%'}

@@ -1,20 +1,17 @@
 import { Box, Flex, Icon, Stack, Text } from "@chakra-ui/react";
-import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import { IconType } from "react-icons";
 import { CgProfile } from "react-icons/cg";
-import { MdAddAPhoto } from "react-icons/md";
-import { TbFilter } from "react-icons/tb";
 import { FaRegHeart } from "react-icons/fa";
 import { FaHeartPulse } from "react-icons/fa6";
+import { GiHouseKeys, GiLoveLetter } from "react-icons/gi";
+import { ImExit } from "react-icons/im";
+import { MdAddAPhoto } from "react-icons/md";
 import { RiSpyFill } from "react-icons/ri";
-import { GiHouseKeys } from "react-icons/gi";
-import { GiLoveLetter } from "react-icons/gi";
-import { IconType } from "react-icons";
-import { ImExit } from "react-icons/im"
-import { storeLog, storeSocket, storeTimeout } from "../../tools/Stores";
+import { TbFilter } from "react-icons/tb";
+import { NavLink, useNavigate } from "react-router-dom";
 import { cookieMan } from "../../tools/CookieMan";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { getToken } from "../../tools/TokenReader";
+import { storeLog, storeSocket, storeTimeout } from "../../tools/Stores";
 
 
 const settingFontSize = { base: '16px', sm: '18px', md: '20px', lg: '22px', xl: '24px' };
