@@ -27,5 +27,5 @@ export default function LikeList() {
         )
     }, [])
 
-    return <DisplayList list={userList} enableDate={false} name={"Likes"}/>
+    return <DisplayList list={userList} enableDate={false} name={"Liked"}/>
 }

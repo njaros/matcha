@@ -40,7 +40,7 @@ function Chatbox(){
     const socket = storeSocket(state => state.socket)
     const me = storeMe(state => state.me)
     const msgList = storeMessageList(state => state.messageList)
-    const room = storeRoomInfo(state => state.roomInfo)
+    const [room, updateRoom] = storeRoomInfo(state => [state.roomInfo, state.updateRoomInfo])
     const updateMsgCount = storeMsgCount(state => state.updateMsgCount)
     const navigate = useNavigate()
     const [messageList, setMessageList] = useState<MessageData[]>([])
@@ -55,12 +55,19 @@ function Chatbox(){
         setMessageList(msgList)
     },[msgList])
 
+    const addMsgToLocalstorage = (newMsg: MessageData) => {
+        let msgList : MessageData[] = JSON.parse(localStorage.getItem('msgList')!)
+        msgList.push(newMsg)
+        localStorage.setItem('msgList', JSON.stringify(msgList))
+    }
+
     const sendMessage = async (message: string) => {
         try{
             const res = await Axios.post("/chat/add_message", {'content': message, 'room_id': room?.id})
             const senderData : MessageData = res.data
             socket?.emit("send_message", senderData)
             setMessageList((list) => [...list, senderData])
+            addMsgToLocalstorage(senderData)
             console.log('from send message')
         }
         catch(err: any){
@@ -72,16 +79,16 @@ function Chatbox(){
 
     useEffect(() => {
         socket?.on("receive_message", (data: any) => {
-            console.log('from receive_message')
             if (data.room === room?.id)
             {
                 setMessageList((list) => [...list, data])
+                addMsgToLocalstorage(data)
             }
         })
         return (() => {
             socket?.off("receive_message")
         })
-    }, [room])
+    }, [room, socket])
 
     const onSubmit = async (data: {message: string}) => {
         if (data.message.length > 0 &&  /^\s*$/.test(data.message) === false)

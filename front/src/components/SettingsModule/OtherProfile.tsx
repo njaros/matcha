@@ -246,7 +246,7 @@ export default function OtherProfile()
             >
                 <ReturnButton to={-1}/>
             </Box>
-             <Text
+             <Flex
                 fontSize={'xx-large'}
                 alignSelf={'center'}
                 margin={'0px 5px'}
@@ -260,9 +260,9 @@ export default function OtherProfile()
                     user?.loved ? "Liked profile" :
                     "Other profile"
                 }
-            </Text>
+            </Flex>
         </Flex>
-        {loading ? <Spinner flex={1} margin="60% 0" size={"xl"} borderWidth={"5px"} color="blue.500" justifySelf={"center"} alignSelf={"center"}/> : user != undefined ?
+        {loading ? <Spinner  margin="60% 0" size={"xl"} borderWidth={"5px"} color="blue.500" justifySelf={"center"} alignSelf={"center"}/> : user != undefined ?
             <Box    className="DisplayProfile"
                     display="flex"
                     width="80%"
@@ -305,7 +305,8 @@ export default function OtherProfile()
                                 marginLeft="10px"
                                 color="white"
                                 fontSize={fontSizeLocation}
-                                fontWeight="bold">{user.location}</Text>
+                                fontWeight="bold">{user.location}
+                        </Text>
                         <Box    className="detail"
                                 display= "flex"
                                 hidden={!detail}

@@ -162,8 +162,8 @@ const Settings = () => {
                 >
                     <SettingElement
                         path="/settings/liked_list"
-                        name="Likes"
-                        desc="See who like you, unlike if you change your mind"
+                        name="Liked"
+                        desc="See who you liked, unlike if you change your mind"
                         icon={FaRegHeart}/>
                     <SettingElement
                         path="/settings/liker_list"
