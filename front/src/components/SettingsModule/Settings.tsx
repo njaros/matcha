@@ -11,7 +11,8 @@ import { RiSpyFill } from "react-icons/ri";
 import { TbFilter } from "react-icons/tb";
 import { NavLink, useNavigate } from "react-router-dom";
 import { cookieMan } from "../../tools/CookieMan";
-import { storeLog, storeSocket, storeTimeout } from "../../tools/Stores";
+import { storeFilter, storeLog, storeSocket, storeTimeout } from "../../tools/Stores";
+import { DateTools } from "../../tools/DateTools";
 
 
 const settingFontSize = { base: '16px', sm: '18px', md: '20px', lg: '22px', xl: '24px' };
@@ -23,6 +24,7 @@ const Settings = () => {
     const navigate = useNavigate();
     const [ logoutClicked, setLogoutClicked] = useState<boolean>(false);
     const { log, updateLog } = storeLog();
+    const { filter, updateFilter } = storeFilter();
 
     const logout = () => {
         if (refreshTokenTimeoutId != undefined)
@@ -35,6 +37,13 @@ const Settings = () => {
             updateSocket(null);
         }
         updateLog(false);
+        updateFilter({
+            date_min: DateTools.dateFromAge(150),
+            date_max: DateTools.dateFromAge(18),
+            distance_max: 30,
+            ranking_gap: 5,
+            hobby_ids: []
+        })
         setLogoutClicked(!logoutClicked);
         cookieMan.eraseCookie('token');
 	}
