@@ -1,8 +1,8 @@
-import { Box, Button, Flex, Icon } from "@chakra-ui/react";
+import { Box, Flex, Icon } from "@chakra-ui/react";
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from "react";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
-import { storeSocket } from "../../tools/Stores";
 import { BsTelephoneX } from "react-icons/bs";
+import { useNavigate, useParams } from "react-router-dom";
+import { storeSocket } from "../../tools/Stores";
 
 const headerIconSize = {base: 8, sm: 10, md: 12, lg: 14, xl: 16}
 
@@ -222,7 +222,7 @@ const VideoChatRoom: React.FC<VideoChatRoomProps> = ({ localStream }) => {
                 <Box 
                     position={"relative"}
                 >
-                    <VideoFeed mediaStream={localStream} isMuted={true} />
+                    <VideoFeed mediaStream={localStream} isMuted={false} />
                     <Icon
                         as={BsTelephoneX}
                         boxSize={headerIconSize}

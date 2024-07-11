@@ -1,11 +1,11 @@
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { storeGps, storeTimeout, storeDisplayNavBool, storeMsgCount, storeRoomList, storeRoomInfo, storeSocket, storeLog } from "../../tools/Stores";
-import { As, Box, Icon, Text } from "@chakra-ui/react"
-import { MdFavorite, MdHome, MdSettings } from "react-icons/md"
-import { TbMessage, TbMessage2Heart } from "react-icons/tb";
+import { As, Box, Icon } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import Notification from "./Notification";
+import { MdFavorite, MdSettings } from "react-icons/md";
+import { TbMessage, TbMessage2Heart } from "react-icons/tb";
+import { NavLink, useLocation } from "react-router-dom";
+import { storeGps, storeLog, storeMsgCount, storeRoomInfo, storeRoomList } from "../../tools/Stores";
 import { isLogged } from "../../tools/TokenReader";
+import Notification from "./Notification";
 
 const headerTextSize = {base: "14px", sm: "16px", md: "19px", lg: "22px", xl: "25px"}
 const headerIconSize = {base: 8, sm: 10, md: 12, lg: 14, xl: 16}

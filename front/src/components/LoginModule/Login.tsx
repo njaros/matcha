@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
+import { Box, Button, Flex, Icon, Input, Spinner, Stack, Text } from "@chakra-ui/react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { AiFillWarning } from "react-icons/ai";
 import { NavLink, useNavigate } from "react-router-dom";
 import { ILoginInForm } from "../../Interfaces";
 import Axios from "../../tools/Caller";
 import { cookieMan } from "../../tools/CookieMan";
 import { storeGps, storeLog } from "../../tools/Stores";
-import { AiFillWarning } from "react-icons/ai";
-import { Box, Button, Flex, Icon, Input, Link, Spinner, Stack, Text } from "@chakra-ui/react";
 
 const Login = (props:{
     handleAccess: (newAccess: string) => void}) =>
