@@ -1,23 +1,28 @@
-import { Box, Button, Flex, FormControl, Input, Select, Stack, Text, Textarea } from "@chakra-ui/react";
+import { Box, Button, fadeConfig, Flex, FormControl, Icon, Input, Select, Spinner, Stack, Text, Textarea } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IUser } from "../../Interfaces";
 import Axios from "../../tools/Caller";
 import ReturnButton from "./ReturnButton";
+import { AiFillWarning } from "react-icons/ai";
 import Hobbies from "./Hobbies";
 
 const Profile = () => {
     const [user, setUser] = useState<IUser>();
     const [readOnly, setReadOnly] = useState<boolean>(true);
     const { register, handleSubmit, setValue } = useForm<IUser>();
-    const [noticeMsg, setNoticeMsg] = useState<{"message": string, "isError": boolean}>({message: "", isError: false});
+    const [ noticeMsg, setNoticeMsg ] = useState<{
+        message: string | null,
+        isError: boolean,
+        init: boolean
+    }>({message: null, isError: false, init: true});
+    const [ loading, setLoading ] = useState<boolean>(false);
 
     function getUserProfile()
     {
-        let notice = ""
+        setLoading(true);
         Axios.get("user/get_user_by_id").then(
             response => {
-                console.log(response.data);
                 setUser(response.data);
                 setValue("username", response.data.username);
                 setValue("email", response.data.email);
@@ -25,18 +30,14 @@ const Profile = () => {
                 setValue("biography", response.data.biography);
                 setValue("gender", response.data.gender);
                 setValue("preference", response.data.preference);
-                // if (response.data)
             }
         ).catch(
             error => {
-                if (error.response.data.message != undefined)
-                    setNoticeMsg({  isError: true, 
-                                    "message": error.response.data.message});
-                else
-                    setNoticeMsg({  isError: true,
-                                    "message": "unhandled error "
-                                    .concat(error.response.status.toString())});
                 console.log(error);
+            }
+        ).finally(
+            () => {
+                setLoading(false);
             }
         )
     }
@@ -45,9 +46,8 @@ const Profile = () => {
         getUserProfile();
     }, [])
 
-    const toggleReadonly = () =>
+    const setValueToUser = () =>
     {
-        setReadOnly(!readOnly);
         if(user)
         {
             setValue("username", user.username);
@@ -123,6 +123,12 @@ const Profile = () => {
     }
 
     const profileSubmit = (data: IUser) => {
+        setLoading(true);
+        setNoticeMsg({
+            message: null,
+            isError: false,
+            init: true
+        });
         const form = new FormData();
         if (data.username != user?.username)
             form.append("username", data.username);
@@ -139,16 +145,38 @@ const Profile = () => {
         Axios.post("profile/update_user", form).then(
             response => {
                 setUser(response.data.updated_user)
+                console.log(response);
+                setNoticeMsg({
+                    message: response.data.notice,
+                    isError: false,
+                    init: false
+                })
             }
         ).catch(
             error => {
-                console.log(error);
+                console.warn(error);
+                if (error.response.data.message != undefined)
+                    setNoticeMsg({  isError: true,
+                                    init: false,
+                                    message: error.response.data.message});
+                else
+                    setNoticeMsg({  isError: true,
+                                    init: false,
+                                    message: "unhandled error "
+                                    .concat(error.response.status.toString())});
             }
         ).finally(
             () => {
-                toggleReadonly();
+                setReadOnly(true);
+                setLoading(false);
+                setValueToUser();
             }
         )
+    }
+
+    function debug() {
+        console.log(noticeMsg);
+        return true;
     }
 
     return (
@@ -254,14 +282,30 @@ const Profile = () => {
                                 val={user.biography}
                             />
                         </Box>
+                        {!noticeMsg.init && debug() &&
+                            <Flex w="100%" justifyContent={"center"} paddingTop={"10px"}>
+                                {noticeMsg.message ?
+                                    <Flex alignItems={"center"} color={noticeMsg.isError ? "red" : "#d58a00"}>
+                                        <Icon margin="0 3px" as={AiFillWarning}/>
+                                    <Text fontSize={"13px"} className="log_error">{noticeMsg.message}</Text>
+                                    </Flex> :
+                                    <Text color={"green"}>
+                                        Profile updated
+                                    </Text>
+                                }
+                            </Flex>
+                        }
                         <Box 
                             placeSelf={'center'} 
                             w={'45%'}
-                            paddingTop={'20px'}
+                            paddingTop={'10px'}
                         >
-                            {readOnly?
+                            {loading ? <Spinner /> : readOnly ?
                             <Button 
-                                onClick={toggleReadonly}
+                                onClick={() => {
+                                    setReadOnly(false);
+                                    setValueToUser();
+                                }}
                                 w={'100%'}
                                 placeSelf={'center'}
                                 textColor={'white'}
@@ -281,7 +325,10 @@ const Profile = () => {
                                 >
                                     <Button 
                                     width="100%" 
-                                    onClick={toggleReadonly}
+                                    onClick={() => {
+                                        setReadOnly(true);
+                                        setValueToUser();
+                                    }}
                                     textColor={'white'}
                                     bg="#A659EC"
                                     borderRadius={'full'}
