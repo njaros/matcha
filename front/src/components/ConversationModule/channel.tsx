@@ -105,6 +105,7 @@ function ChannelList(){
     const socket = storeSocket(state => state.socket)
     const scrollToBottomRef = useRef<HTMLDivElement>(null);
     const setMsgList = storeMessageList(state => state.updateMessageList)
+    const updateRoomList = storeRoomList(state => state.updateRoomList);
     
     useEffect(() => {
         const fetchData = async () => {
@@ -123,7 +124,8 @@ function ChannelList(){
                         }
                     }
                 })
-                setRoomList(updatedRoomList)
+                updateRoomList(updatedRoomList);
+                setRoomList(updatedRoomList);
             } catch (error: any) {
                 console.error(error);
                 if (error.response.status == 404) {
