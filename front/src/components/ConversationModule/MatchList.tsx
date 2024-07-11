@@ -15,7 +15,6 @@
 //             alignItems="center"  
 //             padding={'10px'}
 //             onClick={() => {
-//                 console.log('from match', props.conv)
 //                 props.join_room(props.conv.id)
 //                 props.setRoom(props.conv)
 //                 props.setMessageList(props.conv)

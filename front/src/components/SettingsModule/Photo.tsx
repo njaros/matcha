@@ -89,7 +89,7 @@ const Photo = () => {
                     setErrorMsg({   "section": "photos",
                                     "message": "unhandled error "
                                                     .concat(error.response.status.toString())});
-                console.log(error);
+                console.warn(error);
             }
         )
     }
@@ -139,7 +139,7 @@ const Photo = () => {
             setPhotos(newPhotos);
         })
         .catch(error => {
-            console.log(error);
+            console.warn(error);
         });
     }
 
@@ -167,7 +167,7 @@ const Photo = () => {
             setBoolReactBug(!boolReactBug);
         })
         .catch(error => {
-            console.log(error);
+            console.warn(error);
         })
         setAccepted([]);
         setDenied([]);

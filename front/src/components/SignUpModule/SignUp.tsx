@@ -23,8 +23,6 @@ const Signup: React.FC = () => {
 		form.append("gender", data.gender);
 		form.append("preference", data.preference);
 
-		console.log(birthDate.toISOString().substring(0, 10));
-
 		Axios.post("sign", form).then(
 			response => {
 				if (response.status == 201)

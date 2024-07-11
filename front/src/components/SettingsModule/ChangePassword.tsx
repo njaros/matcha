@@ -23,7 +23,6 @@ export default function ChangePassword() {
             setLoading(true);
             Axios.post("profile/change_password", data).then(
                 response => {
-                    console.log(response);
                     setJobDone(true);
                 }
             ).catch(

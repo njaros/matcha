@@ -121,7 +121,7 @@ const Swipe = () => {
             }
         ).catch(
             err => {
-                console.log(err);
+                console.warn(err);
             }
         ).finally(
             () => {

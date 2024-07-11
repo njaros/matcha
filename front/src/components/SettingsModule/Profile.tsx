@@ -33,7 +33,7 @@ const Profile = () => {
             }
         ).catch(
             error => {
-                console.log(error);
+                console.warn(error);
             }
         ).finally(
             () => {
@@ -145,7 +145,6 @@ const Profile = () => {
         Axios.post("profile/update_user", form).then(
             response => {
                 setUser(response.data.updated_user)
-                console.log(response);
                 setNoticeMsg({
                     message: response.data.notice,
                     isError: false,
@@ -172,11 +171,6 @@ const Profile = () => {
                 setValueToUser();
             }
         )
-    }
-
-    function debug() {
-        console.log(noticeMsg);
-        return true;
     }
 
     return (
@@ -282,7 +276,7 @@ const Profile = () => {
                                 val={user.biography}
                             />
                         </Box>
-                        {!noticeMsg.init && debug() &&
+                        {!noticeMsg.init &&
                             <Flex w="100%" justifyContent={"center"} paddingTop={"10px"}>
                                 {noticeMsg.message ?
                                     <Flex alignItems={"center"} color={noticeMsg.isError ? "red" : "#d58a00"}>

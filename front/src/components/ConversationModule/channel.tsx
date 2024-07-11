@@ -22,8 +22,6 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
     //update store room
     useEffect(() => {
         socket?.on('last_message', (data: any) => {
-            // console.log('data.room', data.room)
-            // console.log('props.conv.id', props.conv.id)
             if (data.room === props.conv.id){
                 setLastMessage({sender_id: data.author.user_id, content: data.content})
             }
@@ -47,7 +45,6 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
             textColor={'Black'}
             padding={'10px'}
             onClick={() => {
-                console.log('from chann', props.conv)
                 props.join_room(props.conv.id)
                 updateRoom(props.conv)
                 setLocalStorage(props.conv)

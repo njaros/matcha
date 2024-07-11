@@ -16,7 +16,6 @@ export default function OnlineChat(props: {id: string}) {
         Axios.post("user/is_user_connected", {user_id: props.id})
         .then(
             response => {
-                console.log(response);
                 setConnected(response.data.connected);
             }
         )

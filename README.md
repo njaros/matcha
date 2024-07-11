@@ -16,7 +16,3 @@ dating web site 42 project
 # TODOS-CHAT
 
 - mettre la conv la plus recente en haut de la liste
-
-# TODOS-LOGS
-
-- retirer un max de log qui ne sont plus utiles

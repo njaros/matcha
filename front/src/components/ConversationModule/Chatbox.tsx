@@ -68,7 +68,6 @@ function Chatbox(){
             socket?.emit("send_message", senderData)
             setMessageList((list) => [...list, senderData])
             addMsgToLocalstorage(senderData)
-            console.log('from send message')
         }
         catch(err: any){
             console.warn(err)

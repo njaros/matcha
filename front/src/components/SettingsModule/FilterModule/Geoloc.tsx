@@ -30,7 +30,7 @@ const Geoloc = (props: {focus: boolean}) => {
         )
         .catch(
             err => {
-                console.log(err);
+                console.warn(err);
             }
         )
     }
@@ -79,7 +79,7 @@ const Geoloc = (props: {focus: boolean}) => {
             popup.remove()
         })
         .catch((error) => {
-            console.log(error);
+            console.warn(error);
         })
     }
     

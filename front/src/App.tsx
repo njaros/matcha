@@ -84,7 +84,7 @@ function App() {
 				}
 				catch (err){
 					if (err)
-						console.log(err)
+						console.warn(err)
 				}
 			}
 			fetchMe()
@@ -131,15 +131,15 @@ function App() {
 					switch (error.response.status)
 					{
 						case 400:
-							console.log("wrong tokens: ", error.response.data);
+							console.warn("wrong tokens: ", error.response.data);
 							break;
 						default:
-							console.log("unhandled error: ", error);
+							console.warn("unhandled error: ", error);
 					}
 				}
 				else
 				{
-					console.log("server error: ", error)
+					console.warn("server error: ", error)
 				}
 				cookieMan.eraseCookie("token");
 				setAccess("");
@@ -171,17 +171,17 @@ function App() {
 						updateRefreshTimeout(timeIdTmp)
 					}
 					else {
-						console.log("token expired before asking a new one");
+						console.warn("token expired before asking a new one");
 						updateLog(false);
 					}
 				}
 				else {
-					console.log("no expiration date on token's payload");
+					console.warn("no expiration date on token's payload");
 					updateLog(false);
 				}
 			}
 			else {
-				console.log("no payload extractable from this token");
+				console.warn("no payload extractable from this token");
 				updateLog(false);
 			}
 		}

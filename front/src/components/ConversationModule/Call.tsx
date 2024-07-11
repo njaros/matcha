@@ -37,12 +37,9 @@ const VideoFeed: FunctionComponent<Props> = ({
 function useOfferSending(peerConnection: RTCPeerConnection){
     const { roomName } = useParams()
     const socket = storeSocket(state => state.socket)
-    console.log('from offer sending')
     const sendOffer = useCallback(async () => {
         const offer = await peerConnection.createOffer()
         await peerConnection.setLocalDescription(offer)
-        console.log("offer= ", offer)
-
         socket?.emit('send_connection_offer', {
             roomName,
             offer
@@ -55,16 +52,12 @@ function useOfferSending(peerConnection: RTCPeerConnection){
 function useOffersListening(peerConnection: RTCPeerConnection){
     const { roomName } = useParams()
     const socket = storeSocket(state => state.socket)
-    console.log("from offers listener")
 
     const handleConnectionOffer = useCallback(
         async ({offer} : {offer: RTCSessionDescriptionInit}) => {
             await peerConnection.setRemoteDescription(offer)
             const answer = await peerConnection.createAnswer()
             await peerConnection.setLocalDescription(answer)
-            console.log("answer= ", answer)
-            console.log('test')
-
             socket?.emit('answer', {answer, roomName})
         }, [roomName]
     )
@@ -98,7 +91,6 @@ function useChatConnection(peerConnection: RTCPeerConnection){
 
     const handleReceiveCandidate = useCallback(
         ({candidate}: {candidate: RTCIceCandidate}) => {
-            console.log("handle receive candidate, candidate = ", candidate);
             peerConnection.addIceCandidate(candidate)
         }, [peerConnection])
 
@@ -127,7 +119,6 @@ function usePeerConnection(localStream: MediaStream, setGuestStream: (media: Med
         })
 
         connection.addEventListener('icecandidate', ({candidate}) => {
-            console.log(candidate);
             if (candidate)
                 socket?.emit('send_candidate', {candidate, roomName})
         })
@@ -190,7 +181,6 @@ const VideoChatRoom: React.FC<VideoChatRoomProps> = ({ localStream }) => {
     };
 
     function logVariable(variable: any) {
-        console.log("logVariable: ", variable);
         if (variable)
             return true;
         return false;

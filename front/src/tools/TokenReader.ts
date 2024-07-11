@@ -21,7 +21,7 @@ export function readPayload(token: string | undefined)
     }
     catch (error)
     {
-        console.log("unreadable token");
+        console.warn("unreadable token");
         return undefined;
     }
 }
