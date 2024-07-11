@@ -18,6 +18,8 @@ je propose qu on s'en foute
 
 - fix last message
 - fix store room
+- mettre la conv la plus recente en haut de la liste
+
 
 # TODOS-LOGS
 

@@ -55,6 +55,7 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
                                 src={props.me?.id === props.conv.user_1.user_id ? props.conv.user_2?.photo : props.conv?.user_1?.photo}
             />
             <Box
+                flex={1}
                 marginLeft={'10px'}
                 textOverflow="ellipsis" 
                 overflow="hidden" 
