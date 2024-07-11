@@ -10,10 +10,11 @@ const Profile = () => {
     const [user, setUser] = useState<IUser>();
     const [readOnly, setReadOnly] = useState<boolean>(true);
     const { register, handleSubmit, setValue } = useForm<IUser>();
-    const [errorMsg, setErrorMsg] = useState<{"section": string, "message": string}>({"section": "", "message": ""});
+    const [noticeMsg, setNoticeMsg] = useState<{"message": string, "isError": boolean}>({message: "", isError: false});
 
     function getUserProfile()
     {
+        let notice = ""
         Axios.get("user/get_user_by_id").then(
             response => {
                 console.log(response.data);
@@ -24,16 +25,17 @@ const Profile = () => {
                 setValue("biography", response.data.biography);
                 setValue("gender", response.data.gender);
                 setValue("preference", response.data.preference);
+                // if (response.data)
             }
         ).catch(
             error => {
                 if (error.response.data.message != undefined)
-                    setErrorMsg({   "section": "getUserProfile", 
+                    setNoticeMsg({  isError: true, 
                                     "message": error.response.data.message});
                 else
-                    setErrorMsg({   "section": "getUserProfile",
+                    setNoticeMsg({  isError: true,
                                     "message": "unhandled error "
-                                                    .concat(error.response.status.toString())});
+                                    .concat(error.response.status.toString())});
                 console.log(error);
             }
         )
