@@ -1,14 +1,11 @@
-import { Avatar, Box, Flex, Icon, Image, Text } from "@chakra-ui/react";
+import { Box, Flex, Icon, Text } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { BsArrowReturnRight } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import Axios from "../../tools/Caller";
-import { storeDisplayNavBool, storeMe, storeMessageList, storeMsgCount, storeRoomInfo, storeRoomList, storeSocket } from "../../tools/Stores";
+import { storeMe, storeMessageList, storeMsgCount, storeRoomInfo, storeRoomList, storeSocket } from "../../tools/Stores";
 import { Room_info } from "../../tools/interface";
-import { AxiosResponse } from "axios";
-import OnlineChat from "./OnlineChat";
 import AvatarConnected from "./AvatarConnected";
-
 
 function Conv(props: {conv: any, index: number, me: any, join_room: any, setMessageList: any}){
     
@@ -21,19 +18,26 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
             content: props.conv.last_message_author?.content
         })
     const socket = storeSocket(state => state.socket)
-
-    //a fix
+    
+    //update store room
     useEffect(() => {
         socket?.on('last_message', (data: any) => {
+            // console.log('data.room', data.room)
+            // console.log('props.conv.id', props.conv.id)
             if (data.room === props.conv.id){
-                console.log('alaid')
+                console.log('here')
                 setLastMessage({sender_id: data.author.user_id, content: data.content})
             }
         })
         return (() => {
             socket?.off('last_message')
         })
-    }, [])
+    }, [socket])
+
+    const setLocalStorage = (conv : any) => {
+        localStorage.setItem('room', JSON.stringify(conv))
+    }
+
     const current_count = msgCount[props.conv.id]?.count
     return (
         <Flex
@@ -47,6 +51,7 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
                 console.log('from chann', props.conv)
                 props.join_room(props.conv.id)
                 updateRoom(props.conv)
+                setLocalStorage(props.conv)
                 props.setMessageList(props.conv)
                 navigate('/chatbox')
             }}
@@ -69,7 +74,7 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
                     overflow="hidden" 
                     whiteSpace="nowrap"
                 >   
-                    {props.me?.id === lastMessage?.sender_id ? 
+                    {props.me?.id === lastMessage.sender_id ? 
                     "You: " + lastMessage.content : 
                     <>
                         {props.conv.last_message_author && <Icon as={BsArrowReturnRight} marginRight={'5px'}/>}
@@ -103,7 +108,7 @@ function ChannelList(){
     const socket = storeSocket(state => state.socket)
     const scrollToBottomRef = useRef<HTMLDivElement>(null);
     const setMsgList = storeMessageList(state => state.updateMessageList)
-
+    
     useEffect(() => {
         if (me){
             const fetchData = async () => {
@@ -138,6 +143,7 @@ function ChannelList(){
         try{
             const res = await Axios.post('/chat/get_message_list_by_room_id', {'room_id': conv?.id})
             setMsgList(res.data)
+            localStorage.setItem('msgList', JSON.stringify(res.data))
         }
         catch(err){
             if (err)

@@ -6,6 +6,11 @@ export interface MessageData {
     send_at: Date;
 }
 
+export interface LastMessage {
+    id:
+    
+}
+
 export interface Room {
     id: string,
     name: string,
