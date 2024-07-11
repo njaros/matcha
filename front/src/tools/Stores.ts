@@ -90,7 +90,7 @@ export const storeLog = create<ILog>()((set) => ({
 }))
 
 export const storeRoomInfo = create<IstoreRoomInfo>()((set) => ({
-	roomInfo: {
+	roomInfo: localStorage.getItem('room') ?  JSON.parse(localStorage.getItem('room')!) : {
 		id: '',
 		name: '',
 		user_1: { user_id: '', photo: '', username: '' },
@@ -116,7 +116,7 @@ export const storeDisplayNavBool = create<IDisplayNavBool>()((set) => ({
 }))
 
 export const storeMessageList = create<IstoreMessageList>()((set) => ({
-	messageList: [],
+	messageList: localStorage.getItem('msgList') ?  JSON.parse(localStorage.getItem('msgList')!) :  [],
 	updateMessageList: (newMessageList: MessageData[]) => set({messageList: newMessageList})
 }))
 
