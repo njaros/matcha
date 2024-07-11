@@ -41,7 +41,7 @@ const Signup: React.FC = () => {
 				if (error.response)
 				{
 					console.warn(error)
-					if (error.response.status == 400)
+					if (error.response.status == 400 || error.response.status == 413)
 						setErrorMsg(error.response.data.message);
 					else
 						setErrorMsg("unhandled error");

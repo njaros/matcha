@@ -229,14 +229,12 @@ def update_user(**kwargs):
                 UPDATE user_table
                 SET username = COALESCE(%s, username),
                     email = COALESCE(%s, email),
-                    birthDate = COALESCE(%s, birthDate),
                     gender = COALESCE(%s, gender),
                     biography = COALESCE(%s, biography),
                     preference = COALESCE(%s, preference)
                 WHERE id = %s
                 RETURNING   username,
                             email,
-                            birthdate,
                             gender,
                             biography,
                             preference
@@ -244,7 +242,6 @@ def update_user(**kwargs):
         (
             kwargs["username"],
             kwargs["email"],
-            kwargs["birthDate"],
             kwargs["gender"],
             kwargs["biography"],
             kwargs["preference"],

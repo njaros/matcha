@@ -73,10 +73,6 @@ def update_user_dto(f):
         kwargs["email"] = str.isEmail(
             request.form.get("email"), optionnal=True
         )
-        kwargs["birthDate"] = date.isDate(
-            request.form.get("birthDate"),
-            {"optionnal": True, "yearMin": 18, "yearMax": 150},
-        )
         kwargs["gender"] = str.isString(
             request.form.get("gender"),
             {"optionnal": True, "allowed": ("man", "woman", "non-binary")},
