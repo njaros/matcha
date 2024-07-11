@@ -4,7 +4,7 @@ import { BsArrowReturnRight } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import Axios from "../../tools/Caller";
 import { storeMe, storeMessageList, storeMsgCount, storeRoomInfo, storeRoomList, storeSocket } from "../../tools/Stores";
-import { Room_info } from "../../tools/interface";
+import { Room_info, RoomList } from "../../tools/interface";
 import AvatarConnected from "./AvatarConnected";
 
 function Conv(props: {conv: any, index: number, me: any, join_room: any, setMessageList: any}){
@@ -25,7 +25,6 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
             // console.log('data.room', data.room)
             // console.log('props.conv.id', props.conv.id)
             if (data.room === props.conv.id){
-                console.log('here')
                 setLastMessage({sender_id: data.author.user_id, content: data.content})
             }
         })
@@ -57,7 +56,7 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
             }}
         >
             <AvatarConnected    id={props.me?.id == props.conv.user_1.user_id ? props.conv.user_2.user_id : props.conv.user_1.user_id}
-                                src={props.me?.id === props.conv.user_1.user_id ? props.conv.user_2?.photo : props.conv?.user_1?.photo}
+                                src={props.me?.id == props.conv.user_1.user_id ? props.conv.user_2.photo : props.conv.user_1.photo}
             />
             <Box
                 flex={1}
@@ -73,14 +72,12 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
                     textOverflow="ellipsis" 
                     overflow="hidden" 
                     whiteSpace="nowrap"
+                    hidden={props.conv.last_message_author == null}
                 >   
                     {props.me?.id === lastMessage.sender_id ? 
-                    "You: " + lastMessage.content : 
-                    <>
-                        {props.conv.last_message_author && <Icon as={BsArrowReturnRight} marginRight={'5px'}/>}
-                        {lastMessage.content}
-                    </>
-                    }
+                    "You: " :
+                    <Icon as={BsArrowReturnRight} marginRight={'5px'}/>}
+                    {lastMessage.content}
                 </Text>
             </Box>
             <Box margin={15} position="relative">
@@ -104,40 +101,38 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
 function ChannelList(){
 
     const me = storeMe(state => state.me)
-    const [roomList, updateRoomList] = storeRoomList(state => [state.roomList, state.updateRoomList])
+    const [roomList, setRoomList] = useState<RoomList[]>([]);
     const socket = storeSocket(state => state.socket)
     const scrollToBottomRef = useRef<HTMLDivElement>(null);
     const setMsgList = storeMessageList(state => state.updateMessageList)
     
     useEffect(() => {
-        if (me){
-            const fetchData = async () => {
-                try {
-                    const roomResponse = await Axios.get('/chat/get_room_list_by_id');
-                    const updatedRoomList = roomResponse.data.map((room: any) => {
-                        return {
-                            ...room,
-                            user_1: {
-                                ...room.user_1,
-                                photo: "data:".concat(room.user_1.photo?.mime_type).concat(";base64,").concat(room.user_1.photo?.binaries),
-                            },
-                            user_2: {
-                                ...room.user_2,
-                                photo: "data:".concat(room.user_2.photo?.mime_type).concat(";base64,").concat(room.user_2.photo?.binaries),
-                            }
+        const fetchData = async () => {
+            try {
+                const roomResponse = await Axios.get('/chat/get_room_list_by_id');
+                const updatedRoomList = roomResponse.data.map((room: any) => {
+                    return {
+                        ...room,
+                        user_1: {
+                            ...room.user_1,
+                            photo: "data:".concat(room.user_1.photo?.mime_type).concat(";base64,").concat(room.user_1.photo?.binaries),
+                        },
+                        user_2: {
+                            ...room.user_2,
+                            photo: "data:".concat(room.user_2.photo?.mime_type).concat(";base64,").concat(room.user_2.photo?.binaries),
                         }
-                    })
-                    updateRoomList(updatedRoomList)
-                } catch (error: any) {
-                    console.error(error);
-                    if (error.response.status == 404) {
-                        updateRoomList(undefined);
                     }
+                })
+                setRoomList(updatedRoomList)
+            } catch (error: any) {
+                console.error(error);
+                if (error.response.status == 404) {
+                    setRoomList([]);
                 }
-            };
-            fetchData();
-        }
-    }, [me]);
+            }
+        };
+        fetchData();
+    }, []);
 
     const setMessageList = async (conv: Room_info) => {
         try{
@@ -192,15 +187,15 @@ function ChannelList(){
                     overflowX={'hidden'}
                     ref={scrollToBottomRef}
                 >
-                    {roomList && roomList.map((conv, index) => (
+                    {me && roomList && roomList.map((conv, index) => (
                     <Box
                         key={index}
                     >
-                        <Conv 
-                            conv={conv} 
-                            index={index} 
-                            me={me} 
-                            join_room={join_room} 
+                        <Conv
+                            conv={conv}
+                            index={index}
+                            me={me}
+                            join_room={join_room}
                             setMessageList={setMessageList}
                         />
                     </Box>                                
