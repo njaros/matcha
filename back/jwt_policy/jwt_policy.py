@@ -102,7 +102,6 @@ def update_access_token(**kwargs):
 # @options_handler
 @token_required
 def refresh(**kwargs):
-    app.logger.info(request.cookies)
     kwargs["refresh_token"] = str.isString(request.cookies["refresh_token"])
     response = update_access_token(**kwargs)
     return response

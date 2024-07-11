@@ -78,7 +78,7 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
                     }
                 </Text>
             </Box>
-            <Box w="8%" margin={15} position="relative">
+            <Box margin={15} position="relative">
                 <Box
                     width={6} 
                     height={6}

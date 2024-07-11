@@ -43,15 +43,14 @@ export default function ChangePassword() {
                 flex={1}
                 flexDirection={"column"}
                 justifyContent={"flex-start"}
-                overflow={"hidden"}
+                overflow={"auto"}
                 w="100%"
                 h="100%">
             <Flex
-                w="100%"
                 flexDirection={"row"}
                 margin="10px 0 0 10px">
                 <Box alignSelf={"center"}>
-                    <ReturnButton to="/settings"/>
+                    <ReturnButton to={-1}/>
                 </Box>
                 <Text
                     fontSize={'xx-large'}
@@ -69,11 +68,15 @@ export default function ChangePassword() {
                     flexDirection={"column"}
                     alignItems={"center"}
                     justifyContent={"center"}
-                    w={"100%"}
-                    h={"100%"}>
-                        <Image  src="/changePass.avif"
-                                width={"60%"}/>
-                        {jobDone ? <Text margin="100px 0" fontWeight={"bold"} placeSelf={"center"}>Password updated</Text> :
+
+                    >
+                <Box
+                    flex={1}
+                    w="100%"
+                    bgImage="/changePass.avif"
+                    backgroundSize="contain" bgPosition="center" bgRepeat="no-repeat"
+                />
+                {jobDone ? <Text margin="100px 0" fontWeight={"bold"} placeSelf={"center"}>Password updated</Text> :
                 <form className="login_form" onSubmit={handleSubmit(changePassSubmit)} style={{width: "70%"}}>
                     <Flex
                         flexDirection="column"

@@ -21,7 +21,6 @@ export default function Notification() {
     const [ nbNews, setNbNews ] = useState<number>(0);
     const [ oldNbNews, setOldNbNews ] = useState<number>(0);
     const socket = storeSocket(state => state.socket);
-    const [bool, setBool] = useState<boolean>(false)
     // const color = isTarget ? '#FFFFFF' : '#57595D'
 
     useEffect(() => {
@@ -103,13 +102,10 @@ export default function Notification() {
     }
 
     function openPopover() {
-        setBool(!bool)
         if (!isOpen) {
             setOldNbNews((nb) => nbNews);
             setNbNews((nb) => 0);
-            
         }
-        console.log('is open', bool)
         scrollDown();
     }
 
@@ -210,25 +206,19 @@ export default function Notification() {
                 isOpen={isOpen}
                 onOpen={onOpen}
                 onClose={onClose}
+                closeOnBlur={true}
             >
                 <PopoverTrigger>
-                    <Flex 
-                        onClick={() => {
-                            if (bool === true){
-                                console.log('nan mais allo')
-                                onClose()
-                            }
-                            openPopover()
-                        }}
-                    >
-                        <Icon
-                            color={bool === true ? 'white' : '#57595D'}
-                            boxSize={headerIconSize}
-                            as={nbNews == 0 ?
+                <Flex>
+                    <Icon
+                        onClick={openPopover}
+                        color={isOpen ? 'white' : '#57595D'}
+                        boxSize={headerIconSize}
+                        as={nbNews == 0 ?
                             MdOutlineNotifications :
-                            MdOutlineNotificationsActive}
+                        MdOutlineNotificationsActive}
                         />
-                    </Flex>
+                </Flex>
                 </PopoverTrigger>
                 <PopoverContent fontSize={textSize}
                                 borderRadius={"20px"}

@@ -10,7 +10,6 @@ export default function MatchList() {
     useEffect(() => {
         Axios.get("relationship/get_matches").then(
             response => {
-                console.log(response);
                 let newList: IListUser[] = [];
                 response.data.map((elt: any) => {
                     newList.push({

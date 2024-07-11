@@ -10,7 +10,6 @@ export default function VisitorList() {
     useEffect(() => {
         Axios.get("user/get_visits_history").then(
             response => {
-                console.log(response);
                 let newList: IListUser[] = [];
                 response.data.map((elt: any) => {
                     newList.push({
