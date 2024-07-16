@@ -60,6 +60,7 @@ services:
       - ./serv/conf.d:/etc/nginx/conf.d:ro
     networks:
       - matcha_network
+    attach: false
 ######################### ADMINER ##########################
   adminer:
     container_name: adminer
