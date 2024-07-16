@@ -171,7 +171,7 @@ function ChannelList(){
                 >
                     Conversation
                 </Text>
-                {!roomList ? 
+                {roomList.length == 0 ? 
                     <Box
                         flex={1}
                         w="100%"
