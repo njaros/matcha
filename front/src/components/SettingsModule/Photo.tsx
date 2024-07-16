@@ -51,7 +51,7 @@ const Photo = () => {
           });
       };
     
-      const handleIconClick = () => {
+      const handlePhotoClick = () => {
         if (inputRef.current) {
           inputRef.current.click();
         }
@@ -186,6 +186,7 @@ const Photo = () => {
                     display={'flex'}
                     alignItems={'center'}
                     justifyContent={'center'}
+                    onClick={handlePhotoClick}
                 >
 
                     {props.photo ? (
@@ -211,7 +212,6 @@ const Photo = () => {
                             onChange={onChangeFile}
                         />
                         <Icon
-                            onClick={handleIconClick}
                             as={CiCirclePlus}
                             boxSize={'35px'}
                         />
