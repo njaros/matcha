@@ -171,11 +171,11 @@ function ChannelList(){
                 >
                     Conversation
                 </Text>
-                {!roomList ? 
+                {roomList.length === 0 ? 
                     <Box
                         flex={1}
                         w="100%"
-                        bgImage="../../assets/images/main-tenant-numero-0.png"
+                        bgImage=" ../../assets/images/main-tenant-numero-0.png"
                         backgroundSize="contain" bgPosition="center" bgRepeat="no-repeat"
                     /> :
                 <Flex
