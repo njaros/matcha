@@ -99,6 +99,7 @@ def get_visits_history(**kwargs):
     hasher = Fernet(current_app.config["SECRET_PHOTO"])
     history = user_sql_request.get_visited_me_history(**kwargs)
     for user in history:
+        user["at"] = user["at"].isoformat()
         if user["binaries"] is not None:
             user["binaries"] = base64.b64encode(
                 hasher.decrypt(user["binaries"])

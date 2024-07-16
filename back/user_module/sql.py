@@ -297,16 +297,17 @@ def get_visited_me_history(**kwargs):
     cur.execute(
         """
             SELECT  user_table.id AS id,
-                    user_table.username AS username,
-                    visits.at AS at,
+                    MAX(user_table.username) AS username,
+                    MAX(visits.at) AS at,
                     photos.binaries AS binaries,
-                    photos.mime_type AS mime_type
+                    MAX(photos.mime_type) AS mime_type
             FROM visits
             LEFT OUTER JOIN user_table ON visitor_id = user_table.id
             LEFT OUTER JOIN photos ON photos.user_id = user_table.id
                 AND main = true
             WHERE visits.visited_id = %s
-            ORDER by at DESC
+            GROUP BY user_table.id, binaries
+            ORDER BY at DESC
         """,
         (kwargs["user"]["id"],),
     )
