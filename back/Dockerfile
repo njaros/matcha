@@ -14,7 +14,7 @@ RUN apk add build-base & \
  
 # copy every content from the local file to the image
 COPY . /app
- 
+
 # configure the container to run in an executed manner
 ENTRYPOINT [ "python" ]
  

@@ -16,3 +16,7 @@ dating web site 42 project
 # TODOS-CHAT
 
 - mettre la conv la plus recente en haut de la liste
+
+# TODOS-CORRECTION
+
+- A user that doesn't have a profile picture can't like another user.

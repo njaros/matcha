@@ -3,15 +3,26 @@ import psycopg
 from .db_filler import insert_users_in_database
 import uuid
 import hashlib
+import time
+from flask import current_app
 
 
 def set_up_db():
-    db_conn = psycopg.connect(
-        dbname=os.environ.get("POSTGRES_DB"),
-        host=os.environ.get("POSTGRES_IP"),
-        user=os.environ.get("POSTGRES_USER"),
-        password=os.environ.get("POSTGRES_PASSWORD"),
-    )
+    connected = False
+    while (connected is False):
+        retry = False
+        try:
+            db_conn = psycopg.connect(
+                dbname=os.environ.get("POSTGRES_DB"),
+                host=os.environ.get("POSTGRES_IP"),
+                user=os.environ.get("POSTGRES_USER"),
+                password=os.environ.get("POSTGRES_PASSWORD"),
+            )
+        except psycopg.OperationalError:
+            retry = True
+            time.sleep(3)
+        if retry is False:
+            connected = True
     cur = db_conn.cursor()
     cur.execute(
         "select relname from pg_class where relkind='r'\
@@ -170,18 +181,46 @@ def set_up_db():
         cur.execute(
             """
             INSERT INTO hobbie (name)
-            VALUES  ('coder matcha'),
-                    ('voiture'),
-                    ('musique'),
-                    ('le foute'),
+            VALUES  ('car'),
+                    ('music'),
+                    ('football'),
                     ('sport'),
-                    ('manger'),
-                    ('alcool'),
-                    ('film'),
+                    ('eating'),
+                    ('books'),
+                    ('films'),
                     ('series'),
-                    ('les guns'),
-                    ('jeux videos'),
-                    ('poney');
+                    ('hangout'),
+                    ('coding matcha'),
+                    ('video games'),
+                    ('dog'),
+                    ('cat'),
+                    ('rock climbing'),
+                    ('lead climbing'),
+                    ('speed climbing'),
+                    ('ice climbing'),
+                    ('hiking'),
+                    ('cooking'),
+                    ('trip'),
+                    ('carpe diem'),
+                    ('tattoo'),
+                    ('piercing'),
+                    ('vegan'),
+                    ('carnivorous'),
+                    ('politic'),
+                    ('manga'),
+                    ('anime'),
+                    ('nature'),
+                    ('biking'),
+                    ('painting'),
+                    ('DIY'),
+                    ('art'),
+                    ('gym'),
+                    ('running'),
+                    ('tennis'),
+                    ('capybara'),
+                    ('sleeping'),
+                    ('astrology')
+                    ;
             """
         )
 
