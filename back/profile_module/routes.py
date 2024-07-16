@@ -105,6 +105,10 @@ def change_main_photo(**kwargs):
     return [], 200
 
 
+@token_required
+def has_photos(**kwargs):
+    return [sql.has_photos(**kwargs) > 0], 200
+
 # -------------------------USER UPDATE-----------------
 
 
@@ -125,7 +129,6 @@ def update_user(**kwargs):
             kwargs["email"] = None
             if thingy.notNoneLen(kwargs) < 3:
                 raise BadRequestError(notice + ", nothing to modify")
-    app.logger.info(kwargs)
     if thingy.notNoneLen(kwargs) < 3:
         raise BadRequestError("nothing to modify")
     updated_user = sql.update_user(**kwargs)

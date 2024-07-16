@@ -28,10 +28,8 @@ def login(**kwargs):
         response.data = "Account not mail validated"
         return response
     if kwargs["user"] is not None:
-        current_app.logger.info(kwargs)
         if (kwargs["latitude"] is None) and (kwargs["user"]["gpsfixed"] is False):
             ip_loc = GPS_tools.get_gps_from_ip(request.remote_addr)
-            current_app.logger.info(ip_loc)
             if ip_loc is not None:
                 kwargs["user"]["latitude"] = ip_loc.latitude
                 kwargs["user"]["longitude"] = ip_loc.longitude

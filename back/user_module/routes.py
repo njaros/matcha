@@ -34,7 +34,6 @@ def get_user_with_room_and_message(**kwargs):
 
 @token_required
 def get_gps(**kwargs):
-    current_app.logger.info(kwargs)
     return jsonify(
         {
             "latitude": kwargs["user"]["latitude"],
@@ -116,5 +115,4 @@ def is_user_connected(**kwargs):
         user_state["last_connection"] = user_sql_request.last_connection_by_id(
             kwargs["user_id"]
         )["last_connection"]
-    current_app.logger.info(user_state)
     return user_state, 200

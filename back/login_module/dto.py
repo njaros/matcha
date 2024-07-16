@@ -102,7 +102,6 @@ def confirm_reset_password_dto(f):
                 app.config["SECRET_RESET_PASSWORD"],
                 algorithms=["HS256"],
             )
-            app.logger.info("pouet")
             expDate = data.get("exp")
             if expDate is None:
                 raise BadRequestError("token expiration date is expired")

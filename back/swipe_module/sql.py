@@ -159,15 +159,12 @@ def get_swipe_list_tags_sort(**kwargs):
         ORDER BY (
             SELECT COUNT(*)
             FROM user_hobbie
-            WHERE id IN (
-                SELECT user_id
+            WHERE id = user_id
+            AND hobbie_id IN (
+                SELECT hobbie_id
                 FROM user_hobbie
-                WHERE hobbie_id IN (
-                    SELECT hobbie_id
-                    FROM user_hobbie
-                    WHERE user_id = %(user)s
+                WHERE user_id = %(user)s
                 )
-            )
         ) DESC
         """
     )
@@ -209,6 +206,17 @@ def like_user(**kwargs):
         ),
     )
     if cur.fetchone() is not None:
+        cur.close()
+        return
+    cur.execute(
+        """
+        SELECT id
+        FROM photos
+        WHERE user_id = %s
+        """,
+        (user,)
+    )
+    if cur.fetchone() is None:
         cur.close()
         return
     cur.execute(
