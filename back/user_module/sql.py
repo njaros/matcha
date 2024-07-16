@@ -42,7 +42,6 @@ def get_user_by_username(username):
     if user is None:
         return None
     cur.close()
-    app.logger.info(user)
     return user
 
 
@@ -85,7 +84,6 @@ def get_user_by_email(email):
     if user is None:
         return None
     cur.close()
-    app.logger.info(user)
     return user
 
 
@@ -133,7 +131,6 @@ def get_user_by_id(id):
 
 def get_user_profile(**kwargs):
     cur = app.config["conn"].cursor(row_factory=dict_row)
-    app.logger.info(kwargs)
     cur.execute(
         """
         SELECT  user_table.id,

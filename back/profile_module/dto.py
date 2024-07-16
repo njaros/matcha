@@ -118,7 +118,6 @@ def set_pos_dto(f):
         latitude = request.get_json()["latitude"]
         longitude = request.get_json()["longitude"]
         kwargs["gps"] = GPS_tools.Gps(latitude, longitude)
-        current_app.logger.info(kwargs["gps"])
         return f(*args, **kwargs)
 
     return decorated
@@ -127,9 +126,7 @@ def set_pos_dto(f):
 def add_hobby_dto(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        current_app.logger.info(request.json)
         kwargs["hobbie_ids"] = (int.isStrInt(request.json["id"], {"min": 0}),)
-        current_app.logger.info(kwargs)
         return f(*args, **kwargs)
 
     return decorated

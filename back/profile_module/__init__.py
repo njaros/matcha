@@ -13,7 +13,8 @@ from .routes import (
     get_self_hobbies,
     add_hobby,
     del_hobby,
-    change_password
+    change_password,
+    has_photos
 )
 from flask_cors import CORS
 
@@ -34,6 +35,12 @@ app.add_url_rule(
     "change_main_photo",
     change_main_photo,
     methods=["POST"],
+)
+app.add_url_rule(
+    "/profile/has_photos",
+    "has_photos",
+    has_photos,
+    methods=["GET"],
 )
 app.add_url_rule(
     "/profile/change_biography",

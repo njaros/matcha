@@ -9,7 +9,6 @@ from flask import current_app
 @like_dislike_dto
 def like_user(**kwargs):
     new_room = sql.like_user(**kwargs)
-    current_app.logger.info(f"user-{kwargs['target_id']}")
     emit('liked',
          kwargs['target_id'],
          kwargs["user"]["id"],

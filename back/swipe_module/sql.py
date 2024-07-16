@@ -210,6 +210,17 @@ def like_user(**kwargs):
         return
     cur.execute(
         """
+        SELECT id
+        FROM photos
+        WHERE user_id = %s
+        """,
+        (user,)
+    )
+    if cur.fetchone() is None:
+        cur.close()
+        return
+    cur.execute(
+        """
         INSERT INTO relationship (id, liker_id, liked_id)
         VALUES (%s, %s, %s);
         """,

@@ -59,11 +59,25 @@ export default function OtherProfile()
     const loveRef = useRef<HTMLDivElement>(null);
     const buttonsRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
+    const [ hasPhotos, setHasPhotos ] = useState<boolean>(false)
+
+    function get_has_photos() {
+        Axios.get("/profile/has_photos").then(
+            response => {
+                setHasPhotos(response.data[0])
+            }
+        ).catch(
+            err => {
+                console.warn(err)
+            }
+        )
+    }
 
     useEffect(() => {
         if (userParam != undefined)
         {
-            setLoading(true)
+            get_has_photos();
+            setLoading(true);
             Axios.post("user/get_user_profile", { user_id: userParam }).then(
                 response => {
                     const photos = parsePhotosFromBack(response.data.photos);
@@ -223,7 +237,7 @@ export default function OtherProfile()
                             <Button value={user.id} borderRadius="15px" onClick={unlike}>
                                 <Icon boxSize={8} color="red.400" as={BsFillHeartbreakFill} />
                             </Button> :
-                            <Button value={user.id} borderRadius="15px" onClick={like}>
+                            <Button value={user.id} hidden={!hasPhotos} borderRadius="15px" onClick={like}>
                                 <Icon boxSize={8} color="red.400" as={RiHeartAddFill}/>
                             </Button>
                         }

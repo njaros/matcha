@@ -74,7 +74,6 @@ def login_user_in_database(kwargs):
 
 def update_gps_loc_by_id(**kwargs):
     cur = app.config["conn"].cursor()
-    app.logger.info(kwargs)
     cur.execute(
         """
         UPDATE user_table

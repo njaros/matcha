@@ -71,7 +71,6 @@ def answer(data):
 def send_candidate(data):
     candidate = data.get("candidate")
     roomName = data.get("roomName")
-    app.logger.info(f"{candidate=}")
     emit(
         "send_candidate",
         {"candidate": candidate, "roomName": roomName},
@@ -97,14 +96,7 @@ def send_message(data):
     room_id = data.get("room_id")
     send_at = data.get("send_at")
 
-    app.logger.info(
-        "User ID: %s, Username: %s, Content: %s, Room ID: %s, Send At: %s",
-        user_id,
-        username,
-        content,
-        room_id,
-        send_at,
-    )
+    
     if None in (user_id, username, content, room_id, send_at):
         return jsonify({"error": "Missing one or more required fields"}), 400
 
@@ -122,7 +114,7 @@ def send_message(data):
     # try and catch
     target = correct_room(room_id, connected_clients[request.sid]["id"])
     if target is None:
-        app.logger.info(f"Room {room_id} not found in database.")
+        app.logger.warn(f"Room {room_id} not found in database.")
         return
     # target = (
     #     room["user_1"]["id"]

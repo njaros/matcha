@@ -185,6 +185,22 @@ def change_main_photo_by_ids(current_main_id, future_main_id):
     cur.close()
 
 
+def has_photos(**kwargs):
+    cur = app.config["conn"].cursor(row_factory=dict_row)
+    cur.execute(
+        """
+        SELECT COUNT (*)
+        FROM photos
+        WHERE user_id = %s
+        """,
+        (kwargs["user"]["id"],)
+    )
+    res = cur.fetchone()["count"]
+    app.logger.info(res)
+    cur.close()
+    return res
+
+
 # -------------- BIOGRAPHY -----------------
 
 

@@ -18,7 +18,8 @@ export default function DisplayProfile(props: {
     user: ISwipeUser,
     likeHandler: (e: any) => void,
     dislikeHandler: (e: any) => void,
-    incrementIndex: () => void
+    incrementIndex: () => void,
+    canlike: boolean
 })
 {
     const [ photoIdx, setPhotoIdx ] = useState<number>(0);
@@ -183,11 +184,11 @@ export default function DisplayProfile(props: {
                     </Button>
                     <ReportTrigger user_id={props.user.id} optionAction={props.incrementIndex}/>
                 </Flex>
-                <Flex flex={1}>
+                <Flex flex={1} justifyContent={"flex-end"}>
                     <Button borderRadius="15px" margin={"0 13%"} colorScheme={detail ? "matchaPink" : "gray"} onClick={detailHandler}>
                         <Icon boxSize={9} as={BiSolidUserDetail} />
                     </Button>
-                    <Button value={props.user.id} borderRadius="15px" onClick={props.likeHandler}>
+                    <Button value={props.user.id} hidden={!props.canlike} borderRadius="15px" onClick={props.likeHandler}>
                         <Icon boxSize={8} color="red.400" as={RiHeartAddFill}/>
                     </Button>
                 </Flex>
