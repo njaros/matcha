@@ -264,7 +264,7 @@ def set_up_db():
 
         # USER TEST INSERTION
 
-        insert_users_in_database(db_conn, 50, 20, 20)
+        insert_users_in_database(db_conn, 500, 45.783329, 4.73333)
         cur.close()
         db_conn.commit()
     return db_conn
