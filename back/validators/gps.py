@@ -73,6 +73,6 @@ def isLongitude(foo: any, req: dict[str, any] = {}):
             return None
     if not isinstance(foo, (float, int)):
         raise TypeException(foo, "longitude")
-    if foo < -90.0 or foo > 90.0:
+    if foo < -180.0 or foo > 180.0:
         raise NotLongitudeException(foo)
     return foo
