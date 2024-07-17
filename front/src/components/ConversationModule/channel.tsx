@@ -7,7 +7,7 @@ import { storeMe, storeMessageList, storeMsgCount, storeRoomInfo, storeRoomList,
 import { Room_info, RoomList } from "../../tools/interface";
 import AvatarConnected from "./AvatarConnected";
 
-function Conv(props: {conv: any, index: number, me: any, join_room: any, setMessageList: any}){
+function Conv(props: {conv: any, index: number, me: any, setMessageList: any}){
     
     const navigate = useNavigate()
     const updateRoom = storeRoomInfo(state => state.updateRoomInfo)
@@ -19,7 +19,6 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
         })
     const socket = storeSocket(state => state.socket)
     
-    //update store room
     useEffect(() => {
         socket?.on('last_message', (data: any) => {
             if (data.room === props.conv.id){
@@ -35,17 +34,21 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
         localStorage.setItem('room', JSON.stringify(conv))
     }
 
+    const setMsgCountTo0 = (id: string) => {
+        socket?.emit('set_msg_count_to_0', props.conv.id)
+    }
+
     const current_count = msgCount[props.conv.id]?.count
     return (
         <Flex
             alignItems={'center'}
             key={props.index}
             w={'100%'}
-            bg='#f2f2f2'
+            bg='#EDF2F7'
             textColor={'Black'}
             padding={'10px'}
             onClick={() => {
-                props.join_room(props.conv.id)
+                setMsgCountTo0(props.conv.id)
                 updateRoom(props.conv)
                 setLocalStorage(props.conv)
                 props.setMessageList(props.conv)
@@ -123,6 +126,9 @@ function ChannelList(){
                 })
                 updateRoomList(updatedRoomList);
                 setRoomList(updatedRoomList);
+                for (var obj of updatedRoomList){
+                    socket?.emit('join_chat_room', obj.id)
+                }
             } catch (error: any) {
                 console.error(error);
                 if (error.response.status == 404) {
@@ -143,10 +149,6 @@ function ChannelList(){
             if (err)
                 console.error(err)
         }
-    }
-
-    const join_room = async (room_id: string) => {
-        socket?.emit('join_chat_room', room_id)
     }
 
     useEffect(() => {
@@ -194,7 +196,6 @@ function ChannelList(){
                             conv={conv}
                             index={index}
                             me={me}
-                            join_room={join_room}
                             setMessageList={setMessageList}
                         />
                     </Box>                                

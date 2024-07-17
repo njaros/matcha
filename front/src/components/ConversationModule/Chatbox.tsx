@@ -125,7 +125,7 @@ function Chatbox(){
                 h={'100%'}
                 flexDir={'column'}
                 width={'100%'}
-                bg='#f2f2f2'
+                bg='#EDF2F7'
             >    
                 <Flex
                     width={'100%'}
@@ -229,7 +229,7 @@ function Chatbox(){
                                 border={'none'}
                                 focusBorderColor="none"
                                 borderRadius={'70px'}
-                                bg={'#f2f2f2'}
+                                bg={'#EDF2F7'}
                                 type='text'
                                 color='black'
                                 textDecoration={'none'}
