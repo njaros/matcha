@@ -83,9 +83,10 @@ export default function DisplayList(props: {list: IListUser[], enableDate: boole
                                     </Box>
                                     <Flex
                                         marginTop={'5px'}
+                                        justifyContent={props.enableDate ? "space-between" : "center"}
                                         >
-                                        <Text w="50%" fontWeight={'bold'} overflow={'hidden'} whiteSpace={'nowrap'} textOverflow="ellipsis" >{user.username}</Text>
-                                        <Text placeSelf={"flex-end"} fontWeight={'bold'}>{DateTools.timeAgo(user.at)} ago</Text>
+                                        <Text fontWeight={'bold'} overflow={'hidden'} whiteSpace={'nowrap'} textOverflow="ellipsis" >{user.username}</Text>
+                                        <Text placeSelf={"flex-end"} hidden={!props.enableDate} fontWeight={'bold'} whiteSpace={"nowrap"}>{DateTools.timeAgo(user.at)} ago</Text>
                                     </Flex>
                                 </Flex>
                             </NavLink>

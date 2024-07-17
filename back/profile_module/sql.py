@@ -196,7 +196,6 @@ def has_photos(**kwargs):
         (kwargs["user"]["id"],)
     )
     res = cur.fetchone()["count"]
-    app.logger.info(res)
     cur.close()
     return res
 
