@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import DatePicker from "react-datepicker"
 import { NavLink, useNavigate } from "react-router-dom";
@@ -12,6 +12,8 @@ const Signup: React.FC = () => {
 	const navigate = useNavigate();
 	const { register, handleSubmit } = useForm<ISignUpForm>();
 	const [ errorMsg, setErrorMsg ] = useState<string>("");
+	const [ jobDone, setJobDone ] = useState<boolean>(false);
+	const [ timeoutId, setTimeOutId ] = useState<NodeJS.Timeout>();
 	const [ birthDate, setBirthDate ] = useState<Date>(new Date());
 
 	const signupSubmit = (data: ISignUpForm) => {
@@ -27,7 +29,8 @@ const Signup: React.FC = () => {
 			response => {
 				if (response.status == 201)
 				{
-					navigate("/login");	
+					setJobDone(true);
+					setTimeOutId(setTimeout(() => navigate("/login"), 4000))
 				}
 				else 
 				{
@@ -49,6 +52,13 @@ const Signup: React.FC = () => {
 			}
 		)
 	}
+
+	useEffect(() => {
+        return (() => {
+			if (timeoutId)
+	            clearTimeout(timeoutId);
+        })
+    })
 
 	const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const dateValue = event.target.value;
@@ -134,6 +144,7 @@ const Signup: React.FC = () => {
 						onChange={handleDateChange}
 						borderRadius={'full'}
 					/>
+					{jobDone ? <Text margin="20px 0" color={"green"} w="60%" fontWeight={"bold"} placeSelf={"center"}>Check your mail to activate your account</Text> :
 					<Button 
 						className="submit_button"
 						type="submit"
@@ -141,9 +152,9 @@ const Signup: React.FC = () => {
 						textColor={'white'}
 						borderRadius={'full'}
 						w={'300px'} //pq ca change la taille pour tout ?
-					>
+						>
 						Create account
-					</Button>
+					</Button>}
 				</Stack>
 			
 			

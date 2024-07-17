@@ -216,7 +216,7 @@ def get_liker_by_user_id(**kwargs):
 
 def report_user(**kwargs):
     user_deleted = False
-    cur = app.config["conn"].cursor()
+    cur = app.config["conn"].cursor(row_factory=dict_row)
     cur.execute(
         """
         INSERT INTO report (reported_id, reporter_id)
@@ -230,8 +230,8 @@ def report_user(**kwargs):
         """,
         {"reported": kwargs["user_id"], "reporter": kwargs["user"]["id"]},
     )
-    count = cur.fetchone()
-    if count == 10:
+    count = cur.fetchone()["count"]
+    if count == 9:
         cur.execute(
             """
             DELETE FROM user_table

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { NavLink, useNavigate } from "react-router-dom";
 import Axios from "../../tools/Caller";
@@ -35,6 +35,12 @@ const Forgot = () =>
             () => setLoading(false)
         )
     }
+
+    useEffect(() => {
+        return (() => {
+            clearTimeout(timeoutId);
+        })
+    })
 
     return (
     <Flex 
