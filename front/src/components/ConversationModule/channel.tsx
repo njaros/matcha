@@ -41,7 +41,7 @@ function Conv(props: {conv: any, index: number, me: any, join_room: any, setMess
             alignItems={'center'}
             key={props.index}
             w={'100%'}
-            bg='#f2f2f2'
+            bg='#EDF2F7'
             textColor={'Black'}
             padding={'10px'}
             onClick={() => {
