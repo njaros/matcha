@@ -20,3 +20,9 @@ dating web site 42 project
 # TODOS-CORRECTION
 
 - A user that doesn't have a profile picture can't like another user.
+
+
+loading pour chat 
+unread msg qui fonctionne pas avec des comptes crees
+1er msg pas affiche quand on rentre dans la conversa
+probleme modulo longitude lattitude

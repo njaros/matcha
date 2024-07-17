@@ -80,10 +80,14 @@ def send_candidate(data):
     app.logger.debug("FROM SEND CANDIDATE")
 
 
-@socketio.on("join_chat_room")
-def join_chat_room(room_id):
+@socketio.on("set_msg_count_to_0")
+def set_msg_count_to_0(room_id): 
     user = connected_clients[request.sid]
     set_unread_msg_count_to_0(user["id"], room_id)
+
+
+@socketio.on("join_chat_room")
+def join_chat_room(room_id):
     join_room(f"room-{room_id}")
 
 
