@@ -127,9 +127,20 @@ function lastConnectionFormat(dateISOString: string): string
     return timeEllapsedStringFormatFromMs(msFromNow(dateISOString));
 }
 
+/**
+ * 
+ * @param dateISOString a date to a format toISOstring
+ * @returns a string describing time ellapsed between dateISOString param and now as little format
+ */
+function timeAgo(dateISOString: string): string
+{
+    return timeEllapsedStringFormatFromSec(secFromNow(dateISOString))
+}
+
 export const DateTools = {
     dateFromAge,
     ageFromDate,
+    timeAgo,
     lastConnectionFormat,
     timeEllapsedStringFormatFromMs,
     timeEllapsedStringFormatFromSec,

@@ -34,7 +34,6 @@ def get_user_with_room_and_message(**kwargs):
 
 @token_required
 def get_gps(**kwargs):
-    current_app.logger.info(kwargs)
     return jsonify(
         {
             "latitude": kwargs["user"]["latitude"],
@@ -100,6 +99,7 @@ def get_visits_history(**kwargs):
     hasher = Fernet(current_app.config["SECRET_PHOTO"])
     history = user_sql_request.get_visited_me_history(**kwargs)
     for user in history:
+        user["at"] = user["at"].isoformat()
         if user["binaries"] is not None:
             user["binaries"] = base64.b64encode(
                 hasher.decrypt(user["binaries"])
@@ -116,5 +116,4 @@ def is_user_connected(**kwargs):
         user_state["last_connection"] = user_sql_request.last_connection_by_id(
             kwargs["user_id"]
         )["last_connection"]
-    current_app.logger.info(user_state)
     return user_state, 200

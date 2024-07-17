@@ -37,6 +37,7 @@ const Swipe = () => {
             last_connection: ""
         }
     );
+    const [ hasPhotos, setHasPhotos ] = useState<boolean>(false)
 
     function getPosInfo(location: any)
     {
@@ -131,6 +132,22 @@ const Swipe = () => {
             }
         )
     }
+
+    function get_has_photos() {
+        Axios.get("/profile/has_photos").then(
+            response => {
+                setHasPhotos(response.data[0])
+            }
+        ).catch(
+            err => {
+                console.warn(err)
+            }
+        )
+    }
+
+    useEffect(() => {
+        get_has_photos();
+    }, [])
 
     useEffect(() => {
         get_swipe_list();
@@ -243,7 +260,12 @@ const Swipe = () => {
             />
         </Box>}
         {swipeUser.id != "" && !loading &&
-            <DisplayProfile user={swipeUser} likeHandler={likeHandler} dislikeHandler={dislikeHandler} incrementIndex={incrementIndex} />
+            <DisplayProfile 
+                user={swipeUser}
+                likeHandler={likeHandler}
+                dislikeHandler={dislikeHandler}
+                incrementIndex={incrementIndex} 
+                canlike={hasPhotos}/>
         }
         {swipeUser.id == "" && !loading && !startPage &&
             <Box    flex={1} display="flex" w="80%" maxW="590px" alignItems="start"

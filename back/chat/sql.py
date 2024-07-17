@@ -147,7 +147,6 @@ def insert_message(data):
         ),
     )
     res = cur.fetchone()
-    app.logger.info("POUUUUET", res)
     cur.close()
     return res
 

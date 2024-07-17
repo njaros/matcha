@@ -158,19 +158,20 @@ def do_user_near_point(latitude, longitude):
     )
 
 
+randoPickerDict = {}
 
-used_photos = set()
 
 def random_photo_picker(folder_path):
     if not os.path.isdir(folder_path):
         print(f"{folder_path} does not exist")
-        return
     files = os.listdir(folder_path)
-    photo = random.choice(files)
-    if photo in used_photos:
-        random_photo_picker(folder_path)
-    used_photos.add(photo)
-    return photo
+    if randoPickerDict.get(folder_path) is None:
+        randoPickerDict[folder_path] = [x for x in range(0, len(files))]
+    randIdx = random.choice(randoPickerDict[folder_path])
+    randoPickerDict[folder_path].remove(randIdx)
+    if len(randoPickerDict[folder_path]) == 0:
+        del randoPickerDict[folder_path]
+    return files[randIdx]
 
 
 def sql_insert_bot_photos(data, conn):
@@ -223,8 +224,8 @@ def insert_bot_photos(conn, users):
                 if age_range[0] <= age <= age_range[1]:
                     sql_insert_bot_photos(
                         {
-                            "photo": random_photo_picker(folder), 
-                            "user_id": user[0], 
+                            "photo": random_photo_picker(folder),
+                            "user_id": user[0],
                             "folder": folder
                         }, 
                         conn
@@ -244,6 +245,5 @@ def insert_users_in_database(conn, n, lat, lng):
             """
     cur.executemany(query, users)
     insert_bot_photos(conn, users)
-    used_photos.clear()
     cur.close()
     conn.commit()

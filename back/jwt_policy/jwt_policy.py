@@ -40,7 +40,7 @@ def token_required(f):
                 raise BadRequestError("token expiration date is expired")
             kwargs["user"] = get_user_by_id(data["user_id"])
         except jwt.exceptions.InvalidTokenError as e:
-            app.logger.info(f"error: {e}")
+            app.logger.warn(f"error: {e}")
             raise BadRequestError("Invalid Authentication token")
         return f(*args, **kwargs)
 

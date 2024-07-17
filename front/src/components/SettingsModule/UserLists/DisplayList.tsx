@@ -2,6 +2,7 @@ import { IListUser } from "../../../Interfaces";
 import { Box, Divider, Flex, Image, SimpleGrid, Text } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
 import ReturnButton from "../ReturnButton";
+import { DateTools } from "../../../tools/DateTools";
 
 const lineSizes={base: "70px", sm: "95px", md: "115px", lg:"135px", xl: "160px"}
 
@@ -56,41 +57,38 @@ export default function DisplayList(props: {list: IListUser[], enableDate: boole
                 >
                     {props.list.map((user, index) => {
                         return (
-                            <Flex
-                            key = {index} 
-                            flexDirection={'column'}
-                            >
-                                <NavLink key={user.id} to={`/other_profile/${user.id}`}>
-                                <Box 
-                                    bg="#edf2f7" 
-                                    h="300px" 
-                                    w="170px" 
-                                    borderRadius={'15px'} 
-                                    border={'1px'} 
-                                    borderColor={'grey'}
-                                    display={'flex'}
-                                    alignItems={'center'}
-                                    justifyContent={'center'}
-                                    >
-                                    <Image 
-                                        src={user.photo} 
-                                        alt="Photo" 
-                                        objectFit="cover" 
-                                        borderRadius="15px"
-                                        top="0"
-                                        left="0"
-                                        width="100%"
-                                        height="100%" 
-                                        />
-                                </Box>
-                                <Flex
-                                    justifyContent={'center'}
-                                    marginTop={'5px'}
-                                >
-                                    <Text fontWeight={'bold'}>{user.username}</Text>
+                            <NavLink key={index} to={`/other_profile/${user.id}`}>
+                                <Flex flexDirection={"column"} w="170px">
+                                    <Box 
+                                        bg="#edf2f7"
+                                        h="300px"
+                                        w="170px"
+                                        borderRadius={'15px'} 
+                                        border={'1px'}
+                                        borderColor={'grey'}
+                                        display={'flex'}
+                                        alignItems={'center'}
+                                        justifyContent={'center'}
+                                        >
+                                        <Image 
+                                            src={user.photo} 
+                                            alt="Photo" 
+                                            objectFit="cover" 
+                                            borderRadius="15px"
+                                            top="0"
+                                            left="0"
+                                            width="100%"
+                                            height="100%"
+                                            />
+                                    </Box>
+                                    <Flex
+                                        marginTop={'5px'}
+                                        >
+                                        <Text w="50%" fontWeight={'bold'} overflow={'hidden'} whiteSpace={'nowrap'} textOverflow="ellipsis" >{user.username}</Text>
+                                        <Text placeSelf={"flex-end"} fontWeight={'bold'}>{DateTools.timeAgo(user.at)} ago</Text>
+                                    </Flex>
                                 </Flex>
-                                </NavLink>
-                            </Flex>
+                            </NavLink>
                         )
                     })}
             </SimpleGrid>
