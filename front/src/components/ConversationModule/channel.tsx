@@ -1,4 +1,4 @@
-import { Box, Flex, Icon, Text } from "@chakra-ui/react";
+import { Box, Flex, Icon, Spinner, Text } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { BsArrowReturnRight } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import Axios from "../../tools/Caller";
 import { storeMe, storeMessageList, storeMsgCount, storeRoomInfo, storeRoomList, storeSocket } from "../../tools/Stores";
 import { Room_info, RoomList } from "../../tools/interface";
 import AvatarConnected from "./AvatarConnected";
+
 
 function Conv(props: {conv: any, index: number, me: any, setMessageList: any}){
     
@@ -18,7 +19,7 @@ function Conv(props: {conv: any, index: number, me: any, setMessageList: any}){
             content: props.conv.last_message_author?.content
         })
     const socket = storeSocket(state => state.socket)
-    
+
     useEffect(() => {
         socket?.on('last_message', (data: any) => {
             if (data.room === props.conv.id){
@@ -105,10 +106,12 @@ function ChannelList(){
     const socket = storeSocket(state => state.socket)
     const scrollToBottomRef = useRef<HTMLDivElement>(null);
     const setMsgList = storeMessageList(state => state.updateMessageList)
-    const updateRoomList = storeRoomList(state => state.updateRoomList);
-    
+    const updateRoomList = storeRoomList(state => state.updateRoomList)
+    const [loading, setLoading] = useState<boolean>(true)
+
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true)
             try {
                 const roomResponse = await Axios.get('/chat/get_room_list_by_id');
                 const updatedRoomList = roomResponse.data.map((room: any) => {
@@ -129,7 +132,9 @@ function ChannelList(){
                 for (var obj of updatedRoomList){
                     socket?.emit('join_chat_room', obj.id)
                 }
+                setLoading(false)
             } catch (error: any) {
+                setLoading(false)
                 console.error(error);
                 if (error.response.status == 404) {
                     setRoomList([]);
@@ -173,6 +178,21 @@ function ChannelList(){
                 >
                     Conversation
                 </Text>
+                { loading ? 
+                    <Box
+                        display="flex"
+                        flex={1}
+                        alignItems={'center'}
+                    >
+                        <Spinner 
+                            size="xl"
+                            color="blue.500"
+                            emptyColor="gray"
+                            speed="0.8s"
+                            thickness="4px"
+                        />
+                    </Box> :
+                <>
                 {roomList.length === 0 ? 
                     <Box
                         flex={1}
@@ -200,7 +220,11 @@ function ChannelList(){
                         />
                     </Box>                                
                     ))}
-                </Flex>}
+                    
+                </Flex>
+                }
+                </>
+                }
             </Flex>
     );
 }

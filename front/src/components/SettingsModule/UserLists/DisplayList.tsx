@@ -1,12 +1,12 @@
 import { IListUser } from "../../../Interfaces";
-import { Box, Divider, Flex, Image, SimpleGrid, Text } from "@chakra-ui/react";
+import { Box, Divider, Flex, Image, SimpleGrid, Spinner, Text } from "@chakra-ui/react";
 import { NavLink } from "react-router-dom";
 import ReturnButton from "../ReturnButton";
 import { DateTools } from "../../../tools/DateTools";
 
 const lineSizes={base: "70px", sm: "95px", md: "115px", lg:"135px", xl: "160px"}
 
-export default function DisplayList(props: {list: IListUser[], enableDate: boolean, name: string}) {
+export default function DisplayList(props: {list: IListUser[], enableDate: boolean, name: string, loading: boolean}) {
     
     return (
     <Flex 
@@ -37,6 +37,22 @@ export default function DisplayList(props: {list: IListUser[], enableDate: boole
                 {props.name}
             </Text>
         </Flex>
+        { props.loading ? 
+                    <Box
+                        display="flex"
+                        flex={1}
+                        alignItems={'center'}
+                        justifyContent={'center'}
+                    >
+                        <Spinner
+                            size="xl"
+                            color="blue.500"
+                            emptyColor="gray"
+                            speed="0.8s"
+                            thickness="4px"
+                        />
+                    </Box> :
+                <>
         {props.list.length === 0 ?
             <Box
                 flex={1}
@@ -93,7 +109,7 @@ export default function DisplayList(props: {list: IListUser[], enableDate: boole
                         )
                     })}
             </SimpleGrid>
-        }
+        }</>}
     </Flex>
     )
 }

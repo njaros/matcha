@@ -6,8 +6,10 @@ import DisplayList from "./DisplayList";
 
 export default function LikeList() {
     const [ userList, setUserList ] = useState<IListUser[]>([])
+    const [loading, setLoading] = useState<boolean>(true)
 
     useEffect(() => {
+        setLoading(true)
         Axios.get("relationship/get_liked_not_matched").then(
             response => {
                 let newList: IListUser[] = [];
@@ -24,8 +26,12 @@ export default function LikeList() {
             err => {
                 console.warn(err);
             }
+        ).finally(
+            () => {
+                setLoading(false);
+            }
         )
     }, [])
 
-    return <DisplayList list={userList} enableDate={false} name={"Liked"}/>
+    return <DisplayList list={userList} enableDate={false} name={"Liked"} loading={loading}/>
 }

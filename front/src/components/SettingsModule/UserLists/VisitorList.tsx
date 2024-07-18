@@ -6,8 +6,10 @@ import DisplayList from "./DisplayList";
 
 export default function VisitorList() {
     const [ userList, setUserList ] = useState<IListUser[]>([])
+    const [loading, setLoading] = useState<boolean>(true)
 
     useEffect(() => {
+        setLoading(true)
         Axios.get("user/get_visits_history").then(
             response => {
                 let newList: IListUser[] = [];
@@ -24,8 +26,12 @@ export default function VisitorList() {
             err => {
                 console.warn(err);
             }
+        ).finally(
+            () => {
+                setLoading(false);
+            }
         )
     }, [])
 
-    return <DisplayList list={userList} enableDate={true} name="Visitors"/>
+    return <DisplayList list={userList} enableDate={true} name="Visitors" loading={loading}/>
 }

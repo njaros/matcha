@@ -6,8 +6,10 @@ import DisplayList from "./DisplayList";
 
 export default function MatchList() {
     const [ userList, setUserList ] = useState<IListUser[]>([])
+    const [loading, setLoading] = useState<boolean>(true)
 
     useEffect(() => {
+        setLoading(true)
         Axios.get("relationship/get_matches").then(
             response => {
                 let newList: IListUser[] = [];
@@ -24,8 +26,12 @@ export default function MatchList() {
             err => {
                 console.warn(err);
             }
+        ).finally(
+            () => {
+                setLoading(false);
+            }
         )
     }, [])
 
-    return <DisplayList list={userList} enableDate={false} name="Matches"/>
+    return <DisplayList list={userList} enableDate={false} name="Matches" loading={loading}/>
 }
